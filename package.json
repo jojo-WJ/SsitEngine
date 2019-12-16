@@ -1,0 +1,58 @@
+{
+  "name": "com.coffee.upm-ssitengine",
+  "displayName": "SsitEngine",
+  "version": "1.0.0",
+  "description": "An framework project for the Unity3D system",
+  "author": "Ssit Jojo <@JjXx>",
+  "contributors": [
+    {
+      "name": "JjXx",
+      "twitter": "@JjXx"
+    }
+  ],
+  "repository": {
+    "type": "release",
+    "url": "https://github.com/jojo-WJ/SsitEngine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jojo-WJ/SsitEngine.git"
+  },
+  "keywords": [
+    "Unity3D",
+    "Unity"
+  ],
+  "license": "BSD",
+  "hideInEditor": false,
+  "unity": "2019.2",
+  "type": "library",
+  "release": {
+    "ci": false,
+    "tagFormat": "${version}",
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": true
+        }
+      ],
+      [
+        "@semantic-release/exec",
+        {
+          "verifyConditionsCmd": "git subtree split --rejoin --prefix=$SRC -b upm && git checkout upm",
+          "prepareCmd": "git add CHANGELOG.md package.json && git commit -m 'chore(release): ${nextRelease.version}\n\n${nextRelease.notes}'",
+          "successCmd": "git checkout -f -B $BRANCH && git subtree merge --prefix=$SRC upm -m 'Release ${nextRelease.version}'",
+          "failCmd": "git checkout -f -B $BRANCH && git reset --hard $REV"
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "failComment": false
+        }
+      ]
+    ]
+  }
+}
