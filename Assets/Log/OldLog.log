@@ -1,0 +1,6 @@
+[2019/12/13][21:32:52]  :Exception : DirectoryNotFoundException: Destination directory not found: C:\Users\SSIT\AppData\LocalLow\Ssit\SsitEngine\Config
+System.IO.File.Copy (System.String sourceFileName, System.String destFileName, System.Boolean overwrite) (at <599589bf4ce248909b8a14cbe4a2034e>:0)
+SsitEngine.Unity.FileUtils.CopyFolderFormStreamToPersitentPath (System.String streamPath, System.Action onFinishedAction) (at Assets/SsitFramework/SsitEngine_Unity/Utility/FileUtils.cs:188)
+SsitEngine.Unity.FileUtils.CopyFolderFormStreamToPersitentPath (System.Collections.Generic.List`1[T] streamPaths, System.Action onFinishedAction) (at Assets/SsitFramework/SsitEngine_Unity/Utility/FileUtils.cs:217)
+SsitEngine.Unity.SsitMain.InitInternalAsset () (at Assets/SsitFramework/SsitEngine_Unity/SsitMain.cs:57)
+

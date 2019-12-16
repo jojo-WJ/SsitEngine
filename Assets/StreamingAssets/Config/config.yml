@@ -1,0 +1,11 @@
+﻿NetWorkConfig:
+  #服务器IP
+  SocketIp: 192.168.12.195
+  #SocketIp: 192.168.12.53
+  #服务器端口号
+  SocketPort: 8700
+
+  HttpIp: 192.168.12.195
+ # HttpIp: 127.0.0.1
+  HttpPort: 8701
+
