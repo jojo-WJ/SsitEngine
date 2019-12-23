@@ -45,9 +45,15 @@ namespace SsitEngine
         /// <param name="scriptableObject">The ScriptableObject to initialize.</param>
         public static void InitializeScriptableObject( ScriptableObject scriptableObject )
         {
-            if (scriptableObject == null) return;
+            if (scriptableObject == null)
+            {
+                return;
+            }
             var methodInfo = scriptableObject.GetType().GetMethod("Initialize");
-            if (methodInfo != null) methodInfo.Invoke(scriptableObject, null);
+            if (methodInfo != null)
+            {
+                methodInfo.Invoke(scriptableObject, null);
+            }
         }
 
         /// <summary>
@@ -60,7 +66,9 @@ namespace SsitEngine
         {
             var copy = new List<T>();
             if (original != null)
+            {
                 for (var i = 0; i < original.Count; i++)
+                {
                     if (original[i] is T)
                     {
                         copy.Add(Object.Instantiate(original[i]));
@@ -68,9 +76,13 @@ namespace SsitEngine
                     else
                     {
                         if (Debug.isDebugBuild)
+                        {
                             Debug.LogWarning("CloneList<" + typeof(T).Name + ">: Element " + i + " is null.");
+                        }
                         copy.Add(null);
                     }
+                }
+            }
             return copy;
         }
 

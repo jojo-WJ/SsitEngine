@@ -29,8 +29,9 @@ namespace SsitEngine.Unity.SsitInput
         /// </summary>
         private const float ZOOM_SENSITIVITY = 1500f;
 
-        private int m_lastCursorActivationFrame = -100;
         private readonly List<TouchGestureBase> m_touchGestures = new List<TouchGestureBase>();
+
+        private int m_lastCursorActivationFrame = -100;
         public EventHandler<TouchGestureEventArgs> OnGestureDetected;
 
         /// <summary>
@@ -76,15 +77,23 @@ namespace SsitEngine.Unity.SsitInput
         {
             // no need to update if no one is listening
             if (OnGestureDetected != null)
+            {
                 foreach (var gesture in m_touchGestures)
                 {
                     var detectedGestureEvent = gesture.Update();
-                    if (detectedGestureEvent != null) OnGestureDetected(gesture, detectedGestureEvent);
+                    if (detectedGestureEvent != null)
+                    {
+                        OnGestureDetected(gesture, detectedGestureEvent);
+                    }
                 }
+            }
             // reset cursor action state if no cursor activating gestures were detected
             // in this frame it might happen that gestures will be detected in this frame
             // later in this case the cursor action state will be overwritten again
-            if (m_lastCursorActivationFrame != Time.frameCount) inputHandlerHelper.EnableCursor(false);
+            if (m_lastCursorActivationFrame != Time.frameCount)
+            {
+                inputHandlerHelper.EnableCursor(false);
+            }
         }
 
         /// <summary>
@@ -92,9 +101,15 @@ namespace SsitEngine.Unity.SsitInput
         /// </summary>
         public override void Destroy()
         {
-            if (OnGestureDetected != null) OnGestureDetected -= OnTouchGestureDetected;
+            if (OnGestureDetected != null)
+            {
+                OnGestureDetected -= OnTouchGestureDetected;
+            }
 
-            for (var i = 0; i < m_touchGestures.Count; i++) m_touchGestures[i].Destory();
+            for (var i = 0; i < m_touchGestures.Count; i++)
+            {
+                m_touchGestures[i].Destory();
+            }
         }
 
         /// <summary>
@@ -149,8 +164,12 @@ namespace SsitEngine.Unity.SsitInput
         private void EnableGesture( EnTouchGestureType type )
         {
             foreach (var gesture in m_touchGestures)
+            {
                 if (gesture.Type == type)
+                {
                     return;
+                }
+            }
             switch (type)
             {
                 case EnTouchGestureType.TAP:

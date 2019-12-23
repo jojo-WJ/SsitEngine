@@ -1,6 +1,4 @@
-
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -25,7 +23,9 @@ public class AssemblyManager
         {
             //如果已经找到，直接返回
             if (defaultCSharpAssembly != null)
+            {
                 return defaultCSharpAssembly;
+            }
 
             //从当前加载的程序包中寻找，如果找到，则直接记录并返回
             var assems = AppDomain.CurrentDomain.GetAssemblies();
@@ -49,7 +49,7 @@ public class AssemblyManager
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public static Assembly GetAssembly(string name)
+    public static Assembly GetAssembly( string name )
     {
 #if UNITY_ANDROID
             //if (!assemblyCache.ContainsKey(name))
@@ -59,9 +59,8 @@ public class AssemblyManager
                 return null;
 
 #else
-        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
-
             if (assembly.GetName().Name == name)
             {
                 return assembly;
@@ -79,15 +78,19 @@ public class AssemblyManager
     /// <param name="assembly">程序集名称，例如：SSJJ，Start</param>
     /// <param name="typeName">类型名称，必须包含完整的命名空间，例如：SSJJ.Render.BulletRail</param>
     /// <returns>类型</returns>
-    public static Type GetAssemblyType(string assembly, string typeName)
+    public static Type GetAssemblyType( string assembly, string typeName )
     {
         Type t;
 
         if (Application.platform == RuntimePlatform.Android || Application.isEditor)
+        {
             t = GetAssembly(assembly).GetType(typeName);
+        }
         //其他平台使用默认程序集中的类型
         else
+        {
             t = DefaultCSharpAssembly.GetType(typeName);
+        }
 
         return t;
     }
@@ -97,7 +100,7 @@ public class AssemblyManager
     /// </summary>
     /// <param name="typeFullName"></param>
     /// <returns></returns>
-    public static Type GetAssemblyType(string typeFullName)
+    public static Type GetAssemblyType( string typeFullName )
     {
         var pointPos = typeFullName.LastIndexOf(".", StringComparison.Ordinal);
         string assemblyName = null;
@@ -125,13 +128,13 @@ public class AssemblyManager
     /// </summary>
     /// <param name="typeName"></param>
     /// <returns></returns>
-    public static Type GetDefaultAssemblyType(string typeName)
+    public static Type GetDefaultAssemblyType( string typeName )
     {
         return DefaultCSharpAssembly.GetType(typeName);
     }
 
 
-    public static Type[] GetTypeList(string assemblyName)
+    public static Type[] GetTypeList( string assemblyName )
     {
         return GetAssembly(assemblyName).GetTypes();
     }
@@ -141,7 +144,7 @@ public static class ReflectionExtension
 {
     public static void Example()
     {
-        var selfType = ReflectionExtension.GetAssemblyCSharp().GetType("QFramework.ReflectionExtension");
+        var selfType = GetAssemblyCSharp().GetType("QFramework.ReflectionExtension");
         Debug.Log(selfType);
     }
 
@@ -171,7 +174,7 @@ public static class ReflectionExtension
             }
         }
 
-        Debug.LogError( ">>>>>>>Error: Can\'t find Assembly-CSharp-Editor.dll");
+        Debug.LogError(">>>>>>>Error: Can\'t find Assembly-CSharp-Editor.dll");
         return null;
     }
 
@@ -182,7 +185,7 @@ public static class ReflectionExtension
     /// <param name="methodName">方法名</param>
     /// <param name="args">参数</param>
     /// <returns></returns>
-    public static object InvokeByReflect(this object obj, string methodName, params object[] args)
+    public static object InvokeByReflect( this object obj, string methodName, params object[] args )
     {
         var methodInfo = obj.GetType().GetMethod(methodName);
         return methodInfo == null ? null : methodInfo.Invoke(obj, args);
@@ -194,7 +197,7 @@ public static class ReflectionExtension
     /// <param name="obj"></param>
     /// <param name="fieldName">域名</param>
     /// <returns></returns>
-    public static object GetFieldByReflect(this object obj, string fieldName)
+    public static object GetFieldByReflect( this object obj, string fieldName )
     {
         var fieldInfo = obj.GetType().GetField(fieldName);
         return fieldInfo == null ? null : fieldInfo.GetValue(obj);
@@ -206,7 +209,7 @@ public static class ReflectionExtension
     /// <param name="obj"></param>
     /// <param name="fieldName">属性名</param>
     /// <returns></returns>
-    public static object GetPropertyByReflect(this object obj, string propertyName, object[] index = null)
+    public static object GetPropertyByReflect( this object obj, string propertyName, object[] index = null )
     {
         var propertyInfo = obj.GetType().GetProperty(propertyName);
         return propertyInfo == null ? null : propertyInfo.GetValue(obj, index);
@@ -216,7 +219,7 @@ public static class ReflectionExtension
     /// 拥有特性
     /// </summary>
     /// <returns></returns>
-    public static bool HasAttribute(this PropertyInfo prop, Type attributeType, bool inherit)
+    public static bool HasAttribute( this PropertyInfo prop, Type attributeType, bool inherit )
     {
         return prop.GetCustomAttributes(attributeType, inherit).Length > 0;
     }
@@ -225,7 +228,7 @@ public static class ReflectionExtension
     /// 拥有特性
     /// </summary>
     /// <returns></returns>
-    public static bool HasAttribute(this FieldInfo field, Type attributeType, bool inherit)
+    public static bool HasAttribute( this FieldInfo field, Type attributeType, bool inherit )
     {
         return field.GetCustomAttributes(attributeType, inherit).Length > 0;
     }
@@ -234,7 +237,7 @@ public static class ReflectionExtension
     /// 拥有特性
     /// </summary>
     /// <returns></returns>
-    public static bool HasAttribute(this Type type, Type attributeType, bool inherit)
+    public static bool HasAttribute( this Type type, Type attributeType, bool inherit )
     {
         return type.GetCustomAttributes(attributeType, inherit).Length > 0;
     }
@@ -243,7 +246,7 @@ public static class ReflectionExtension
     /// 拥有特性
     /// </summary>
     /// <returns></returns>
-    public static bool HasAttribute(this MethodInfo method, Type attributeType, bool inherit)
+    public static bool HasAttribute( this MethodInfo method, Type attributeType, bool inherit )
     {
         return method.GetCustomAttributes(attributeType, inherit).Length > 0;
     }
@@ -252,44 +255,52 @@ public static class ReflectionExtension
     /// <summary>
     /// 获取第一个特性
     /// </summary>
-    public static T GetFirstAttribute<T>(this MethodInfo method, bool inherit) where T : Attribute
+    public static T GetFirstAttribute<T>( this MethodInfo method, bool inherit ) where T : Attribute
     {
-        var attrs = (T[])method.GetCustomAttributes(typeof(T), inherit);
+        var attrs = (T[]) method.GetCustomAttributes(typeof(T), inherit);
         if (attrs != null && attrs.Length > 0)
+        {
             return attrs[0];
+        }
         return null;
     }
 
     /// <summary>
     /// 获取第一个特性
     /// </summary>
-    public static T GetFirstAttribute<T>(this FieldInfo field, bool inherit) where T : Attribute
+    public static T GetFirstAttribute<T>( this FieldInfo field, bool inherit ) where T : Attribute
     {
-        var attrs = (T[])field.GetCustomAttributes(typeof(T), inherit);
+        var attrs = (T[]) field.GetCustomAttributes(typeof(T), inherit);
         if (attrs != null && attrs.Length > 0)
+        {
             return attrs[0];
+        }
         return null;
     }
 
     /// <summary>
     /// 获取第一个特性
     /// </summary>
-    public static T GetFirstAttribute<T>(this PropertyInfo prop, bool inherit) where T : Attribute
+    public static T GetFirstAttribute<T>( this PropertyInfo prop, bool inherit ) where T : Attribute
     {
-        var attrs = (T[])prop.GetCustomAttributes(typeof(T), inherit);
+        var attrs = (T[]) prop.GetCustomAttributes(typeof(T), inherit);
         if (attrs != null && attrs.Length > 0)
+        {
             return attrs[0];
+        }
         return null;
     }
 
     /// <summary>
     /// 获取第一个特性
     /// </summary>
-    public static T GetFirstAttribute<T>(this Type type, bool inherit) where T : Attribute
+    public static T GetFirstAttribute<T>( this Type type, bool inherit ) where T : Attribute
     {
-        var attrs = (T[])type.GetCustomAttributes(typeof(T), inherit);
+        var attrs = (T[]) type.GetCustomAttributes(typeof(T), inherit);
         if (attrs != null && attrs.Length > 0)
+        {
             return attrs[0];
+        }
         return null;
     }
 }

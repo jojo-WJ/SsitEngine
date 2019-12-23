@@ -18,16 +18,22 @@ namespace SsitEngine.Unity.HUD
         public static void ShowCompassBarDistance( this HudElement element, int distance = 0 )
         {
             if (element.CompassBar.DistanceText == null)
+            {
                 return;
+            }
 
             // only update if value has changed
             var useDistanceText = element.useCompassBarDistanceText;
             if (useDistanceText != element.CompassBar.DistanceText.gameObject.activeSelf)
+            {
                 element.CompassBar.DistanceText.gameObject.SetActive(useDistanceText);
+            }
 
             // update distance text if active
             if (useDistanceText) // TODO add TextMeshPro support?
+            {
                 element.CompassBar.DistanceText.text = string.Format(element.compassBarDistanceTextFormat, distance);
+            }
         }
 
         #endregion
@@ -59,7 +65,9 @@ namespace SsitEngine.Unity.HUD
             rect.GetLocalCorners(arr);
             var _radius = Mathf.Abs(arr[0].y);
             if (Mathf.Abs(arr[0].x) < Mathf.Abs(arr[0].y))
+            {
                 _radius = Mathf.Abs(arr[0].x);
+            }
 
             return _radius;
         }
@@ -98,12 +106,18 @@ namespace SsitEngine.Unity.HUD
             /*if (elementType == NavigationElementType.Radar)
                 element.Radar.transform.localPosition = markerPos;*/
             if (elementType == NavigationElementType.HUD)
+            {
                 element.Hud.transform.localPosition = markerPos;
+            }
             else if (elementType == NavigationElementType.CompassBar)
+            {
                 element.CompassBar.transform.position =
                     new Vector3(markerPos.x + parentRect.localPosition.x, parentRect.position.y, 0f);
+            }
             else if (elementType == NavigationElementType.Minimap)
+            {
                 element.Minimap.transform.localPosition = markerPos;
+            }
         }
 
 
@@ -130,17 +144,23 @@ namespace SsitEngine.Unity.HUD
             // set marker gameobject active/inactive
             if (markerGO != null)
                 // only update if value has changed
+            {
                 if (value != markerGO.activeSelf)
                 {
                     // invoke events
                     if (value) // appeared
+                    {
                         element.OnAppear.Invoke(element, elementType);
+                    }
                     else // disappeared
+                    {
                         element.OnDisappear.Invoke(element, elementType);
+                    }
 
                     // set active state
                     markerGO.gameObject.SetActive(value);
                 }
+            }
         }
 
         public static Vector3 ConvertPosition( Canvas canvas, Vector3 pos, out bool isInRect )
@@ -195,16 +215,22 @@ namespace SsitEngine.Unity.HUD
         public static void SetIndicatorActive( this HudElement element, bool value )
         {
             if (element.Indicator == null)
+            {
                 return;
+            }
 
             // only update, if value has changed
             if (value != element.Indicator.gameObject.activeSelf)
             {
                 // invoke events
                 if (value) // appeared
+                {
                     element.OnAppear.Invoke(element, NavigationElementType.Indicator);
+                }
                 else // disappeared
+                {
                     element.OnDisappear.Invoke(element, NavigationElementType.Indicator);
+                }
 
                 // set indicator active/inactive
                 element.Indicator.gameObject.SetActive(value);
@@ -225,15 +251,19 @@ namespace SsitEngine.Unity.HUD
 
                 // only update if value has changed
                 if (showDistance != distanceText.gameObject.activeSelf)
+                {
                     distanceText.gameObject.SetActive(showDistance);
+                }
 
                 // update distance text if active
                 if (showDistance) // TODO add TextMeshPro support?
+                {
                     distanceText.text =
                         string.Format(
                             onScreen
                                 ? element.indicatorOnscreenDistanceTextFormat
                                 : element.indicatorOffscreenDistanceTextFormat, distance);
+                }
             }
         }
 
@@ -243,14 +273,22 @@ namespace SsitEngine.Unity.HUD
             // show/hide onscreen rect
             if (element.Indicator.OnscreenRect != null)
                 // only update, if value has changed
+            {
                 if (value != element.Indicator.OnscreenRect.gameObject.activeSelf)
+                {
                     element.Indicator.OnscreenRect.gameObject.SetActive(value);
+                }
+            }
 
             // show/hide offscreen rect
             if (element.Indicator.OffscreenRect != null)
                 // only update, if value has changed
+            {
                 if (!value != element.Indicator.OffscreenRect.gameObject.activeSelf)
+                {
                     element.Indicator.OffscreenRect.gameObject.SetActive(!value);
+                }
+            }
         }
 
 
@@ -267,7 +305,9 @@ namespace SsitEngine.Unity.HUD
         {
             // set indicator rotation
             if (element.Indicator.OffscreenPointer != null)
+            {
                 element.Indicator.OffscreenPointer.transform.rotation = rotation;
+            }
         }
 
 
@@ -275,7 +315,9 @@ namespace SsitEngine.Unity.HUD
             float minScale )
         {
             if (element.ignoreIndicatorScaling)
+            {
                 return;
+            }
 
             // set indicator scale
             var scale = (distance - 1f) / (scaleRadius - 1f);
@@ -299,9 +341,13 @@ namespace SsitEngine.Unity.HUD
             {
                 // invoke events
                 if (value) // appeared
+                {
                     element.OnAppear.Invoke(element, NavigationElementType.HUD);
+                }
                 else // disappeared
+                {
                     element.OnDisappear.Invoke(element, NavigationElementType.HUD);
+                }
 
                 // set indicator active/inactive
                 element.Hud.gameObject.SetActive(value);
@@ -336,7 +382,9 @@ namespace SsitEngine.Unity.HUD
         public static void SetHudScale( this HudElement element, float distance, float scaleRadius, float minScale )
         {
             if (element.ignoreHudRadius)
+            {
                 return;
+            }
 
             // set indicator scale
             var scale = (distance - 1f) / (scaleRadius - 1f);
@@ -359,22 +407,30 @@ namespace SsitEngine.Unity.HUD
         public static void ShowMinimapAboveArrow( this HudElement element, bool value )
         {
             if (element.Minimap.ArrowAbove == null)
+            {
                 return;
+            }
 
             // only update if value has changed
             if (value != element.Minimap.ArrowAbove.gameObject.activeSelf)
+            {
                 element.Minimap.ArrowAbove.gameObject.SetActive(value);
+            }
         }
 
 
         public static void ShowMinimapBelowArrow( this HudElement element, bool value )
         {
             if (element.Minimap.ArrowBelow == null)
+            {
                 return;
+            }
 
             // only update if value has changed
             if (value != element.Minimap.ArrowBelow.gameObject.activeSelf)
+            {
                 element.Minimap.ArrowBelow.gameObject.SetActive(value);
+            }
         }
 
         #endregion

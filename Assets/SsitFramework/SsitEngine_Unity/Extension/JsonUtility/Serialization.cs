@@ -46,7 +46,10 @@ namespace SsitEngine.Unity.Utility
         {
             var count = Math.Min(keys.Count, values.Count);
             target = new Dictionary<TKey, TValue>(count);
-            for (var i = 0; i < count; ++i) target.Add(keys[i], values[i]);
+            for (var i = 0; i < count; ++i)
+            {
+                target.Add(keys[i], values[i]);
+            }
         }
 
         public Dictionary<TKey, TValue> ToDictionary()

@@ -22,7 +22,9 @@ namespace SsitEngine.Mathematics
             if (length < 5)
             {
                 for (var index = 0; index < length; ++index)
+                {
                     numArray[index] = source[index];
+                }
             }
             else
             {
@@ -31,8 +33,10 @@ namespace SsitEngine.Mathematics
                 numArray[1] =
                     (2.0 * source[0] + 27.0 * source[1] + 12.0 * source[2] - 8.0 * source[3] + 2.0 * source[4]) / 35.0;
                 for (var index = 2; index < length - 2; ++index)
+                {
                     numArray[index] = (-3.0 * (source[index - 2] + source[index + 2]) +
                                        12.0 * (source[index - 1] + source[index + 1]) + 17.0 * source[index]) / 35.0;
+                }
                 numArray[length - 2] = (2.0 * source[length - 5] - 8.0 * source[length - 4] +
                                         12.0 * source[length - 3] + 27.0 * source[length - 2] +
                                         2.0 * source[length - 1]) / 35.0;
@@ -52,7 +56,9 @@ namespace SsitEngine.Mathematics
             if (length < 7)
             {
                 for (var index = 0; index < length; ++index)
+                {
                     numArray[index] = source[index];
+                }
             }
             else
             {
@@ -63,9 +69,11 @@ namespace SsitEngine.Mathematics
                 numArray[2] = (-4.0 * source[0] + 16.0 * source[1] + 19.0 * source[2] + 12.0 * source[3] +
                                2.0 * source[4] - 4.0 * source[5] + source[6]) / 42.0;
                 for (var index = 3; index <= length - 4; ++index)
+                {
                     numArray[index] = (-2.0 * (source[index - 3] + source[index + 3]) +
                                        3.0 * (source[index - 2] + source[index + 2]) +
                                        6.0 * (source[index - 1] + source[index + 1]) + 7.0 * source[index]) / 21.0;
+                }
                 numArray[length - 3] = (-4.0 * source[length - 1] + 16.0 * source[length - 2] +
                                         19.0 * source[length - 3] + 12.0 * source[length - 4] +
                                         2.0 * source[length - 5] - 4.0 * source[length - 6] + source[length - 7]) /

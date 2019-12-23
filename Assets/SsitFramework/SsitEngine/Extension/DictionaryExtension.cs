@@ -18,7 +18,10 @@ namespace SsitEngine
         public static string KeysToString<TKey, TValue>( this Dictionary<TKey, TValue> dict )
         {
             var sb = new StringBuilder();
-            foreach (var value in dict.Keys) sb.AppendLine(value.ToString());
+            foreach (var value in dict.Keys)
+            {
+                sb.AppendLine(value.ToString());
+            }
             return sb.ToString();
         }
 
@@ -32,7 +35,10 @@ namespace SsitEngine
         public static string KeysToString<TKey, TValue>( this IDictionary<TKey, TValue> dict )
         {
             var sb = new StringBuilder();
-            foreach (var value in dict.Keys) sb.AppendLine(value.ToString());
+            foreach (var value in dict.Keys)
+            {
+                sb.AppendLine(value.ToString());
+            }
             return sb.ToString();
         }
 
@@ -44,7 +50,9 @@ namespace SsitEngine
             TValue value )
         {
             if (dict.ContainsKey(key) == false)
+            {
                 dict.Add(key, value);
+            }
             return dict;
         }
 
@@ -81,8 +89,12 @@ namespace SsitEngine
             IEnumerable<KeyValuePair<TKey, TValue>> values, bool replaceExisted )
         {
             foreach (var item in values)
+            {
                 if (dict.ContainsKey(item.Key) == false || replaceExisted)
+                {
                     dict[item.Key] = item.Value;
+                }
+            }
             return dict;
         }
 
@@ -99,8 +111,12 @@ namespace SsitEngine
             Dictionary<TKey, TValue> values, bool replaceExisted )
         {
             foreach (var item in values)
+            {
                 if (dict.ContainsKey(item.Key) == false || replaceExisted)
+                {
                     dict[item.Key] = item.Value;
+                }
+            }
             return dict;
         }
     }

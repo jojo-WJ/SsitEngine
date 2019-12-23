@@ -119,9 +119,15 @@ namespace SsitEngine.Unity.SsitInput
                 // more or less than m_fingerCount finger -> no press
                 m_isTapDown = false;
                 // if more fingers than needed first wait for no tap this way 2 fingers are not recognized when 3 finger gesture is ending
-                if (Input.touchCount > m_fingerCount) m_isWaitingForNoTap = true;
+                if (Input.touchCount > m_fingerCount)
+                {
+                    m_isWaitingForNoTap = true;
+                }
             }
-            if (m_isWaitingForNoTap && Input.touchCount == 0) m_isWaitingForNoTap = false;
+            if (m_isWaitingForNoTap && Input.touchCount == 0)
+            {
+                m_isWaitingForNoTap = false;
+            }
             return null;
         }
     }

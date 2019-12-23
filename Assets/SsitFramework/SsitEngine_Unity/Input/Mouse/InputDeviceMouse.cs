@@ -57,7 +57,10 @@ namespace SsitEngine.Unity.SsitInput
             }
 
             // cursor activation
-            if (m_lastMousePosition != Input.mousePosition) inputHandlerHelper.SetCursorPosition(Input.mousePosition);
+            if (m_lastMousePosition != Input.mousePosition)
+            {
+                inputHandlerHelper.SetCursorPosition(Input.mousePosition);
+            }
             inputHandlerHelper.EnableCursor(Input.GetMouseButton(0) && !isAlt);
 
             // camera direction
@@ -72,9 +75,13 @@ namespace SsitEngine.Unity.SsitInput
                 if ((m_mouseLookStart - Input.mousePosition).magnitude > 1e-3f /*0.001f*/)
                 {
                     if (!isAlt)
+                    {
                         inputHandlerHelper.RotateCameraAroundPivot(Input.mousePosition, m_mouseLookStart);
+                    }
                     else
+                    {
                         inputHandlerHelper.RotateCamera(Input.mousePosition, m_mouseLookStart);
+                    }
                     m_mouseLookStart = Input.mousePosition;
                 }
             }
@@ -116,7 +123,10 @@ namespace SsitEngine.Unity.SsitInput
         /// <param name="isAlt"></param>
         protected virtual void MoveCamera( Vector3 moveDelta, bool isAlt )
         {
-            if (!isAlt) inputHandlerHelper.MoveCamera(Vector3.zero, moveDelta, true);
+            if (!isAlt)
+            {
+                inputHandlerHelper.MoveCamera(Vector3.zero, moveDelta, true);
+            }
             //else
             //{
             //    inputHandlerHelper.RotateCamera(Input.mousePosition, m_mouseLookStart);

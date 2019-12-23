@@ -1,12 +1,11 @@
 ﻿using System;
-using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
+using Debug = UnityEngine.Debug;
 
 namespace SsitEngine.Editor
 {
@@ -29,14 +28,14 @@ namespace SsitEngine.Editor
 
         public static readonly string JsonFolderDefaultPath = "/Art/JsonData";
 
-        public static void TableConvert(string path)
+        public static void TableConvert( string path )
         {
             IntiFilePath();
             CheckFolder();
             Process proc = null;
             if (!File.Exists(CommandPathFolder + path))
             {
-                UnityEngine.Debug.LogError("批处理命令不存在::" + CommandPathFolder + "Path::" + path);
+                Debug.LogError("批处理命令不存在::" + CommandPathFolder + "Path::" + path);
                 return;
             }
 
@@ -55,16 +54,16 @@ namespace SsitEngine.Editor
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.LogErrorFormat("Exception Occurred :{0},{1}", ex.Message, ex.StackTrace.ToString());
+                Debug.LogErrorFormat("Exception Occurred :{0},{1}", ex.Message, ex.StackTrace);
             }
 
-            DirectoryInfo dir = new DirectoryInfo(Application.dataPath + BinaryFloderPath); //目录
+            var dir = new DirectoryInfo(Application.dataPath + BinaryFloderPath); //目录
             if (dir.Exists) //目录存在
             {
                 foreach (var file in dir.GetFiles("*.bin")) //遍历后缀名为bin的文件
                 {
                     //计算相应的以bytes为后缀的同名文件
-                    string byteFile = file.FullName.Substring(0, file.FullName.LastIndexOf(".")) + ".bytes";
+                    var byteFile = file.FullName.Substring(0, file.FullName.LastIndexOf(".")) + ".bytes";
                     if (File.Exists(file.FullName))
                     {
                         File.Delete(byteFile); //删除旧bytes文件
@@ -77,21 +76,20 @@ namespace SsitEngine.Editor
             Fresh();
         }
 
-        public static void TableConvert(FolderTree.Data data, string commandpath, TableFileScrips mConfigInfo)
+        public static void TableConvert( FolderTree.Data data, string commandpath, TableFileScrips mConfigInfo )
         {
-
             Process proc = null;
             if (!Directory.Exists(mConfigInfo.WorkSpacePath))
             {
-                UnityEngine.Debug.LogError("批处理工作路径不存在::" + "Path::" + mConfigInfo.WorkSpacePath);
+                Debug.LogError("批处理工作路径不存在::" + "Path::" + mConfigInfo.WorkSpacePath);
                 return;
             }
 
-            string batPath = commandpath + ".bat";
+            var batPath = commandpath + ".bat";
 
             if (!File.Exists(batPath))
             {
-                UnityEngine.Debug.LogError("批处理命令不存在::" + batPath);
+                Debug.LogError("批处理命令不存在::" + batPath);
                 return;
             }
 
@@ -108,17 +106,14 @@ namespace SsitEngine.Editor
 
                 proc.WaitForExit();
                 //EditorUtility.DisplayDialog( "导出结果", "导出成功!", "确定" );
-
-
-
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.LogErrorFormat("Exception Occurred :{0},{1}", ex.Message, ex.StackTrace.ToString());
+                Debug.LogErrorFormat("Exception Occurred :{0},{1}", ex.Message, ex.StackTrace);
             }
 
             //修正c#
-            string scripPath = mConfigInfo.ScriptExportPath + "/" + data.name + ".cs";
+            var scripPath = mConfigInfo.ScriptExportPath + "/" + data.name + ".cs";
             if (File.Exists(scripPath))
             {
                 ReToC(scripPath, mConfigInfo.mIsExportJson);
@@ -137,23 +132,22 @@ namespace SsitEngine.Editor
                 //判断当前的data是否是文件夹
                 if (data.isFolder)
                 {
-                    string[] tempPaths = EditorFileUtility.GetFilesByPattern(data.relationPath, ".xlsx");
+                    var tempPaths = EditorFileUtility.GetFilesByPattern(data.relationPath, ".xlsx");
                     foreach (var item in tempPaths)
                     {
-                        UnityEngine.Debug.Log(item);
+                        Debug.Log(item);
                     }
                 }
                 else
                 {
-                    string luaPath = mConfigInfo.LuaExportPath + "/" + data.name + ".lua";
+                    var luaPath = mConfigInfo.LuaExportPath + "/" + data.name + ".lua";
 
                     if (File.Exists(luaPath))
                     {
-                        string refName = data.name + "Table";
+                        var refName = data.name + "Table";
                         ToLua(luaPath, data.name, ref refName);
                     }
                 }
-
             }
 
             //DirectoryInfo dir = new DirectoryInfo(mConfigInfo.BinaryExportPath);//目录
@@ -174,16 +168,16 @@ namespace SsitEngine.Editor
         }
 
 
-        static void Fresh()
+        private static void Fresh()
         {
             //UnityEditor.EditorApplication.ExecuteMenuItem("Assets/Refresh");
             AssetDatabase.Refresh();
         }
 
-        static void IntiFilePath()
+        private static void IntiFilePath()
         {
             //DirectoryInfo d1 = new DirectoryInfo(Application.dataPath + BinaryFloderPath);
-            string path = Application.dataPath;
+            var path = Application.dataPath;
 
             path = path.Replace("Assets", "Table");
             path = Path.GetFullPath(path) + "\\";
@@ -194,7 +188,7 @@ namespace SsitEngine.Editor
         {
             //DirectoryInfo d1 = new DirectoryInfo(Application.dataPath + BinaryFloderPath);
             //if (!d1.Exists) { d1.Create(); }
-            DirectoryInfo d1 = new DirectoryInfo(Application.dataPath + DataScriptsFolderPath);
+            var d1 = new DirectoryInfo(Application.dataPath + DataScriptsFolderPath);
             if (!d1.Exists)
             {
                 d1.Create();
@@ -202,18 +196,18 @@ namespace SsitEngine.Editor
 
             //d1 = new DirectoryInfo(Application.dataPath + LuasFolderPath);
             //if (!d1.Exists) { d1.Create(); }
-            d1 = new DirectoryInfo(Application.dataPath + JsonFolderResPath);
-            if (!d1.Exists)
-            {
+            //d1 = new DirectoryInfo(Application.dataPath + JsonFolderResPath);
+            //if (!d1.Exists)
+            //{
                 d1.Create();
-            }
+            //}
         }
 
         #region C#代码修正
 
-        static void ReToC(string path, bool isJson)
+        private static void ReToC( string path, bool isJson )
         {
-            CodeReGeneration cr = new CodeReGeneration(path);
+            var cr = new CodeReGeneration(path);
             if (isJson)
             {
                 //cr.Replace("public tabtoy.Logger TableLogger = new tabtoy.Logger();", "");
@@ -230,30 +224,30 @@ namespace SsitEngine.Editor
 
         #region ExportLuaTools
 
-        public static string ToLua(string path, string name, ref string luaTableName)
+        public static string ToLua( string path, string name, ref string luaTableName )
         {
-            string cContent = EditorFileUtility.ReadFile(path);
+            var cContent = EditorFileUtility.ReadFile(path);
 
             if (!string.IsNullOrEmpty(cContent))
             {
-                string[] cc = SpitContentC(ref cContent, StringSplitOptions.None);
+                var cc = SpitContentC(ref cContent, StringSplitOptions.None);
 
-                string preTableName = "";
+                var preTableName = "";
 
-                IEnumerator iEnumerator = cc.GetEnumerator();
-                int index = -1;
+                var iEnumerator = cc.GetEnumerator();
+                var index = -1;
                 while (iEnumerator.MoveNext())
                 {
                     index++;
-                    string cur = (string) iEnumerator.Current;
+                    var cur = (string) iEnumerator.Current;
                     if (cur.StartsWith("--"))
                     {
                         continue;
                     }
-                    else if (cur.StartsWith("local"))
+                    if (cur.StartsWith("local"))
                     {
                         cur = cur.Remove(0, 5);
-                        string[] vv = cur.Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+                        var vv = cur.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
                         preTableName = vv[0];
                         cc[index] = luaTableName + " = " + luaTableName + " or {}";
                         iEnumerator.MoveNext();
@@ -284,7 +278,7 @@ namespace SsitEngine.Editor
                     {
                         cur = (string) iEnumerator.Current;
 
-                        string partical = preTableName + "." + name;
+                        var partical = preTableName + "." + name;
                         if (cur.Contains("(") && cur.Contains(partical))
                         {
                             cur = cur.Replace(partical, name);
@@ -298,7 +292,7 @@ namespace SsitEngine.Editor
                     }
                 }
 
-                string ret = string.Join("\n", cc);
+                var ret = string.Join("\n", cc);
 
                 //写入原路径
                 EditorFileUtility.WriteFile(path, ret);
@@ -313,24 +307,23 @@ namespace SsitEngine.Editor
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static string[] SpitContentC(ref string target, StringSplitOptions options)
+        public static string[] SpitContentC( ref string target, StringSplitOptions options )
         {
-            return target.Split(new string[] {"\n"}, options);
+            return target.Split(new[] {"\n"}, options);
         }
 
 
         #region Fitter
 
-        public static void filterKeyWord(ref string[] targetArray)
+        public static void filterKeyWord( ref string[] targetArray )
         {
-            for (int i = 0; i < targetArray.Length; i++)
+            for (var i = 0; i < targetArray.Length; i++)
             {
-
             }
         }
 
 
-        public static string[] filterWord = new string[]
+        public static string[] filterWord =
         {
             //Define
             "#region",
@@ -342,28 +335,27 @@ namespace SsitEngine.Editor
 
             //class Info
             "using",
-            "namespace",
+            "namespace"
         };
 
-        public static string[] NotesWord = new string[]
+        public static string[] NotesWord =
         {
             //注释
             "//",
             "/*",
-            "*/",
+            "*/"
         };
 
-        public static string[] MethodWord = new string[]
+        public static string[] MethodWord =
         {
             //方法
             "private",
             "public",
             "static",
-            "void",
-
+            "void"
         };
 
-        public static string[] ScriptBlockWord = new string[]
+        public static string[] ScriptBlockWord =
         {
             //方法
             "if",
@@ -378,27 +370,26 @@ namespace SsitEngine.Editor
 
         #endregion
 
-
         #endregion
 
 
         #region ExportJsonTools
 
-        public static string ToJsonC(string path)
+        public static string ToJsonC( string path )
         {
-            string cContent = EditorFileUtility.ReadFile(path);
-            List<string> temp = new List<string>();
+            var cContent = EditorFileUtility.ReadFile(path);
+            var temp = new List<string>();
             if (!string.IsNullOrEmpty(cContent))
             {
-                string[] cc = SpitContentC(ref cContent, StringSplitOptions.None);
+                var cc = SpitContentC(ref cContent, StringSplitOptions.None);
 
-                string preTableName = "";
+                var preTableName = "";
 
-                IEnumerator iEnumerator = cc.GetEnumerator();
+                var iEnumerator = cc.GetEnumerator();
 
                 while (iEnumerator.MoveNext())
                 {
-                    string cur = (string) iEnumerator.Current;
+                    var cur = (string) iEnumerator.Current;
                     if (cur.Contains("public tabtoy.Logger TableLogger "))
                     {
                         cur = cur.Replace("public tabtoy.Logger TableLogger = new tabtoy.Logger();",
@@ -415,7 +406,7 @@ namespace SsitEngine.Editor
                     else if (cur.Contains("#region Deserialize code"))
                     {
                         //获取类名
-                        string TypeName = String.Empty;
+                        var TypeName = string.Empty;
 
                         while (iEnumerator.MoveNext())
                         {
@@ -423,7 +414,7 @@ namespace SsitEngine.Editor
 
                             if (cur.Contains("public static void Deserialize"))
                             {
-                                var tempHeader = cur.Split(new string[] {" ", "(", ","},
+                                var tempHeader = cur.Split(new[] {" ", "(", ","},
                                     StringSplitOptions.RemoveEmptyEntries);
                                 TypeName = tempHeader[4];
                             }
@@ -431,9 +422,9 @@ namespace SsitEngine.Editor
                             //获取字典块
                             if (cur.Contains("// Build"))
                             {
-                                StringBuilder sb1 = new StringBuilder();
-                                StringBuilder sb2 = new StringBuilder();
-                                string additiveContext = string.Empty;
+                                var sb1 = new StringBuilder();
+                                var sb2 = new StringBuilder();
+                                var additiveContext = string.Empty;
                                 sb1.AppendLine(cur);
                                 sb2.AppendLine(cur);
                                 while (iEnumerator.MoveNext())
@@ -443,9 +434,9 @@ namespace SsitEngine.Editor
                                     if (!string.IsNullOrEmpty(cur) && cur.Contains("var"))
                                     {
                                         sb2.AppendLine(cur);
-                                        var listParams = cur.Split(new string[] {".", "["},
+                                        var listParams = cur.Split(new[] {".", "["},
                                             StringSplitOptions.RemoveEmptyEntries);
-                                        string param = listParams[1];
+                                        var param = listParams[1];
                                         additiveContext = string.Format("\t\t\t\t\tthis.{0}.Add(ins.{1}[i]);", param,
                                             param);
                                         //sb2.AppendLine( tempt );
@@ -453,13 +444,13 @@ namespace SsitEngine.Editor
                                     else if (!string.IsNullOrEmpty(cur) && cur.Contains("Add"))
                                     {
                                         //string tempt = cur.Replace( "ins", "this" );
-                                        var listParams1 = cur.Split(new string[] {"(", ","},
+                                        var listParams1 = cur.Split(new[] {"(", ","},
                                             StringSplitOptions.RemoveEmptyEntries);
-                                        string key = listParams1[1];
-                                        var listParams2 = cur.Split(new string[] {"."},
+                                        var key = listParams1[1];
+                                        var listParams2 = cur.Split(new[] {"."},
                                             StringSplitOptions.RemoveEmptyEntries);
-                                        string dic = listParams2[1];
-                                        string llr1 = string.Format("\t\t\t\tif(!{0}.ContainsKey({1}))", dic, key);
+                                        var dic = listParams2[1];
+                                        var llr1 = string.Format("\t\t\t\tif(!{0}.ContainsKey({1}))", dic, key);
                                         sb2.AppendLine(llr1);
 
                                         sb2.AppendLine("\t\t\t\t{");
@@ -468,12 +459,11 @@ namespace SsitEngine.Editor
                                             sb2.AppendLine(additiveContext);
                                         }
 
-                                        string llr2 = string.Format("\t\t\t\t\t{0}.Add({1}, element);", dic, key);
+                                        var llr2 = string.Format("\t\t\t\t\t{0}.Add({1}, element);", dic, key);
                                         sb2.AppendLine(llr2);
 
 
                                         sb2.AppendLine("\t\t\t\t}");
-
                                     }
                                     else
                                     {
@@ -488,12 +478,12 @@ namespace SsitEngine.Editor
 
                                 if (!string.IsNullOrEmpty(TypeName))
                                 {
-                                    string temp1 = BuildDeserializeCode;
+                                    var temp1 = BuildDeserializeCode;
                                     temp1 = temp1.Replace("arg0", TypeName);
                                     temp1 = temp1.Replace("arg1", sb1.ToString());
                                     temp.Add(temp1);
 
-                                    string temp2 = BuildDeserializeReCode;
+                                    var temp2 = BuildDeserializeReCode;
                                     temp2 = temp2.Replace("arg0", TypeName);
                                     temp2 = temp2.Replace("arg2", sb2.ToString());
                                     temp.Add(temp2);
@@ -512,7 +502,7 @@ namespace SsitEngine.Editor
                     }
                 }
 
-                string ret = string.Join("\n", temp.ToArray());
+                var ret = string.Join("\n", temp.ToArray());
 
                 //写入原路径
                 EditorFileUtility.WriteFile(path, ret);
@@ -522,14 +512,14 @@ namespace SsitEngine.Editor
             return cContent;
         }
 
-        static readonly string BuildDeserializeCode =
+        private static readonly string BuildDeserializeCode =
             @"      public static void Deserialize( arg0 ins)
 		{
             arg1
         }
         ";
 
-        static readonly string BuildDeserializeReCode =
+        private static readonly string BuildDeserializeReCode =
             @"      public void DeserializeRe( arg0 ins)
 		{
             arg2
@@ -601,6 +591,5 @@ namespace SsitEngine.Editor
         //    }
         //    Fresh();
         //}
-
     }
 }

@@ -37,7 +37,10 @@ namespace SsitEngine.Unity.Entity
                 float instanceExpireTime, int instancePriority, IEntityGroupHelper entityGroupHelper,
                 IObjectPoolManager objectPoolManager )
             {
-                if (entityGroupHelper == null) throw new SsitEngineException("Entity group helper is invalid.");
+                if (entityGroupHelper == null)
+                {
+                    throw new SsitEngineException("Entity group helper is invalid.");
+                }
 
                 GroupId = groupId;
                 Helper = entityGroupHelper;
@@ -109,8 +112,12 @@ namespace SsitEngine.Unity.Entity
             public bool HasEntity( int entityId )
             {
                 foreach (var entity in m_Entities)
+                {
                     if (entity.Id == entityId)
+                    {
                         return true;
+                    }
+                }
 
                 return false;
             }
@@ -123,11 +130,17 @@ namespace SsitEngine.Unity.Entity
             public bool HasEntity( string entityAssetName )
             {
                 if (string.IsNullOrEmpty(entityAssetName))
+                {
                     throw new SsitEngineException("Entity asset name is invalid.");
+                }
 
                 foreach (var entity in m_Entities)
+                {
                     if (entity.EntityAssetName == entityAssetName)
+                    {
                         return true;
+                    }
+                }
 
                 return false;
             }
@@ -140,8 +153,12 @@ namespace SsitEngine.Unity.Entity
             public IEntity GetEntity( int entityId )
             {
                 foreach (var entity in m_Entities)
+                {
                     if (entity.Id == entityId)
+                    {
                         return entity;
+                    }
+                }
 
                 return null;
             }
@@ -154,11 +171,17 @@ namespace SsitEngine.Unity.Entity
             public IEntity GetEntity( string entityAssetName )
             {
                 if (string.IsNullOrEmpty(entityAssetName))
+                {
                     throw new SsitEngineException("Entity asset name is invalid.");
+                }
 
                 foreach (var entity in m_Entities)
+                {
                     if (entity.EntityAssetName == entityAssetName)
+                    {
                         return entity;
+                    }
+                }
 
                 return null;
             }
@@ -171,12 +194,18 @@ namespace SsitEngine.Unity.Entity
             public IEntity[] GetEntities( string entityAssetName )
             {
                 if (string.IsNullOrEmpty(entityAssetName))
+                {
                     throw new SsitEngineException("Entity asset name is invalid.");
+                }
 
                 var results = new List<IEntity>();
                 foreach (var entity in m_Entities)
+                {
                     if (entity.EntityAssetName == entityAssetName)
+                    {
                         results.Add(entity);
+                    }
+                }
 
                 return results.ToArray();
             }
@@ -189,14 +218,23 @@ namespace SsitEngine.Unity.Entity
             public void GetEntities( string entityAssetName, List<IEntity> results )
             {
                 if (string.IsNullOrEmpty(entityAssetName))
+                {
                     throw new SsitEngineException("Entity asset name is invalid.");
+                }
 
-                if (results == null) throw new SsitEngineException("Results is invalid.");
+                if (results == null)
+                {
+                    throw new SsitEngineException("Results is invalid.");
+                }
 
                 results.Clear();
                 foreach (var entity in m_Entities)
+                {
                     if (entity.EntityAssetName == entityAssetName)
+                    {
                         results.Add(entity);
+                    }
+                }
             }
 
             /// <summary>
@@ -206,7 +244,10 @@ namespace SsitEngine.Unity.Entity
             public IEntity[] GetAllEntities()
             {
                 var results = new List<IEntity>();
-                foreach (var entity in m_Entities) results.Add(entity);
+                foreach (var entity in m_Entities)
+                {
+                    results.Add(entity);
+                }
 
                 return results.ToArray();
             }
@@ -217,22 +258,34 @@ namespace SsitEngine.Unity.Entity
             /// <param name="results">实体组中的所有实体。</param>
             public void GetAllEntities( List<IEntity> results )
             {
-                if (results == null) throw new SsitEngineException("Results is invalid.");
+                if (results == null)
+                {
+                    throw new SsitEngineException("Results is invalid.");
+                }
 
                 results.Clear();
-                foreach (var entity in m_Entities) results.Add(entity);
+                foreach (var entity in m_Entities)
+                {
+                    results.Add(entity);
+                }
             }
 
             public void SetEntityInstanceLocked( object entityInstance, bool locked )
             {
-                if (entityInstance == null) throw new SsitEngineException("Entity instance is invalid.");
+                if (entityInstance == null)
+                {
+                    throw new SsitEngineException("Entity instance is invalid.");
+                }
 
                 m_InstancePool.SetLocked(entityInstance, locked);
             }
 
             public void SetEntityInstancePriority( object entityInstance, int priority )
             {
-                if (entityInstance == null) throw new SsitEngineException("Entity instance is invalid.");
+                if (entityInstance == null)
+                {
+                    throw new SsitEngineException("Entity instance is invalid.");
+                }
 
                 m_InstancePool.SetPriority(entityInstance, priority);
             }

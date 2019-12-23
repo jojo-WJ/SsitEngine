@@ -1,41 +1,37 @@
-﻿using SsitEngine.DebugLog;
+﻿using System;
+using SsitEngine.DebugLog;
 using SsitEngine.Unity;
 using SsitEngine.Unity.Timer;
-using System;
 using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// Quest condition that becomes true after a specified duration.
     /// </summary>
     [Serializable]
     public class TimerQuestConditionPro : QuestCondition
     {
+        private QuestCounter m_counter;
 
-        [Tooltip("Counter to track time left.")]
-        [SerializeField]
+        [Tooltip("Counter to track time left.")] [SerializeField]
         private int m_counterIndex;
 
-        private TimerEventTask m_event;
-        [Tooltip("How the counter value applies to the condition.")]
-        [SerializeField]
+        [Tooltip("How the counter value applies to the condition.")] [SerializeField]
         private CounterValueConditionMode m_counterValueMode = CounterValueConditionMode.AtLeast;
 
-        [Tooltip("The required value for the Counter Value Mode.")]
-        [SerializeField]
-        private QuestNumber m_requiredCounterValue;
+        private TimerEventTask m_event;
 
-        private QuestCounter m_counter = null;
+        [Tooltip("The required value for the Counter Value Mode.")] [SerializeField]
+        private QuestNumber m_requiredCounterValue;
 
         /// <summary>
         /// Index of a counter defined in the quest. Inspect the quest's main info to view/edit counters.
         /// </summary>
         public int counterIndex
         {
-            get { return m_counterIndex; }
-            set { m_counterIndex = value; }
+            get => m_counterIndex;
+            set => m_counterIndex = value;
         }
 
         /// <summary>
@@ -43,24 +39,25 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public QuestNumber requiredCounterValue
         {
-            get { return m_requiredCounterValue; }
-            set { m_requiredCounterValue = value; }
+            get => m_requiredCounterValue;
+            set => m_requiredCounterValue = value;
         }
 
 
         public override string GetEditorName()
         {
-            var counter = (quest != null) ? quest.GetCounter(counterIndex) : null;
-            return (counter != null) ? ("Timer: " + counter.name) : "Timer";
+            var counter = quest != null ? quest.GetCounter(counterIndex) : null;
+            return counter != null ? "Timer: " + counter.name : "Timer";
         }
 
 
         public override void StartChecking( System.Action trueAction )
         {
             base.StartChecking(trueAction);
-            m_counter = (quest != null) ? quest.GetCounter(counterIndex) : null;
+            m_counter = quest != null ? quest.GetCounter(counterIndex) : null;
             //QuestTimerManager.RegisterTimer(this);
-            m_event = Engine.Instance.Platform.AddTimerEvent(TimerEventType.TeveSpanUntil, SsitFrameUtils.DefaultPriority, m_requiredCounterValue.literalValue, 0, OnTimeCallBack);
+            m_event = Engine.Instance.Platform.AddTimerEvent(TimerEventType.TeveSpanUntil,
+                SsitFrameUtils.DefaultPriority, m_requiredCounterValue.literalValue, 0, OnTimeCallBack);
             if (m_event != null)
             {
                 if (m_counter != null)
@@ -72,7 +69,6 @@ namespace SsitEngine.QuestManager
                     SsitDebug.Debug("Timer StartChecking 添加计时器事件");
                 }
             }
-
         }
 
 
@@ -87,12 +83,14 @@ namespace SsitEngine.QuestManager
         }
 
 
-        private void OnTimeCallBack(TimerEventTask eve, float timeElapsed, object data )
+        private void OnTimeCallBack( TimerEventTask eve, float timeElapsed, object data )
         {
             if (m_counter == null)
+            {
                 return;
+            }
 
-            int temp = Mathf.CeilToInt(m_requiredCounterValue.literalValue - timeElapsed);
+            var temp = Mathf.CeilToInt(m_requiredCounterValue.literalValue - timeElapsed);
             //防止每帧发送通知
             if (m_counter.currentValue != temp)
             {
@@ -101,12 +99,14 @@ namespace SsitEngine.QuestManager
             if (timeElapsed >= m_requiredCounterValue.literalValue)
             {
                 if (Engine.Debug)
-                    SsitDebug.Debug("Quest Machine: TimerQuestCondition '" + m_counter.name + "' timer ran out. Setting condition true." + "timeElapsed:" + timeElapsed, quest);
+                {
+                    SsitDebug.Debug(
+                        "Quest Machine: TimerQuestCondition '" + m_counter.name +
+                        "' timer ran out. Setting condition true." + "timeElapsed:" + timeElapsed, quest);
+                }
                 StopChecking();
                 SetTrue();
             }
         }
-
     }
-
 }

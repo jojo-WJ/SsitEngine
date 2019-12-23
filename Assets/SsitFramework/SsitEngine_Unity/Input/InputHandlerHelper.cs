@@ -105,8 +105,14 @@ namespace SsitEngine.Unity.SsitInput
         public void MoveCamera( Vector3 fromScreenCoords, Vector3 toScreenCoords, bool convertDir = false,
             bool ignoreUI = false )
         {
-            if (!m_isCameraMoveMenet) return;
-            if (ignoreUI && !IsInteractable) return;
+            if (!m_isCameraMoveMenet)
+            {
+                return;
+            }
+            if (ignoreUI && !IsInteractable)
+            {
+                return;
+            }
             var cam = m_inputManager.Cam;
             if (cam != null)
             {
@@ -116,7 +122,10 @@ namespace SsitEngine.Unity.SsitInput
                 var dir = toScreenCoords - fromScreenCoords;
                 //本地坐标转世界坐标
                 dir = cam.transform.TransformDirection(dir);
-                if (!convertDir) dir.y = 0;
+                if (!convertDir)
+                {
+                    dir.y = 0;
+                }
                 if (cam.orthographic)
                 {
                     var forwardDir = Vector3.Dot(dir, cam.transform.forward);
@@ -138,8 +147,14 @@ namespace SsitEngine.Unity.SsitInput
         /// <inheritdoc />
         public void RotateCamera( Vector3 fromScreenCoords, Vector3 toScreenCoords, bool ignoreUI = false )
         {
-            if (!m_isCameraMoveMenet) return;
-            if (ignoreUI && !IsInteractable) return;
+            if (!m_isCameraMoveMenet)
+            {
+                return;
+            }
+            if (ignoreUI && !IsInteractable)
+            {
+                return;
+            }
 
             if (Mathf.Approximately(toScreenCoords.sqrMagnitude, 0))
             {
@@ -174,9 +189,13 @@ namespace SsitEngine.Unity.SsitInput
                 cam.transform.Rotate(axis, -angle, Space.World);
                 // keep the camera up direction
                 if (cam.transform.up.y > 0)
+                {
                     cam.transform.LookAt(cam.transform.position + cam.transform.forward, Vector3.up);
+                }
                 else
+                {
                     cam.transform.LookAt(cam.transform.position + cam.transform.forward, Vector3.down);
+                }
                 UpdateCameraPivotPoint();
             }
         }
@@ -184,8 +203,14 @@ namespace SsitEngine.Unity.SsitInput
         /// <inheritdoc />
         public void RotateCameraAroundPivot( Vector3 fromScreenCoords, Vector3 toScreenCoords, bool ignoreUI = false )
         {
-            if (!m_isCameraMoveMenet) return;
-            if (ignoreUI && !IsInteractable) return;
+            if (!m_isCameraMoveMenet)
+            {
+                return;
+            }
+            if (ignoreUI && !IsInteractable)
+            {
+                return;
+            }
 
             if (Mathf.Approximately(toScreenCoords.sqrMagnitude, 0))
             {
@@ -215,13 +240,19 @@ namespace SsitEngine.Unity.SsitInput
                 }
 
                 if (Mathf.Abs(relativeScreenDist.x) > config.rotPermissiDelta.x)
+                {
                     cam.transform.RotateAround(m_camPivot, cam.transform.up, -relativeScreenDist.x * config.rotSpeed);
+                }
 
 
                 if (cam.transform.up.y > 0)
+                {
                     cam.transform.LookAt(m_camPivot, Vector3.up);
+                }
                 else
+                {
                     cam.transform.LookAt(m_camPivot, Vector3.down);
+                }
             }
         }
 
@@ -248,7 +279,10 @@ namespace SsitEngine.Unity.SsitInput
         {
             // check if mouse is over UI
             var isMouseOverDelegate = IsCursorOverUI();
-            if (isMouseOverDelegate) m_lastGUITouchFrame = Time.frameCount;
+            if (isMouseOverDelegate)
+            {
+                m_lastGUITouchFrame = Time.frameCount;
+            }
             // two frames after touch/mouse over GUI
             return isMouseOverDelegate || Time.frameCount - m_lastGUITouchFrame <= 1;
         }
@@ -302,10 +336,14 @@ namespace SsitEngine.Unity.SsitInput
             // check touchscreen input
             var touches = Input.touches;
             for (var t = 0; t < touches.Length; t++)
+            {
                 if (EventSystem.current.IsPointerOverGameObject(touches[t].fingerId) ||
                     // input at the edge of the screen is not allowed (3d UI could have a 1 pixel offset to the edge of the screen)
                     IsAtScreensEdge(touches[t].position))
+                {
                     return true;
+                }
+            }
 
             // check mouse input
 #if !UNITY_EDITOR && (UNITY_ANDROID || UNITY_IPHONE || UNITY_WP8 || UNITY_WP_8_1)
@@ -364,7 +402,9 @@ namespace SsitEngine.Unity.SsitInput
         protected void CheckCursor()
         {
             if (m_isCursorOverSomething && (m_cursorHitInfo.collider == null || m_cursorHitInfo.transform == null))
+            {
                 m_isCursorOverSomething = false;
+            }
         }
 
         /// <summary>
@@ -385,7 +425,9 @@ namespace SsitEngine.Unity.SsitInput
                     // 高度与俯仰角关联，高度越高，俯仰角越大
                     if (Vector3.Distance(lookPosition, m_camPivot) >
                         lookPosition.y * Mathf.Cos(Mathf.Deg2Rad * 45)) // 45°
+                    {
                         m_camPivot = lookPosition + lookDirection * lookPosition.y * Mathf.Cos(Mathf.Deg2Rad * 45);
+                    }
                 }
                 else
                 {
@@ -408,7 +450,10 @@ namespace SsitEngine.Unity.SsitInput
                         pivotDirection = Vector3.Dot(lookDirection, camToPivot);
                     }
                     var pivotOffset = Vector3.Cross(lookDirection, camToPivot).magnitude;
-                    if (pivotOffset > 1f) m_camPivot = lookPosition + lookDirection * pivotDirection;
+                    if (pivotOffset > 1f)
+                    {
+                        m_camPivot = lookPosition + lookDirection * pivotDirection;
+                    }
                 }
             }
         }
@@ -484,7 +529,10 @@ namespace SsitEngine.Unity.SsitInput
                 }
                 if (hitCount > 0)
                 {
-                    if (p_mode == EEstimateDistanceMode.AVERAGE) hitValue /= hitCount;
+                    if (p_mode == EEstimateDistanceMode.AVERAGE)
+                    {
+                        hitValue /= hitCount;
+                    }
                     camDist = (hitValue - cam.transform.position).magnitude;
                 }
             }
@@ -501,7 +549,10 @@ namespace SsitEngine.Unity.SsitInput
             //todo:摄像机高度动态变化摄像机的移速|缩放速度
             var cam = m_inputManager.Cam;
 
-            if (cam) return cam.transform.position.y /* factor*/;
+            if (cam)
+            {
+                return cam.transform.position.y /* factor*/;
+            }
 
             return 1;
         }

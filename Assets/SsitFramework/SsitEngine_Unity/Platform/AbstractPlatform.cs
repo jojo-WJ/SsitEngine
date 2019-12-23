@@ -30,7 +30,10 @@ namespace SsitEngine.Unity
         {
             get
             {
-                if (m_platformConfig == null) m_platformConfig = Resources.Load<PlatformConfig>("PlatformConfig");
+                if (m_platformConfig == null)
+                {
+                    m_platformConfig = Resources.Load<PlatformConfig>("PlatformConfig");
+                }
                 return m_platformConfig;
             }
             set => m_platformConfig = value;
@@ -75,12 +78,18 @@ namespace SsitEngine.Unity
             var fullPath = Application.streamingAssetsPath + "/";
             if (Application.platform == RuntimePlatform.Android)
                 //安卓自己会加头
+            {
                 fullPath = fullPath + path;
+            }
             else if (Application.platform == RuntimePlatform.IPhonePlayer)
+            {
                 fullPath = "file://" + fullPath + path;
+            }
             else
                 // Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.WindowsEditor
+            {
                 fullPath = "file:///" + fullPath + path;
+            }
 
             return fullPath;
         }
@@ -260,7 +269,9 @@ namespace SsitEngine.Unity
         {
             var task = m_timerEventTaskHelper.CreateTimeEventTask(type, priority, second, span, func, data);
             if (task != null && Engine.Instance.HasModule(typeof(TimerManager).FullName))
+            {
                 return TimerManager.Instance.AddTimerEvent(task);
+            }
             return null;
         }
 
@@ -295,8 +306,10 @@ namespace SsitEngine.Unity
             SsitFunction<bool> spawncondition = null ) where T1 : ObjectBase
         {
             if (Engine.Instance.HasModule(typeof(ObjectPoolManager).FullName))
+            {
                 return ObjectPoolManager.Instance.CreateSingleSpawnObjectPool(name, autoReleaseInterval, capacity,
                     expireTime, priority, loadFunction, spawncondition);
+            }
             throw new SsitEngineException(TextUtils.Format("模块管理{0}系统加载异常", typeof(ObjectPoolManager).FullName));
         }
 
@@ -309,7 +322,9 @@ namespace SsitEngine.Unity
         public bool DestroyObjectPool<T1>( string name ) where T1 : ObjectBase
         {
             if (Engine.Instance.HasModule(typeof(ObjectPoolManager).FullName))
+            {
                 return ObjectPoolManager.Instance.DestroyObjectPool<T1>(name);
+            }
             return false;
         }
 
@@ -321,14 +336,18 @@ namespace SsitEngine.Unity
         public ulong AddWebRequestTask( WebRequestInfo task )
         {
             if (WebRequestManager.Instance == null)
+            {
                 return 0;
+            }
             return WebRequestManager.Instance.AddWebRequest(task);
         }
 
         public bool RemoveWebRequestTask( ulong taskid )
         {
             if (WebRequestManager.Instance == null)
+            {
                 return false;
+            }
             return WebRequestManager.Instance.RemoveWebRequest(taskid);
         }
 

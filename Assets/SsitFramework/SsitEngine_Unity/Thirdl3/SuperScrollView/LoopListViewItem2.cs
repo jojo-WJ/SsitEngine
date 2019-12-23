@@ -28,7 +28,10 @@ namespace SuperScrollView
         {
             get
             {
-                if (mCachedRectTransform == null) mCachedRectTransform = gameObject.GetComponent<RectTransform>();
+                if (mCachedRectTransform == null)
+                {
+                    mCachedRectTransform = gameObject.GetComponent<RectTransform>();
+                }
                 return mCachedRectTransform;
             }
         }
@@ -50,9 +53,13 @@ namespace SuperScrollView
             {
                 var arrageType = ParentListView.ArrangeType;
                 if (arrageType == ListItemArrangeType.TopToBottom)
+                {
                     return CachedRectTransform.anchoredPosition3D.y;
+                }
                 if (arrageType == ListItemArrangeType.BottomToTop)
+                {
                     return CachedRectTransform.anchoredPosition3D.y + CachedRectTransform.rect.height;
+                }
                 return 0;
             }
         }
@@ -63,8 +70,13 @@ namespace SuperScrollView
             {
                 var arrageType = ParentListView.ArrangeType;
                 if (arrageType == ListItemArrangeType.TopToBottom)
+                {
                     return CachedRectTransform.anchoredPosition3D.y - CachedRectTransform.rect.height;
-                if (arrageType == ListItemArrangeType.BottomToTop) return CachedRectTransform.anchoredPosition3D.y;
+                }
+                if (arrageType == ListItemArrangeType.BottomToTop)
+                {
+                    return CachedRectTransform.anchoredPosition3D.y;
+                }
                 return 0;
             }
         }
@@ -76,9 +88,13 @@ namespace SuperScrollView
             {
                 var arrageType = ParentListView.ArrangeType;
                 if (arrageType == ListItemArrangeType.LeftToRight)
+                {
                     return CachedRectTransform.anchoredPosition3D.x;
+                }
                 if (arrageType == ListItemArrangeType.RightToLeft)
+                {
                     return CachedRectTransform.anchoredPosition3D.x - CachedRectTransform.rect.width;
+                }
                 return 0;
             }
         }
@@ -89,8 +105,13 @@ namespace SuperScrollView
             {
                 var arrageType = ParentListView.ArrangeType;
                 if (arrageType == ListItemArrangeType.LeftToRight)
+                {
                     return CachedRectTransform.anchoredPosition3D.x + CachedRectTransform.rect.width;
-                if (arrageType == ListItemArrangeType.RightToLeft) return CachedRectTransform.anchoredPosition3D.x;
+                }
+                if (arrageType == ListItemArrangeType.RightToLeft)
+                {
+                    return CachedRectTransform.anchoredPosition3D.x;
+                }
                 return 0;
             }
         }
@@ -100,7 +121,9 @@ namespace SuperScrollView
             get
             {
                 if (ParentListView.IsVertList)
+                {
                     return CachedRectTransform.rect.height;
+                }
                 return CachedRectTransform.rect.width;
             }
         }

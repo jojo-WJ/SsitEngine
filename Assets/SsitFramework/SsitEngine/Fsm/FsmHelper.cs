@@ -25,8 +25,10 @@ namespace SsitEngine.Fsm
         public static Fsm<T> CreateFsm<T>( string name, T owner, params FsmState<T>[] states ) where T : class
         {
             if (string.IsNullOrEmpty(name))
+            {
                 throw new SsitEngineException(TextUtils.Format("Fsm  name is null or empty '{0}'.",
                     TextUtils.GetFullName<T>(name)));
+            }
 
             var fsm = new Fsm<T>(name, owner, states);
 
@@ -45,7 +47,9 @@ namespace SsitEngine.Fsm
             if (fsm != null)
                 //todo：预留管理接口
 
+            {
                 fsm.Shutdown();
+            }
             return false;
         }
     }

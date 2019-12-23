@@ -33,7 +33,9 @@ namespace SsitEngine.Unity.UI.Common.Curve
                 var num1 = 0.0f;
                 var num2 = MaxKey * 0.05f;
                 for (var x = 0.0f; (double) x < (double) MaxKey; x += num2)
+                {
                     num1 += Vector3.Distance(GetPointAt(x), GetPointAt(x + num2));
+                }
                 return num1;
             }
         }

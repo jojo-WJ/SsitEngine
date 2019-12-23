@@ -1,10 +1,4 @@
-﻿
-
-using UnityEngine;
-
-namespace SsitEngine.QuestManager
+﻿namespace SsitEngine.QuestManager
 {
-
-    public delegate void QuestCounterParameterDelegate(QuestCounter counter);
-
+    public delegate void QuestCounterParameterDelegate( QuestCounter counter );
 }

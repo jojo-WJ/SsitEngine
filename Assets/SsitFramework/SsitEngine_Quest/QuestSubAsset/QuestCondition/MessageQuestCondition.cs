@@ -1,56 +1,55 @@
-﻿using SsitEngine.PureMVC.Interfaces;
-using SsitEngine.PureMVC.Patterns;
-using SsitEngine.DebugLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using SsitEngine.DebugLog;
+using SsitEngine.PureMVC.Interfaces;
+using SsitEngine.PureMVC.Patterns;
 using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// 从消息系统收到消息时变为真的请求条件
     /// </summary>
     [Serializable]
     public class MessageQuestCondition : QuestCondition
     {
-
-        [Tooltip("Required message sender.")]
-        [SerializeField]
-        private QuestMessageParticipant m_senderSpecifier = QuestMessageParticipant.Any;
-
-        [Tooltip("Required message sender ID, or any sender if blank. Can also be {QUESTERID} or {QUESTGIVERID}. Sender must have a Quest Giver or Entity component.")]
-        [SerializeField]
-        private string m_senderID;
-
-        [Tooltip("Required message target.")]
-        [SerializeField]
-        private QuestMessageParticipant m_targetSpecifier = QuestMessageParticipant.Any;
-
-        [Tooltip("Required message target ID, or any target if blank. Can also be {QUESTERID} or {QUESTGIVERID}. Target must have a Quest Giver or Entity component.")]
-        [SerializeField]
-        private string m_targetID;
-
         [Tooltip("Required message. Condition is true when this message is received with the parameter below.")]
         [SerializeField]
         private string m_message;
 
-        [Tooltip("Required parameter for message. Condition is true when the message above is received with this parameter. (Leave blank to accept any parameter.)")]
+        [Tooltip(
+            "Required parameter for message. Condition is true when the message above is received with this parameter. (Leave blank to accept any parameter.)")]
         [SerializeField]
         private string m_parameter;
 
-        [Tooltip("Additional value to expected with the message.")]
+        [Tooltip(
+            "Required message sender ID, or any sender if blank. Can also be {QUESTERID} or {QUESTGIVERID}. Sender must have a Quest Giver or Entity component.")]
         [SerializeField]
+        private string m_senderID;
+
+        [Tooltip("Required message sender.")] [SerializeField]
+        private QuestMessageParticipant m_senderSpecifier = QuestMessageParticipant.Any;
+
+        [Tooltip(
+            "Required message target ID, or any target if blank. Can also be {QUESTERID} or {QUESTGIVERID}. Target must have a Quest Giver or Entity component.")]
+        [SerializeField]
+        private string m_targetID;
+
+        [Tooltip("Required message target.")] [SerializeField]
+        private QuestMessageParticipant m_targetSpecifier = QuestMessageParticipant.Any;
+
+        [Tooltip("Additional value to expected with the message.")] [SerializeField]
         private MessageValue m_value;
 
         private Dictionary<string, int> receiveEntityMap;
+
         /// <summary>
         /// Required message sender.
         /// </summary>
         public QuestMessageParticipant senderSpecifier
         {
-            get { return m_senderSpecifier; }
-            set { m_senderSpecifier = value; }
+            get => m_senderSpecifier;
+            set => m_senderSpecifier = value;
         }
 
         /// <summary>
@@ -58,8 +57,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string SenderId
         {
-            get { return QuestMachineTags.GetIDBySpecifier(senderSpecifier, m_senderID); }
-            set { m_senderID = value; }
+            get => QuestMachineTags.GetIDBySpecifier(senderSpecifier, m_senderID);
+            set => m_senderID = value;
         }
 
         /// <summary>
@@ -67,8 +66,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public QuestMessageParticipant TargetSpecifier
         {
-            get { return m_targetSpecifier; }
-            set { m_targetSpecifier = value; }
+            get => m_targetSpecifier;
+            set => m_targetSpecifier = value;
         }
 
         /// <summary>
@@ -76,8 +75,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string TargetId
         {
-            get { return QuestMachineTags.GetIDBySpecifier(TargetSpecifier, m_targetID); }
-            set { m_targetID = value; }
+            get => QuestMachineTags.GetIDBySpecifier(TargetSpecifier, m_targetID);
+            set => m_targetID = value;
         }
 
         /// <summary>
@@ -85,8 +84,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string Message
         {
-            get { return m_message; }
-            set { m_message = value; }
+            get => m_message;
+            set => m_message = value;
         }
 
         /// <summary>
@@ -94,8 +93,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string Parameter
         {
-            get { return m_parameter; }
-            set { m_parameter = value; }
+            get => m_parameter;
+            set => m_parameter = value;
         }
 
         /// <summary>
@@ -103,25 +102,28 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public MessageValue Value
         {
-            get { return m_value; }
-            set { m_value = value; }
+            get => m_value;
+            set => m_value = value;
         }
 
-        public string RuntimeSenderId { get { return QuestMachineTags.ReplaceTags(SenderId, quest); } }
+        public string RuntimeSenderId => QuestMachineTags.ReplaceTags(SenderId, quest);
 
-        public string RuntimeTargetId { get { return QuestMachineTags.ReplaceTags(TargetId, quest); } }
+        public string RuntimeTargetId => QuestMachineTags.ReplaceTags(TargetId, quest);
 
-        public string RuntimeMessage { get { return QuestMachineTags.ReplaceTags(Message, quest); } }
+        public string RuntimeMessage => QuestMachineTags.ReplaceTags(Message, quest);
 
-        public ushort RuntimeUshortMessage { get { return TextUtils.ToUshort(RuntimeMessage); } }
+        public ushort RuntimeUshortMessage => TextUtils.ToUshort(RuntimeMessage);
 
-        public string RuntimeParameter { get { return QuestMachineTags.ReplaceTags(Parameter, quest); } }
+        public string RuntimeParameter => QuestMachineTags.ReplaceTags(Parameter, quest);
 
-        public string RuntimeStringValue { get { return (Value != null) ? QuestMachineTags.ReplaceTags(Value.StringValue, quest) : string.Empty; } }
+        public string RuntimeStringValue =>
+            Value != null ? QuestMachineTags.ReplaceTags(Value.StringValue, quest) : string.Empty;
 
         public override string GetEditorName()
         {
-            return string.IsNullOrEmpty(Message) ? "Message" : "Message: " + Message + " " + Parameter + " " + Value.EditorNameValue();
+            return string.IsNullOrEmpty(Message)
+                ? "Message"
+                : "Message: " + Message + " " + Parameter + " " + Value.EditorNameValue();
         }
 
         public override void AddTagsToDictionary()
@@ -131,10 +133,12 @@ namespace SsitEngine.QuestManager
             AddTagsToDictionary(Message);
             AddTagsToDictionary(Parameter);
             if (Value != null && Value.ValueType == MessageValueType.String)
+            {
                 AddTagsToDictionary(Value.StringValue);
+            }
         }
 
-        public override void StartChecking(System.Action trueAction)
+        public override void StartChecking( System.Action trueAction )
         {
             base.StartChecking(trueAction);
             //SsitDebug.Debug("StartChecking:: MessageQuestCondition Hash:: " + this.GetHashCode().ToString());
@@ -166,20 +170,23 @@ namespace SsitEngine.QuestManager
             {
                 SsitDebug.Error($"任务消息id 异常{RuntimeMessage}");
             }
-
         }
-
 
 
         #region HandleNotification
 
-        public void HandleNotification(INotification notification)
+        public void HandleNotification( INotification notification )
         {
-            QuestMessageArgs messageArgs = (QuestMessageArgs)notification.Body;
+            var messageArgs = (QuestMessageArgs) notification.Body;
 
-            if (/*!(QuestUtility.IsRequiredID(messageArgs.sender, RuntimeSenderId) &&*/!string.Equals(RuntimeParameter, messageArgs.parameter))
+            if ( /*!(QuestUtility.IsRequiredID(messageArgs.sender, RuntimeSenderId) &&*/
+                !string.Equals(RuntimeParameter, messageArgs.parameter))
+            {
                 return;
-            SsitDebug.Debug("Quest Machine: MessageQuestCondition.OnMessage( " + messageArgs.msgId + ", " + messageArgs.parameter + ")", quest);
+            }
+            SsitDebug.Debug(
+                "Quest Machine: MessageQuestCondition.OnMessage( " + messageArgs.msgId + ", " + messageArgs.parameter +
+                ")", quest);
             switch (quest.CompleteMode)
             {
                 case QuestCompleteMode.SingleComplet:
@@ -209,7 +216,7 @@ namespace SsitEngine.QuestManager
                     }
                     if (handler != null)
                     {
-                        bool isTrue = handler(quest, receiveEntityMap.Count);
+                        var isTrue = handler(quest, receiveEntityMap.Count);
                         if (isTrue)
                         {
                             SetTrue();
@@ -220,14 +227,20 @@ namespace SsitEngine.QuestManager
         }
 
 
-        private bool IsRequiredValue(QuestMessageArgs messageArgs)
+        private bool IsRequiredValue( QuestMessageArgs messageArgs )
         {
             if (Value == null)
+            {
                 return true;
+            }
             if (Value.ValueType == MessageValueType.None)
+            {
                 return true;
+            }
             if (messageArgs.FirstValue == null)
+            {
                 return false;
+            }
             switch (Value.ValueType)
             {
                 case MessageValueType.String:
@@ -235,12 +248,13 @@ namespace SsitEngine.QuestManager
                 case MessageValueType.Int:
                     return QuestUtility.ArgToInt(messageArgs.FirstValue) == Value.IntValue;
                 default:
-                    Debug.LogError("Quest Machine: Unhandled MessageValueType " + Value.ValueType + ". Please contact the developer.", quest);
+                    Debug.LogError(
+                        "Quest Machine: Unhandled MessageValueType " + Value.ValueType +
+                        ". Please contact the developer.", quest);
                     return false;
             }
         }
+
         #endregion
-
     }
-
 }

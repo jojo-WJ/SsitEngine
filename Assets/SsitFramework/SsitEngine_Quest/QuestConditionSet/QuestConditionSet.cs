@@ -1,10 +1,10 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// 管理一组条件，当为真时调用委托
     /// 1、条件列表、条件模式、条件判定结果
@@ -14,24 +14,18 @@ namespace SsitEngine.QuestManager
     [Serializable]
     public class QuestConditionSet
     {
-
         #region Serialized Fields
 
-        [Tooltip( "Conditions in this condition set." )]
-        [SerializeField]
+        [Tooltip("Conditions in this condition set.")] [SerializeField]
         private List<QuestCondition> m_conditionList = new List<QuestCondition>();
 
-        [Tooltip( "How many conditions need to be true." )]
-        [SerializeField]
+        [Tooltip("How many conditions need to be true.")] [SerializeField]
         private ConditionCountMode m_conditionCountMode;
 
-        [Tooltip( "If the Condition Count Mode is Min, at least this many conditions must be true." )]
-        [SerializeField]
+        [Tooltip("If the Condition Count Mode is Min, at least this many conditions must be true.")] [SerializeField]
         private int m_minConditionCount;
 
-        [HideInInspector]
-        [SerializeField]
-        private int m_numTrueConditions;
+        [HideInInspector] [SerializeField] private int m_numTrueConditions;
 
         #endregion
 
@@ -42,8 +36,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public List<QuestCondition> ConditionList
         {
-            get { return m_conditionList; }
-            set { m_conditionList = value; }
+            get => m_conditionList;
+            set => m_conditionList = value;
         }
 
         /// <summary>
@@ -51,8 +45,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public ConditionCountMode ConditionCountMode
         {
-            get { return m_conditionCountMode; }
-            set { m_conditionCountMode = value; }
+            get => m_conditionCountMode;
+            set => m_conditionCountMode = value;
         }
 
         /// <summary>
@@ -60,8 +54,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public int MinConditionCount
         {
-            get { return m_minConditionCount; }
-            set { m_minConditionCount = value; }
+            get => m_minConditionCount;
+            set => m_minConditionCount = value;
         }
 
         /// <summary>
@@ -69,16 +63,15 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public int NumTrueConditions
         {
-            get { return m_numTrueConditions; }
-            set { m_numTrueConditions = value; }
+            get => m_numTrueConditions;
+            set => m_numTrueConditions = value;
         }
 
         public bool IsPassing
         {
-            get { return m_isPassing; }
-            set { m_isPassing = value; }
+            get => m_isPassing;
+            set => m_isPassing = value;
         }
-
 
         #endregion
 
@@ -86,8 +79,8 @@ namespace SsitEngine.QuestManager
 
         private System.Action m_trueAction = delegate { };
 
-        private bool m_isChecking = false;
-        private bool m_isPassing = false;
+        private bool m_isChecking;
+        private bool m_isPassing;
 
         #endregion
 
@@ -100,11 +93,16 @@ namespace SsitEngine.QuestManager
         /// <param name="questNode"></param>
         public void SetRuntimeReferences( Quest quest, QuestNode questNode )
         {
-            if (ConditionList == null) return;
-            for (int i = 0; i < ConditionList.Count; i++)
+            if (ConditionList == null)
+            {
+                return;
+            }
+            for (var i = 0; i < ConditionList.Count; i++)
             {
                 if (ConditionList[i] != null)
-                    ConditionList[i].SetRuntimeReferences( quest, questNode );
+                {
+                    ConditionList[i].SetRuntimeReferences(quest, questNode);
+                }
             }
         }
 
@@ -113,15 +111,18 @@ namespace SsitEngine.QuestManager
             if (copy == null)
             {
                 if (Debug.isDebugBuild)
-                    Debug.LogWarning( "Quest Machine: QuestConditionSet.CloneSubassetsInto() failed because copy is invalid." );
+                {
+                    Debug.LogWarning(
+                        "Quest Machine: QuestConditionSet.CloneSubassetsInto() failed because copy is invalid.");
+                }
                 return;
             }
-            copy.ConditionList = QuestSubasset.CloneList( ConditionList );
+            copy.ConditionList = QuestSubasset.CloneList(ConditionList);
         }
 
         public void DestroySubassets()
         {
-            QuestSubasset.DestroyList( ConditionList );
+            QuestSubasset.DestroyList(ConditionList);
         }
 
         #endregion
@@ -135,15 +136,21 @@ namespace SsitEngine.QuestManager
         public void StartChecking( System.Action trueAction )
         {
             if (m_isPassing || m_isChecking || ConditionList == null)
+            {
                 return;
+            }
             m_isChecking = true;
             m_trueAction = trueAction;
             NumTrueConditions = 0;
-            for (int i = 0; i < ConditionList.Count; i++)
+            for (var i = 0; i < ConditionList.Count; i++)
             {
-                UnityEngine.Assertions.Assert.IsNotNull( ConditionList[i], "Quest Machine: conditionList element " + i + " is null. Does your Conditions list have an invalid entry?" );
+                Assert.IsNotNull(ConditionList[i],
+                    "Quest Machine: conditionList element " + i +
+                    " is null. Does your Conditions list have an invalid entry?");
                 if (ConditionList[i] != null)
-                    ConditionList[i].StartChecking( OnTrueCondition );
+                {
+                    ConditionList[i].StartChecking(OnTrueCondition);
+                }
             }
         }
 
@@ -157,11 +164,14 @@ namespace SsitEngine.QuestManager
                 m_isPassing = true;
                 return;
             }
-            for (int i = 0; i < ConditionList.Count; i++)
+            for (var i = 0; i < ConditionList.Count; i++)
             {
                 //--- Don't assert; may be null because application is quitting:
                 // UnityEngine.Assertions.Assert.IsNotNull(conditionList[i], "Quest Machine: conditionList element " + i + " is null. Does your Conditions list have an invalid entry?");
-                if (ConditionList[i] != null) ConditionList[i].StopChecking();
+                if (ConditionList[i] != null)
+                {
+                    ConditionList[i].StopChecking();
+                }
             }
             m_isChecking = false;
         }
@@ -174,18 +184,23 @@ namespace SsitEngine.QuestManager
             get
             {
                 if (ConditionList == null || ConditionList.Count == 0)
+                {
                     return true;
+                }
                 switch (ConditionCountMode)
                 {
                     case ConditionCountMode.All:
-                        return (NumTrueConditions >= ConditionList.Count);
+                        return NumTrueConditions >= ConditionList.Count;
                     case ConditionCountMode.Any:
-                        return (NumTrueConditions > 0);
+                        return NumTrueConditions > 0;
                     case ConditionCountMode.Min:
-                        return (NumTrueConditions >= MinConditionCount);
+                        return NumTrueConditions >= MinConditionCount;
                     default:
                         if (Debug.isDebugBuild)
-                            Debug.LogWarning( "Quest Machine: Internal error. Unrecognized condition count mode '" + ConditionCountMode + "'. Please contact the developer." );
+                        {
+                            Debug.LogWarning("Quest Machine: Internal error. Unrecognized condition count mode '" +
+                                             ConditionCountMode + "'. Please contact the developer.");
+                        }
                         return false;
                 }
             }
@@ -195,7 +210,9 @@ namespace SsitEngine.QuestManager
         {
             NumTrueConditions++;
             if (AreConditionsMet)
+            {
                 SetTrue();
+            }
         }
 
         private void SetTrue()
@@ -205,11 +222,9 @@ namespace SsitEngine.QuestManager
 
         public static int ConditionCount( QuestConditionSet conditionSet )
         {
-            return (conditionSet != null && conditionSet.ConditionList != null) ? conditionSet.ConditionList.Count : 0;
+            return conditionSet != null && conditionSet.ConditionList != null ? conditionSet.ConditionList.Count : 0;
         }
 
         #endregion
-
     }
-
 }

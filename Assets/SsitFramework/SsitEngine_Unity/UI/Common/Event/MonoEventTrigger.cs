@@ -157,9 +157,13 @@ namespace SsitEngine.Unity.UI.Common.Event
         public void OnPointerClick( PointerEventData eventData )
         {
             if (eventData.clickCount == 2)
+            {
                 onDoubleClickedClick.Invoke(eventData);
+            }
             else
+            {
                 onPointerClick.Invoke(eventData);
+            }
         }
 
         /// <summary>On pointer down.</summary>
@@ -230,7 +234,10 @@ namespace SsitEngine.Unity.UI.Common.Event
         public static MonoEventTrigger Get( GameObject obj )
         {
             var listener = obj.GetComponent<MonoEventTrigger>();
-            if (listener == null) listener = obj.AddComponent<MonoEventTrigger>();
+            if (listener == null)
+            {
+                listener = obj.AddComponent<MonoEventTrigger>();
+            }
             return listener;
         }
     }

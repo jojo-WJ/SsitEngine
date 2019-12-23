@@ -6,37 +6,73 @@
 *│　创建时间：2019/4/1 12:23:15                     
 *└──────────────────────────────────────────────────────────────┘
 */
-using SsitEngine.PureMVC.Patterns;
+
+using System.Collections.Generic;
 using SsitEngine.Core.ReferencePool;
 using SsitEngine.DebugLog;
+using SsitEngine.PureMVC.Patterns;
 using SsitEngine.Unity;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// 任务状态静态管理器
     /// </summary>
     public static class QuestHelper
     {
+        #region Quest Counters
+
+        /// <summary>
+        /// Looks up a quest's counter.
+        /// </summary>
+        /// <param name="questID">The quest's ID.</param>
+        /// <param name="counterName">The counter name.</param>
+        /// <returns>A quest counter, or null if none matches the questID and counterName.</returns>
+        public static QuestCounter GetQuestCounter( string questID, string counterName, string questerID = null )
+        {
+            var quest = GetQuestInstance(questID, questerID);
+            if (quest == null)
+            {
+                if (Debug.isDebugBuild)
+                {
+                    Debug.LogWarning("Quest Machine: GetQuestCounter(" + questID + ", " + counterName +
+                                     "): Couldn't find a quest with ID '" + questID + "'.");
+                }
+                return null;
+            }
+            var counter = quest.GetCounter(counterName);
+            if (counter == null)
+            {
+                if (Debug.isDebugBuild)
+                {
+                    Debug.LogWarning("Quest Machine: GetQuestCounter(" + questID + ", " + counterName +
+                                     "): Couldn't find a counter named '" + counterName + "'.");
+                }
+                return null;
+            }
+            return counter;
+        }
+
+        #endregion
+
         #region Properties & Variables
 
-        private static bool m_isLoadingGame = false;
+        private static bool m_isLoadingGame;
 
         /// <summary>
         /// True when loading a game, in which case quests shouldn't run their state actions again.
         /// </summary>
         public static bool IsLoadingGame
         {
-            get { return m_isLoadingGame; }
-            set { m_isLoadingGame = value; }
+            get => m_isLoadingGame;
+            set => m_isLoadingGame = value;
         }
 
         #endregion
 
         #region Quest List Container Registry
+
         // Quest List Containers include questers (QuestJournal) and quest givers (QuestGiver).
         /// <summary>
         /// Registers a QuestListContainer for easy lookup.
@@ -45,11 +81,15 @@ namespace SsitEngine.QuestManager
         public static void RegisterQuestListContainer( IdentifiableQuestListContainer qlc )
         {
             if (qlc == null || !Engine.Instance.HasModule(typeof(QuestManager).FullName))
+            {
                 return;
+            }
             //var id = StringField.GetStringValue(qlc.id);
             if (QuestManager.Instance.QuestListContainers.ContainsKey(qlc.id))
             {
-                UnityEngine.Debug.LogWarning("Quest Machine: A QuestListContainer with id '" + qlc.id + "' is already registered. Can't register " + qlc, qlc);
+                Debug.LogWarning(
+                    "Quest Machine: A QuestListContainer with id '" + qlc.id +
+                    "' is already registered. Can't register " + qlc, qlc);
             }
             else
             {
@@ -64,7 +104,9 @@ namespace SsitEngine.QuestManager
         public static void UnregisterQuestListContainer( IdentifiableQuestListContainer qlc )
         {
             if (qlc == null || !Engine.Instance.HasModule(typeof(QuestManager).FullName))
+            {
                 return;
+            }
             //var id = StringField.GetStringValue(qlc.id);
             if (QuestManager.Instance.QuestListContainers.ContainsKey(qlc.id))
             {
@@ -79,8 +121,12 @@ namespace SsitEngine.QuestManager
         public static IdentifiableQuestListContainer GetQuestListContainer( string id )
         {
             if (!Engine.Instance.HasModule(typeof(QuestManager).FullName))
+            {
                 return null;
-            return (!string.IsNullOrEmpty(id) && QuestManager.Instance.QuestListContainers.ContainsKey(id)) ? QuestManager.Instance.QuestListContainers[id] : null;
+            }
+            return !string.IsNullOrEmpty(id) && QuestManager.Instance.QuestListContainers.ContainsKey(id)
+                ? QuestManager.Instance.QuestListContainers[id]
+                : null;
         }
 
 
@@ -93,9 +139,12 @@ namespace SsitEngine.QuestManager
             foreach (var kvp in QuestManager.Instance.QuestListContainers)
             {
                 var journal = kvp.Value as QuestJournal;
-                if (journal != null && (string.IsNullOrEmpty(id) || string.Equals(id, kvp.Key))) return journal;
+                if (journal != null && (string.IsNullOrEmpty(id) || string.Equals(id, kvp.Key)))
+                {
+                    return journal;
+                }
             }
-            return UnityEngine.Object.FindObjectOfType<QuestJournal>();
+            return Object.FindObjectOfType<QuestJournal>();
         }
 
         /// <summary>
@@ -109,16 +158,22 @@ namespace SsitEngine.QuestManager
         public static void UnregisterAllQuestListContainer()
         {
             if (!Engine.Instance.HasModule(typeof(QuestManager).FullName))
+            {
                 return;
+            }
             QuestManager.Instance.QuestListContainers.Clear();
         }
+
         #endregion
 
         #region Quest Asset Registry
 
         private static string GetQuestKey( Quest quest )
         {
-            if (quest == null) return null;
+            if (quest == null)
+            {
+                return null;
+            }
             return string.IsNullOrEmpty(quest.Id) ? quest.GetInstanceID().ToString() : quest.Id;
         }
 
@@ -130,19 +185,21 @@ namespace SsitEngine.QuestManager
         public static Quest GetQuestAsset( string id )
         {
             if (!Engine.Instance.HasModule(typeof(QuestManager).FullName))
+            {
                 return null;
+            }
             var ins = QuestManager.Instance.QuestAssets;
 
             if (ins.ContainsKey(id))
             {
                 return ins[id];
             }
-            else
+            if (Engine.Debug)
             {
-                if (Engine.Debug)
-                    SsitDebug.Warning("Quest Machine: A quest asset with ID '" + id + "' is not registered with Quest Machine.");
-                return null;
+                SsitDebug.Warning("Quest Machine: A quest asset with ID '" + id +
+                                  "' is not registered with Quest Machine.");
             }
+            return null;
         }
 
         #endregion
@@ -158,17 +215,26 @@ namespace SsitEngine.QuestManager
         public static void RegisterQuestInstance( Quest quest )
         {
             if (quest == null || !Engine.Instance.HasModule(typeof(QuestManager).FullName))
+            {
                 return;
+            }
             if (quest.IsAsset)
             {
-                UnityEngine.Debug.LogWarning("Quest Machine: " + quest.name + " ('" + quest.Id + "') is an asset. Not registering it in Quest Machine's instance list.");
+                Debug.LogWarning("Quest Machine: " + quest.name + " ('" + quest.Id +
+                                 "') is an asset. Not registering it in Quest Machine's instance list.");
                 return;
             }
             var key = GetQuestKey(quest);
             if (Engine.Debug)
+            {
                 SsitDebug.Debug("Quest Machine: Registering quest instance '" + quest.Id + "'.", quest);
+            }
             if (string.IsNullOrEmpty(key) && Engine.Debug)
-                SsitDebug.Warning("Quest Machine: " + quest.name + " ID is blank. This may affect registration with Quest Machine.", quest);
+            {
+                SsitDebug.Warning(
+                    "Quest Machine: " + quest.name + " ID is blank. This may affect registration with Quest Machine.",
+                    quest);
+            }
 
             var ins = QuestManager.Instance.QuestInstances;
 
@@ -186,7 +252,9 @@ namespace SsitEngine.QuestManager
         public static void UnregisterQuestInstance( Quest quest )
         {
             if (quest == null || !Engine.Instance.HasModule(typeof(QuestManager).FullName))
+            {
                 return;
+            }
             var key = GetQuestKey(quest);
             var ins = QuestManager.Instance.QuestInstances;
 
@@ -209,17 +277,22 @@ namespace SsitEngine.QuestManager
         public static Quest GetQuestInstance( string id, string questerID )
         {
             if (!Engine.Instance.HasModule(typeof(QuestManager).FullName))
+            {
                 return null;
+            }
             var anyQuester = string.IsNullOrEmpty(questerID);
             var ins = QuestManager.Instance.QuestInstances;
 
             if (ins.ContainsKey(id) && ins[id].Count > 0)
             {
                 var list = ins[id];
-                for (int i = 0; i < list.Count; i++)
+                for (var i = 0; i < list.Count; i++)
                 {
                     var questInstance = list[i];
-                    if (questInstance == null) continue;
+                    if (questInstance == null)
+                    {
+                        continue;
+                    }
                     if (anyQuester || string.Equals(questerID, questInstance.QuesterId))
                     {
                         return questInstance;
@@ -227,7 +300,10 @@ namespace SsitEngine.QuestManager
                 }
             }
             if (Engine.Debug)
-                SsitDebug.Warning("Quest Machine: A quest instance with ID '" + id + "' is not registered with Quest Machine.");
+            {
+                SsitDebug.Warning("Quest Machine: A quest instance with ID '" + id +
+                                  "' is not registered with Quest Machine.");
+            }
             return null;
         }
 
@@ -247,35 +323,10 @@ namespace SsitEngine.QuestManager
         public static Dictionary<string, List<Quest>> GetAllQuestInstances()
         {
             if (!Engine.Instance.HasModule(typeof(QuestManager).FullName))
+            {
                 return null;
+            }
             return QuestManager.Instance.QuestInstances;
-        }
-
-        #endregion
-
-        #region Quest Counters
-
-        /// <summary>
-        /// Looks up a quest's counter.
-        /// </summary>
-        /// <param name="questID">The quest's ID.</param>
-        /// <param name="counterName">The counter name.</param>
-        /// <returns>A quest counter, or null if none matches the questID and counterName.</returns>
-        public static QuestCounter GetQuestCounter( string questID, string counterName, string questerID = null )
-        {
-            var quest = GetQuestInstance(questID, questerID);
-            if (quest == null)
-            {
-                if (UnityEngine.Debug.isDebugBuild) UnityEngine.Debug.LogWarning("Quest Machine: GetQuestCounter(" + questID + ", " + counterName + "): Couldn't find a quest with ID '" + questID + "'.");
-                return null;
-            }
-            var counter = quest.GetCounter(counterName);
-            if (counter == null)
-            {
-                if (UnityEngine.Debug.isDebugBuild) UnityEngine.Debug.LogWarning("Quest Machine: GetQuestCounter(" + questID + ", " + counterName + "): Couldn't find a counter named '" + counterName + "'.");
-                return null;
-            }
-            return counter;
         }
 
         #endregion
@@ -292,7 +343,11 @@ namespace SsitEngine.QuestManager
             var quest = GetQuestInstance(questID, questerID);
             if (quest == null)
             {
-                if (UnityEngine.Debug.isDebugBuild) UnityEngine.Debug.LogWarning("Quest Machine: GetQuestState(" + questID + "): Couldn't find a quest with ID '" + questID + "'.");
+                if (Debug.isDebugBuild)
+                {
+                    Debug.LogWarning("Quest Machine: GetQuestState(" + questID + "): Couldn't find a quest with ID '" +
+                                     questID + "'.");
+                }
                 return QuestState.WaitingToStart;
             }
             return quest.GetState();
@@ -309,7 +364,11 @@ namespace SsitEngine.QuestManager
             var quest = GetQuestInstance(questID, questerID);
             if (quest == null)
             {
-                if (UnityEngine.Debug.isDebugBuild) UnityEngine.Debug.LogWarning("Quest Machine: SetQuestState(" + questID + ", " + state + "): Couldn't find a quest with ID '" + questID + "'.");
+                if (Debug.isDebugBuild)
+                {
+                    Debug.LogWarning("Quest Machine: SetQuestState(" + questID + ", " + state +
+                                     "): Couldn't find a quest with ID '" + questID + "'.");
+                }
                 return;
             }
             quest.SetState(state);
@@ -326,13 +385,21 @@ namespace SsitEngine.QuestManager
             var quest = GetQuestInstance(questID, questerID);
             if (quest == null)
             {
-                if (UnityEngine.Debug.isDebugBuild) UnityEngine.Debug.LogWarning("Quest Machine: GetQuestNodeState(" + questID + ", " + questNodeID + "): Couldn't find a quest with ID '" + questID + "'.");
+                if (Debug.isDebugBuild)
+                {
+                    Debug.LogWarning("Quest Machine: GetQuestNodeState(" + questID + ", " + questNodeID +
+                                     "): Couldn't find a quest with ID '" + questID + "'.");
+                }
                 return QuestNodeState.Inactive;
             }
             var node = quest.GetNode(questNodeID);
             if (node == null)
             {
-                if (UnityEngine.Debug.isDebugBuild) UnityEngine.Debug.LogWarning("Quest Machine: GetQuestNodeState(" + questID + ", " + questNodeID + "): Quest doesn't have a node with ID '" + questNodeID + "'.");
+                if (Debug.isDebugBuild)
+                {
+                    Debug.LogWarning("Quest Machine: GetQuestNodeState(" + questID + ", " + questNodeID +
+                                     "): Quest doesn't have a node with ID '" + questNodeID + "'.");
+                }
                 return QuestNodeState.Inactive;
             }
             return node.GetState();
@@ -344,22 +411,32 @@ namespace SsitEngine.QuestManager
         /// <param name="questID">The quest's ID.</param>
         /// <param name="questNodeID">The quest node's ID.</param>
         /// <param name="state">The quest node's new state.</param>
-        public static void SetQuestNodeState( string questID, string questNodeID, QuestNodeState state, string questerID = null )
+        public static void SetQuestNodeState( string questID, string questNodeID, QuestNodeState state,
+            string questerID = null )
         {
             var quest = GetQuestInstance(questID, questerID);
             if (quest == null)
             {
-                if (Debug.isDebugBuild) Debug.LogWarning("Quest Machine: SetQuestNodeState(" + questID + ", " + questNodeID + ", " + state + "): Couldn't find a quest with ID '" + questID + "'.");
+                if (Debug.isDebugBuild)
+                {
+                    Debug.LogWarning("Quest Machine: SetQuestNodeState(" + questID + ", " + questNodeID + ", " + state +
+                                     "): Couldn't find a quest with ID '" + questID + "'.");
+                }
                 return;
             }
             var node = quest.GetNode(questNodeID);
             if (node == null)
             {
-                if (Debug.isDebugBuild) Debug.LogWarning("Quest Machine: SetQuestNodeState(" + questID + ", " + questNodeID + ", " + state + "): Quest doesn't have a node with ID '" + questNodeID + "'.");
+                if (Debug.isDebugBuild)
+                {
+                    Debug.LogWarning("Quest Machine: SetQuestNodeState(" + questID + ", " + questNodeID + ", " + state +
+                                     "): Quest doesn't have a node with ID '" + questNodeID + "'.");
+                }
                 return;
             }
             node.SetState(state);
         }
+
         #endregion
 
         #region Parameters & IDs
@@ -370,10 +447,12 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public static string ArgToString( object arg )
         {
-            var argType = (arg != null) ? arg.GetType() : null;
+            var argType = arg != null ? arg.GetType() : null;
             if (argType == typeof(string))
-                return (string)arg;
-            return (arg != null) ? arg.ToString() : string.Empty;
+            {
+                return (string) arg;
+            }
+            return arg != null ? arg.ToString() : string.Empty;
         }
 
         /// <summary>
@@ -381,7 +460,7 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public static int ArgToInt( object arg )
         {
-            return (arg != null && arg.GetType() == typeof(int)) ? (int)arg : -1;
+            return arg != null && arg.GetType() == typeof(int) ? (int) arg : -1;
         }
 
         public static bool IsRequiredID( object obj, string id )
@@ -395,11 +474,17 @@ namespace SsitEngine.QuestManager
             {
                 var go = obj as GameObject;
                 var questList = go.GetComponentInChildren<IdentifiableQuestListContainer>();
-                if (questList != null) return questList.id;
+                if (questList != null)
+                {
+                    return questList.id;
+                }
                 //var entity = go.GetComponentInChildren<QuestEntity>();
                 //if (entity != null) return entity.Id;
                 questList = go.GetComponentInParent<IdentifiableQuestListContainer>();
-                if (questList != null) return questList.id;
+                if (questList != null)
+                {
+                    return questList.id;
+                }
                 //entity = go.GetComponentInParent<QuestEntity>();
                 //if (entity != null) return entity.Id;
             }
@@ -409,7 +494,7 @@ namespace SsitEngine.QuestManager
             }
             else if (obj != null && obj.GetType() == typeof(string))
             {
-                return (string)obj;
+                return (string) obj;
             }
             return defaultID;
         }
@@ -424,7 +509,10 @@ namespace SsitEngine.QuestManager
             {
                 var go = obj as GameObject;
                 var questList = go.GetComponentInChildren<IdentifiableQuestListContainer>();
-                if (questList != null) return questList.displayName;
+                if (questList != null)
+                {
+                    return questList.displayName;
+                }
                 //var entity = go.GetComponentInChildren<QuestEntity>();
                 //if (entity != null) return entity.DisplayName;
             }
@@ -438,14 +526,14 @@ namespace SsitEngine.QuestManager
             }
             else if (obj != null && obj.GetType() == typeof(string))
             {
-                return (string)obj;
+                return (string) obj;
             }
             return defaultDisplayName;
         }
+
         #endregion
 
         #region 消息集成
-
 
         /// <summary>
         /// 创建任务系统消息体
@@ -456,11 +544,12 @@ namespace SsitEngine.QuestManager
         /// <param name="parameter">参数</param>
         /// <param name="values">可变参数值</param>
         /// <returns>任务系统消息体</returns>
-        public static QuestMessageArgs CreateQuestEvent( ushort msgId, object sender, object target, string parameter, params object[] values )
+        public static QuestMessageArgs CreateQuestEvent( ushort msgId, object sender, object target, string parameter,
+            params object[] values )
         {
             if (Engine.Instance.HasModule(typeof(QuestManager).FullName))
             {
-                QuestMessageArgs msg = ReferencePool.Acquire<QuestMessageArgs>();
+                var msg = ReferencePool.Acquire<QuestMessageArgs>();
                 msg.SetQuestMessageParm(msgId, sender, target, parameter, values);
                 return msg;
             }
@@ -475,9 +564,10 @@ namespace SsitEngine.QuestManager
         /// <param name="target">目标者</param>
         /// <param name="parameter">参数</param>
         /// <param name="values">可变参数值</param>
-        public static void SendNotification( ushort msgId, object sender, object target, string parameter, params object[] values )
+        public static void SendNotification( ushort msgId, object sender, object target, string parameter,
+            params object[] values )
         {
-            QuestMessageArgs msg = CreateQuestEvent(msgId, sender, target, parameter, values);
+            var msg = CreateQuestEvent(msgId, sender, target, parameter, values);
             if (msg == null && Engine.Debug)
             {
                 SsitDebug.Warning("创建任务系统消息体失败");
@@ -492,7 +582,10 @@ namespace SsitEngine.QuestManager
         /// <param name="message"></param>
         public static void SendCompositeMessage( object sender, string message )
         {
-            if (string.IsNullOrEmpty(message)) return;
+            if (string.IsNullOrEmpty(message))
+            {
+                return;
+            }
             var parameter = string.Empty;
             object value = null;
             if (message.Contains(":")) // Parameter?
@@ -507,22 +600,32 @@ namespace SsitEngine.QuestManager
                     var valueString = parameter.Substring(colonPos + 1);
                     parameter = parameter.Substring(0, colonPos);
                     int valueInt;
-                    bool isNumeric = int.TryParse(valueString, out valueInt);
+                    var isNumeric = int.TryParse(valueString, out valueInt);
                     if (isNumeric)
+                    {
                         value = valueInt;
+                    }
                     else
+                    {
                         value = valueString;
+                    }
                 }
             }
 
             ushort msgId = 0;
             ushort.TryParse(message, out msgId);
             if (msgId == 0)
+            {
                 return;
+            }
             if (value == null)
+            {
                 SendNotification(msgId, sender, null, parameter);
+            }
             else
+            {
                 SendNotification(msgId, sender, null, parameter, value);
+            }
         }
 
         #endregion

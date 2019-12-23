@@ -1,28 +1,24 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// A quest list with an ID.
     /// </summary>
-    [AddComponentMenu( "" )] // Just a base class.
+    [AddComponentMenu("")] // Just a base class.
     public class IdentifiableQuestListContainer : QuestListContainer
     {
-
         #region Serialized Fields
 
-        [Tooltip( "The ID that uniquely identifies this entity. If unassigned, uses the Quest Entity's Display Name if present." )]
+        [Tooltip(
+            "The ID that uniquely identifies this entity. If unassigned, uses the Quest Entity's Display Name if present.")]
         [SerializeField]
         protected string m_id;
 
-        [Tooltip( "The name shown in UIs. If blank, uses the Quest Entity's Display Name if present." )]
-        [SerializeField]
+        [Tooltip("The name shown in UIs. If blank, uses the Quest Entity's Display Name if present.")] [SerializeField]
         protected string m_displayName;
 
-        [Tooltip( "The image shown in UIs. If unassigned, uses the Quest Entity's Image if present." )]
-        [SerializeField]
+        [Tooltip("The image shown in UIs. If unassigned, uses the Quest Entity's Image if present.")] [SerializeField]
         protected Sprite m_image;
 
         #endregion
@@ -40,8 +36,10 @@ namespace SsitEngine.QuestManager
         {
             get
             {
-                if (!string.IsNullOrEmpty( m_id ))
+                if (!string.IsNullOrEmpty(m_id))
+                {
                     return m_id;
+                }
                 //if (string.IsNullOrEmpty( m_fallbackID ))
                 //{
                 //    var entity = GetComponentInChildren<QuestEntity>();
@@ -50,10 +48,7 @@ namespace SsitEngine.QuestManager
                 //return m_fallbackID;
                 return null;
             }
-            set
-            {
-                m_id = value;
-            }
+            set => m_id = value;
         }
 
         /// <summary>
@@ -61,8 +56,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string displayName
         {
-            get { return m_displayName; }
-            set { m_displayName = value; }
+            get => m_displayName;
+            set => m_displayName = value;
         }
 
         /// <summary>
@@ -70,8 +65,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public Sprite image
         {
-            get { return m_image; }
-            set { m_image = value; }
+            get => m_image;
+            set => m_image = value;
         }
 
         #endregion
@@ -80,24 +75,22 @@ namespace SsitEngine.QuestManager
 
         public override void OnEnable()
         {
-            if (!string.IsNullOrEmpty( id ))
+            if (!string.IsNullOrEmpty(id))
             {
                 //Debug.Log( "RegisterQuestListContainer" );
-                QuestUtility.RegisterQuestListContainer( this );
+                QuestUtility.RegisterQuestListContainer(this);
             }
         }
 
         public override void OnDisable()
         {
-            if (!string.IsNullOrEmpty( id ))
+            if (!string.IsNullOrEmpty(id))
             {
                 //Debug.Log( "UnregisterQuestListContainer" );
-                QuestUtility.UnregisterQuestListContainer( this );
+                QuestUtility.UnregisterQuestListContainer(this);
             }
         }
 
         #endregion
-
     }
-
 }

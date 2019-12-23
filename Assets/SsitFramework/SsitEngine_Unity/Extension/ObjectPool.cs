@@ -12,10 +12,14 @@ namespace SsitEngine.Unity.Pool
         public ObjectPool( int initialCount, Func<T> creator, Action<T> clearer = null )
         {
             if (initialCount < 0)
+            {
                 throw new ArgumentOutOfRangeException("initialCount");
+            }
 
             if (creator == null)
+            {
                 throw new ArgumentNullException("creator");
+            }
 
             queue = new Queue<T>(initialCount);
 
@@ -31,7 +35,9 @@ namespace SsitEngine.Unity.Pool
         public T Acquire()
         {
             if (queue.Count != 0)
+            {
                 return queue.Dequeue();
+            }
 
             return creator();
         }
@@ -42,7 +48,9 @@ namespace SsitEngine.Unity.Pool
         public void Release( T obj )
         {
             if (clearer != null)
+            {
                 clearer(obj);
+            }
 
             queue.Enqueue(obj);
         }
@@ -50,14 +58,18 @@ namespace SsitEngine.Unity.Pool
         public void Clear()
         {
             if (typeof(T) == typeof(IDisposable))
+            {
                 while (queue.Count != 0)
                 {
                     var obj = queue.Dequeue();
 
                     ((IDisposable) obj).Dispose();
                 }
+            }
             else
+            {
                 queue.Clear();
+            }
 
             queue.TrimExcess();
         }

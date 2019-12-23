@@ -19,6 +19,7 @@
             {
                 // DCL 
                 if (s_instance == null)
+                {
                     lock (m_lockObject)
                     {
                         if (s_instance == null)
@@ -27,6 +28,7 @@
                             s_instance.OnSingletonInit();
                         }
                     }
+                }
 
                 return s_instance;
             }

@@ -6,6 +6,7 @@
 *│　创建时间：2019年5月13日 12点31分                             
 *└──────────────────────────────────────────────────────────────┘
 */
+
 using System.Collections.Generic;
 
 namespace SsitEngine.QuestManager
@@ -15,12 +16,14 @@ namespace SsitEngine.QuestManager
     /// </summary>
     public interface IQuestHelper
     {
-        Quest ConvertTemplateToQuest( string id, string title, string group, string desc, QuestTemplate questTemplate, List<QuestContent> rewardsUiContents, List<RewardSystem> rewardSystems );
+        Quest ConvertTemplateToQuest( string id, string title, string group, string desc, QuestTemplate questTemplate,
+            List<QuestContent> rewardsUiContents, List<RewardSystem> rewardSystems );
 
-        Step CreateStep( string name, string desc, string countName, string message, string param, string onActiveMsg = "", string onCompleteMsg = "", int score = 1, string acitveRequireValue = "" );
+        Step CreateStep( string name, string desc, string countName, string message, string param,
+            string onActiveMsg = "", string onCompleteMsg = "", int score = 1, string acitveRequireValue = "" );
 
-        void CreateQuestIndicator(QuestMessageArgs msgArgs);
+        void CreateQuestIndicator( QuestMessageArgs msgArgs );
 
-        void RefreshQuestIndicator(QuestMessageArgs msgArgs);
+        void RefreshQuestIndicator( QuestMessageArgs msgArgs );
     }
 }

@@ -2,6 +2,7 @@
 using SsitEngine.Data;
 using SsitEngine.PureMVC.Interfaces;
 using SsitEngine.PureMVC.Patterns;
+
 /**
 *┌──────────────────────────────────────────────────────────────┐
 *│　描   述：                                                    
@@ -60,11 +61,16 @@ namespace SsitEngine.Unity.Data
         public override void Shutdown()
         {
             if (isShutdown)
+            {
                 return;
+            }
 
             isShutdown = true;
             var mapIt = m_dataMaps.GetEnumerator();
-            while (mapIt.MoveNext()) Facade.Instance.RemoveProxy(mapIt.Current.Value.ProxyName);
+            while (mapIt.MoveNext())
+            {
+                Facade.Instance.RemoveProxy(mapIt.Current.Value.ProxyName);
+            }
             mapIt.Dispose();
             m_dataMaps.Clear();
             m_dataMaps = null;
@@ -127,7 +133,9 @@ namespace SsitEngine.Unity.Data
         public T GetDataProxy<T>( int index ) where T : class, IDataProxy
         {
             if (m_dataMaps.ContainsKey(index))
+            {
                 return m_dataMaps[index] as T;
+            }
             return null;
         }
 
@@ -139,7 +147,10 @@ namespace SsitEngine.Unity.Data
         /// <returns>数据</returns>
         public T GetData<T>( int index, int id ) where T : class
         {
-            if (m_dataMaps.ContainsKey(index)) return m_dataMaps[index].GetData<T>(id);
+            if (m_dataMaps.ContainsKey(index))
+            {
+                return m_dataMaps[index].GetData<T>(id);
+            }
             return default;
         }
 
@@ -153,9 +164,15 @@ namespace SsitEngine.Unity.Data
         public T GetData<T>( string proxyName, int id ) where T : class
         {
             var proxy = Facade.Instance.RetrieveProxy(proxyName);
-            if (proxy == null) throw new SsitEngineException(TextUtils.Format("查询的数据名称{0}代理不存在", proxyName));
+            if (proxy == null)
+            {
+                throw new SsitEngineException(TextUtils.Format("查询的数据名称{0}代理不存在", proxyName));
+            }
             var dataProxy = proxy as DataProxy<ModelBase>;
-            if (dataProxy == null) throw new SsitEngineException("查询的数据代理转换异常");
+            if (dataProxy == null)
+            {
+                throw new SsitEngineException("查询的数据代理转换异常");
+            }
 
             return dataProxy.GetData<T>(id);
         }

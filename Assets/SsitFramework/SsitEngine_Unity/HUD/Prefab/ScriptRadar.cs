@@ -27,7 +27,9 @@ namespace SsitEngine.Unity.HUD
         {
             base.ChangeIconColor(color);
             if (Icon != null)
+            {
                 Icon.color = color;
+            }
         }
 
         #endregion

@@ -27,14 +27,14 @@ namespace SuperScrollView
     public class ItemPool
     {
         private static int mCurItemIdCount;
+        private readonly List<LoopListViewItem2> mPooledItemList = new List<LoopListViewItem2>();
+        private readonly List<LoopListViewItem2> mTmpPooledItemList = new List<LoopListViewItem2>();
         private int mInitCreateCount = 1;
         private RectTransform mItemParent;
         private float mPadding;
-        private readonly List<LoopListViewItem2> mPooledItemList = new List<LoopListViewItem2>();
         private string mPrefabName;
         private GameObject mPrefabObj;
         private float mStartPosOffset;
-        private readonly List<LoopListViewItem2> mTmpPooledItemList = new List<LoopListViewItem2>();
 
         public void Init( GameObject prefabObj, float padding, float startPosOffset, int createCount,
             RectTransform parent )
@@ -87,7 +87,10 @@ namespace SuperScrollView
         {
             ClearTmpRecycledItem();
             var count = mPooledItemList.Count;
-            for (var i = 0; i < count; ++i) Object.DestroyImmediate(mPooledItemList[i].gameObject);
+            for (var i = 0; i < count; ++i)
+            {
+                Object.DestroyImmediate(mPooledItemList[i].gameObject);
+            }
             mPooledItemList.Clear();
         }
 
@@ -119,8 +122,14 @@ namespace SuperScrollView
         public void ClearTmpRecycledItem()
         {
             var count = mTmpPooledItemList.Count;
-            if (count == 0) return;
-            for (var i = 0; i < count; ++i) RecycleItemReal(mTmpPooledItemList[i]);
+            if (count == 0)
+            {
+                return;
+            }
+            for (var i = 0; i < count; ++i)
+            {
+                RecycleItemReal(mTmpPooledItemList[i]);
+            }
             mTmpPooledItemList.Clear();
         }
     }
@@ -166,28 +175,30 @@ namespace SuperScrollView
 
     public class LoopListView2 : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
-        private Vector2 mAdjustedVec;
-
-        private int mCurReadyMaxItemIndex;
-        private int mCurReadyMinItemIndex;
         private readonly SnapData mCurSnapData = new SnapData();
-        private float mDistanceForNew0 = 200;
-        private float mDistanceForNew1 = 200;
-        private float mDistanceForRecycle0 = 300;
-        private float mDistanceForRecycle1 = 300;
-        private float mItemDefaultWithPaddingSize = 20;
 
         private readonly List<LoopListViewItem2> mItemList = new List<LoopListViewItem2>();
 
         private readonly Dictionary<string, ItemPool> mItemPoolDict = new Dictionary<string, ItemPool>();
         private readonly List<ItemPool> mItemPoolList = new List<ItemPool>();
+
+        private readonly Vector3[] mItemWorldCorners = new Vector3[4];
+
+        private readonly Vector3[] mViewPortRectLocalCorners = new Vector3[4];
+        private Vector2 mAdjustedVec;
+
+        private int mCurReadyMaxItemIndex;
+        private int mCurReadyMinItemIndex;
+        private float mDistanceForNew0 = 200;
+        private float mDistanceForNew1 = 200;
+        private float mDistanceForRecycle0 = 300;
+        private float mDistanceForRecycle1 = 300;
+        private float mItemDefaultWithPaddingSize = 20;
         private ItemPosMgr mItemPosMgr;
 
         [SerializeField] private List<ItemPrefabConfData> mItemPrefabDataList = new List<ItemPrefabConfData>();
 
         [SerializeField] private Vector2 mItemSnapPivot = Vector2.zero;
-
-        private readonly Vector3[] mItemWorldCorners = new Vector3[4];
 
 
         private Vector3 mLastFrameContainerPos = Vector3.zero;
@@ -213,8 +224,6 @@ namespace SuperScrollView
         private float mSmoothDumpVel;
         private float mSnapFinishThreshold = 0.1f;
         private float mSnapVecThreshold = 145;
-
-        private readonly Vector3[] mViewPortRectLocalCorners = new Vector3[4];
         private RectTransform mViewPortRectTransform;
 
         [SerializeField] private Vector2 mViewPortSnapPivot = Vector2.zero;
@@ -242,7 +251,9 @@ namespace SuperScrollView
             get
             {
                 if (IsVertList)
+                {
                     return mViewPortRectTransform.rect.height;
+                }
                 return mViewPortRectTransform.rect.width;
             }
         }
@@ -257,26 +268,44 @@ namespace SuperScrollView
 
         public virtual void OnBeginDrag( PointerEventData eventData )
         {
-            if (eventData.button != PointerEventData.InputButton.Left) return;
+            if (eventData.button != PointerEventData.InputButton.Left)
+            {
+                return;
+            }
             IsDraging = true;
             CacheDragPointerEventData(eventData);
             mCurSnapData.Clear();
-            if (mOnBeginDragAction != null) mOnBeginDragAction();
+            if (mOnBeginDragAction != null)
+            {
+                mOnBeginDragAction();
+            }
         }
 
         public virtual void OnDrag( PointerEventData eventData )
         {
-            if (eventData.button != PointerEventData.InputButton.Left) return;
+            if (eventData.button != PointerEventData.InputButton.Left)
+            {
+                return;
+            }
             CacheDragPointerEventData(eventData);
-            if (mOnDragingAction != null) mOnDragingAction();
+            if (mOnDragingAction != null)
+            {
+                mOnDragingAction();
+            }
         }
 
         public virtual void OnEndDrag( PointerEventData eventData )
         {
-            if (eventData.button != PointerEventData.InputButton.Left) return;
+            if (eventData.button != PointerEventData.InputButton.Left)
+            {
+                return;
+            }
             IsDraging = false;
             mPointerEventData = null;
-            if (mOnEndDragAction != null) mOnEndDragAction();
+            if (mOnEndDragAction != null)
+            {
+                mOnEndDragAction();
+            }
             ForceSnapUpdateCheck();
         }
 
@@ -289,7 +318,10 @@ namespace SuperScrollView
                     Debug.LogError("A item prefab is null ");
                     continue;
                 }
-                if (prefabName == data.mItemPrefab.name) return data;
+                if (prefabName == data.mItemPrefab.name)
+                {
+                    return data;
+                }
             }
             return null;
         }
@@ -297,9 +329,15 @@ namespace SuperScrollView
         public void OnItemPrefabChanged( string prefabName )
         {
             var data = GetItemPrefabConfData(prefabName);
-            if (data == null) return;
+            if (data == null)
+            {
+                return;
+            }
             ItemPool pool = null;
-            if (mItemPoolDict.TryGetValue(prefabName, out pool) == false) return;
+            if (mItemPoolDict.TryGetValue(prefabName, out pool) == false)
+            {
+                return;
+            }
             var firstItemIndex = -1;
             var pos = Vector3.zero;
             if (mItemList.Count > 0)
@@ -311,7 +349,10 @@ namespace SuperScrollView
             ClearAllTmpRecycledItem();
             pool.DestroyAllItem();
             pool.Init(data.mItemPrefab, data.mPadding, data.mStartPosOffset, data.mInitCreateCount, ContainerTrans);
-            if (firstItemIndex >= 0) RefreshAllShownItemWithFirstIndexAndPos(firstItemIndex, pos);
+            if (firstItemIndex >= 0)
+            {
+                RefreshAllShownItemWithFirstIndexAndPos(firstItemIndex, pos);
+            }
         }
 
         /*
@@ -341,21 +382,32 @@ namespace SuperScrollView
                 return;
             }
             if (mDistanceForRecycle0 <= mDistanceForNew0)
+            {
                 Debug.LogError("mDistanceForRecycle0 should be bigger than mDistanceForNew0");
+            }
             if (mDistanceForRecycle1 <= mDistanceForNew1)
+            {
                 Debug.LogError("mDistanceForRecycle1 should be bigger than mDistanceForNew1");
+            }
             mCurSnapData.Clear();
             mItemPosMgr = new ItemPosMgr(mItemDefaultWithPaddingSize);
             mScrollRectTransform = ScrollRect.GetComponent<RectTransform>();
             ContainerTrans = ScrollRect.content;
             mViewPortRectTransform = ScrollRect.viewport;
-            if (mViewPortRectTransform == null) mViewPortRectTransform = mScrollRectTransform;
+            if (mViewPortRectTransform == null)
+            {
+                mViewPortRectTransform = mScrollRectTransform;
+            }
             if (ScrollRect.horizontalScrollbarVisibility == ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport &&
                 ScrollRect.horizontalScrollbar != null)
+            {
                 Debug.LogError("ScrollRect.horizontalScrollbarVisibility cannot be set to AutoHideAndExpandViewport");
+            }
             if (ScrollRect.verticalScrollbarVisibility == ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport &&
                 ScrollRect.verticalScrollbar != null)
+            {
                 Debug.LogError("ScrollRect.verticalScrollbarVisibility cannot be set to AutoHideAndExpandViewport");
+            }
             IsVertList = ArrangeType == ListItemArrangeType.TopToBottom ||
                          ArrangeType == ListItemArrangeType.BottomToTop;
             ScrollRect.horizontal = !IsVertList;
@@ -366,17 +418,27 @@ namespace SuperScrollView
             AdjustContainerPivot(ContainerTrans);
             InitItemPool();
             mOnGetItemByIndex = onGetItemByIndex;
-            if (mListViewInited) Debug.LogError("LoopListView2.InitListView method can be called only once.");
+            if (mListViewInited)
+            {
+                Debug.LogError("LoopListView2.InitListView method can be called only once.");
+            }
             mListViewInited = true;
             ResetListView();
             //SetListItemCount(itemTotalCount, true);
             mCurSnapData.Clear();
             ItemTotalCount = itemTotalCount;
-            if (ItemTotalCount < 0) SupportScrollBar = false;
+            if (ItemTotalCount < 0)
+            {
+                SupportScrollBar = false;
+            }
             if (SupportScrollBar)
+            {
                 mItemPosMgr.SetItemMaxCount(ItemTotalCount);
+            }
             else
+            {
                 mItemPosMgr.SetItemMaxCount(0);
+            }
             mCurReadyMaxItemIndex = 0;
             mCurReadyMinItemIndex = 0;
             mLeftSnapUpdateExtraCount = 1;
@@ -389,9 +451,18 @@ namespace SuperScrollView
         {
             mScrollBarClickEventListener = null;
             Scrollbar curScrollBar = null;
-            if (IsVertList && ScrollRect.verticalScrollbar != null) curScrollBar = ScrollRect.verticalScrollbar;
-            if (!IsVertList && ScrollRect.horizontalScrollbar != null) curScrollBar = ScrollRect.horizontalScrollbar;
-            if (curScrollBar == null) return;
+            if (IsVertList && ScrollRect.verticalScrollbar != null)
+            {
+                curScrollBar = ScrollRect.verticalScrollbar;
+            }
+            if (!IsVertList && ScrollRect.horizontalScrollbar != null)
+            {
+                curScrollBar = ScrollRect.horizontalScrollbar;
+            }
+            if (curScrollBar == null)
+            {
+                return;
+            }
             var listener = ClickEventListener.Get(curScrollBar.gameObject);
             mScrollBarClickEventListener = listener;
             listener.SetPointerUpHandler(OnPointerUpInScrollBar);
@@ -411,7 +482,10 @@ namespace SuperScrollView
         public void ResetListView( bool resetPos = true )
         {
             mViewPortRectTransform.GetLocalCorners(mViewPortRectLocalCorners);
-            if (resetPos) ContainerTrans.anchoredPosition3D = Vector3.zero;
+            if (resetPos)
+            {
+                ContainerTrans.anchoredPosition3D = Vector3.zero;
+            }
             ForceSnapUpdateCheck();
         }
 
@@ -425,14 +499,24 @@ namespace SuperScrollView
         */
         public void SetListItemCount( int itemCount, bool resetPos = true )
         {
-            if (itemCount == ItemTotalCount) return;
+            if (itemCount == ItemTotalCount)
+            {
+                return;
+            }
             mCurSnapData.Clear();
             ItemTotalCount = itemCount;
-            if (ItemTotalCount < 0) SupportScrollBar = false;
+            if (ItemTotalCount < 0)
+            {
+                SupportScrollBar = false;
+            }
             if (SupportScrollBar)
+            {
                 mItemPosMgr.SetItemMaxCount(ItemTotalCount);
+            }
             else
+            {
                 mItemPosMgr.SetItemMaxCount(0);
+            }
             if (ItemTotalCount == 0)
             {
                 mCurReadyMaxItemIndex = 0;
@@ -444,7 +528,10 @@ namespace SuperScrollView
                 UpdateContentSize();
                 return;
             }
-            if (mCurReadyMaxItemIndex >= ItemTotalCount) mCurReadyMaxItemIndex = ItemTotalCount - 1;
+            if (mCurReadyMaxItemIndex >= ItemTotalCount)
+            {
+                mCurReadyMaxItemIndex = ItemTotalCount - 1;
+            }
             mLeftSnapUpdateExtraCount = 1;
             mNeedCheckNextMaxItem = true;
             mNeedCheckNextMinItem = true;
@@ -473,8 +560,14 @@ namespace SuperScrollView
         public LoopListViewItem2 GetShownItemByItemIndex( int itemIndex )
         {
             var count = mItemList.Count;
-            if (count == 0) return null;
-            if (itemIndex < mItemList[0].ItemIndex || itemIndex > mItemList[count - 1].ItemIndex) return null;
+            if (count == 0)
+            {
+                return null;
+            }
+            if (itemIndex < mItemList[0].ItemIndex || itemIndex > mItemList[count - 1].ItemIndex)
+            {
+                return null;
+            }
             var i = itemIndex - mItemList[0].ItemIndex;
             return mItemList[i];
         }
@@ -487,7 +580,10 @@ namespace SuperScrollView
         public LoopListViewItem2 GetShownItemByIndex( int index )
         {
             var count = mItemList.Count;
-            if (index < 0 || index >= count) return null;
+            if (index < 0 || index >= count)
+            {
+                return null;
+            }
             return mItemList[index];
         }
 
@@ -498,29 +594,51 @@ namespace SuperScrollView
 
         public int GetIndexInShownItemList( LoopListViewItem2 item )
         {
-            if (item == null) return -1;
+            if (item == null)
+            {
+                return -1;
+            }
             var count = mItemList.Count;
-            if (count == 0) return -1;
+            if (count == 0)
+            {
+                return -1;
+            }
             for (var i = 0; i < count; ++i)
+            {
                 if (mItemList[i] == item)
+                {
                     return i;
+                }
+            }
             return -1;
         }
 
 
         public void DoActionForEachShownItem( Action<LoopListViewItem2, object> action, object param )
         {
-            if (action == null) return;
+            if (action == null)
+            {
+                return;
+            }
             var count = mItemList.Count;
-            if (count == 0) return;
-            for (var i = 0; i < count; ++i) action(mItemList[i], param);
+            if (count == 0)
+            {
+                return;
+            }
+            for (var i = 0; i < count; ++i)
+            {
+                action(mItemList[i], param);
+            }
         }
 
 
         public LoopListViewItem2 NewListViewItem( string itemPrefabName )
         {
             ItemPool pool = null;
-            if (mItemPoolDict.TryGetValue(itemPrefabName, out pool) == false) return null;
+            if (mItemPoolDict.TryGetValue(itemPrefabName, out pool) == false)
+            {
+                return null;
+            }
             var item = pool.GetItem();
             var rf = item.GetComponent<RectTransform>();
             rf.SetParent(ContainerTrans);
@@ -538,13 +656,20 @@ namespace SuperScrollView
         public void OnItemSizeChanged( int itemIndex )
         {
             var item = GetShownItemByItemIndex(itemIndex);
-            if (item == null) return;
+            if (item == null)
+            {
+                return;
+            }
             if (SupportScrollBar)
             {
                 if (IsVertList)
+                {
                     SetItemSize(itemIndex, item.CachedRectTransform.rect.height, item.Padding);
+                }
                 else
+                {
                     SetItemSize(itemIndex, item.CachedRectTransform.rect.width, item.Padding);
+                }
             }
             UpdateContentSize();
             UpdateAllShownItemsPos();
@@ -558,8 +683,14 @@ namespace SuperScrollView
         public void RefreshItemByItemIndex( int itemIndex )
         {
             var count = mItemList.Count;
-            if (count == 0) return;
-            if (itemIndex < mItemList[0].ItemIndex || itemIndex > mItemList[count - 1].ItemIndex) return;
+            if (count == 0)
+            {
+                return;
+            }
+            if (itemIndex < mItemList[0].ItemIndex || itemIndex > mItemList[count - 1].ItemIndex)
+            {
+                return;
+            }
             var firstItemIndex = mItemList[0].ItemIndex;
             var i = itemIndex - firstItemIndex;
             var curItem = mItemList[i];
@@ -573,9 +704,13 @@ namespace SuperScrollView
             }
             mItemList[i] = newItem;
             if (IsVertList)
+            {
                 pos.x = newItem.StartPosOffset;
+            }
             else
+            {
                 pos.y = newItem.StartPosOffset;
+            }
             newItem.CachedRectTransform.anchoredPosition3D = pos;
             OnItemSizeChanged(itemIndex);
             ClearAllTmpRecycledItem();
@@ -595,35 +730,62 @@ namespace SuperScrollView
         {
             ScrollRect.StopMovement();
             mCurSnapData.Clear();
-            if (ItemTotalCount == 0) return;
-            if (itemIndex < 0 && ItemTotalCount > 0) return;
-            if (ItemTotalCount > 0 && itemIndex >= ItemTotalCount) itemIndex = ItemTotalCount - 1;
-            if (offset < 0) offset = 0;
+            if (ItemTotalCount == 0)
+            {
+                return;
+            }
+            if (itemIndex < 0 && ItemTotalCount > 0)
+            {
+                return;
+            }
+            if (ItemTotalCount > 0 && itemIndex >= ItemTotalCount)
+            {
+                itemIndex = ItemTotalCount - 1;
+            }
+            if (offset < 0)
+            {
+                offset = 0;
+            }
             var pos = Vector3.zero;
             var viewPortSize = ViewPortSize;
-            if (offset > viewPortSize) offset = viewPortSize;
+            if (offset > viewPortSize)
+            {
+                offset = viewPortSize;
+            }
             if (ArrangeType == ListItemArrangeType.TopToBottom)
             {
                 var containerPos = ContainerTrans.anchoredPosition3D.y;
-                if (containerPos < 0) containerPos = 0;
+                if (containerPos < 0)
+                {
+                    containerPos = 0;
+                }
                 pos.y = -containerPos - offset;
             }
             else if (ArrangeType == ListItemArrangeType.BottomToTop)
             {
                 var containerPos = ContainerTrans.anchoredPosition3D.y;
-                if (containerPos > 0) containerPos = 0;
+                if (containerPos > 0)
+                {
+                    containerPos = 0;
+                }
                 pos.y = -containerPos + offset;
             }
             else if (ArrangeType == ListItemArrangeType.LeftToRight)
             {
                 var containerPos = ContainerTrans.anchoredPosition3D.x;
-                if (containerPos > 0) containerPos = 0;
+                if (containerPos > 0)
+                {
+                    containerPos = 0;
+                }
                 pos.x = -containerPos + offset;
             }
             else if (ArrangeType == ListItemArrangeType.RightToLeft)
             {
                 var containerPos = ContainerTrans.anchoredPosition3D.x;
-                if (containerPos < 0) containerPos = 0;
+                if (containerPos < 0)
+                {
+                    containerPos = 0;
+                }
                 pos.x = -containerPos - offset;
             }
 
@@ -635,16 +797,24 @@ namespace SuperScrollView
                 return;
             }
             if (IsVertList)
+            {
                 pos.x = newItem.StartPosOffset;
+            }
             else
+            {
                 pos.y = newItem.StartPosOffset;
+            }
             newItem.CachedRectTransform.anchoredPosition3D = pos;
             if (SupportScrollBar)
             {
                 if (IsVertList)
+                {
                     SetItemSize(itemIndex, newItem.CachedRectTransform.rect.height, newItem.Padding);
+                }
                 else
+                {
                     SetItemSize(itemIndex, newItem.CachedRectTransform.rect.width, newItem.Padding);
+                }
             }
             mItemList.Add(newItem);
             UpdateContentSize();
@@ -659,7 +829,10 @@ namespace SuperScrollView
         public void RefreshAllShownItem()
         {
             var count = mItemList.Count;
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
             RefreshAllShownItemWithFirstIndex(mItemList[0].ItemIndex);
         }
 
@@ -667,7 +840,10 @@ namespace SuperScrollView
         public void RefreshAllShownItemWithFirstIndex( int firstItemIndex )
         {
             var count = mItemList.Count;
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
             var firstItem = mItemList[0];
             var pos = firstItem.CachedRectTransform.anchoredPosition3D;
             RecycleAllItem();
@@ -675,18 +851,29 @@ namespace SuperScrollView
             {
                 var curIndex = firstItemIndex + i;
                 var newItem = GetNewItemByIndex(curIndex);
-                if (newItem == null) break;
+                if (newItem == null)
+                {
+                    break;
+                }
                 if (IsVertList)
+                {
                     pos.x = newItem.StartPosOffset;
+                }
                 else
+                {
                     pos.y = newItem.StartPosOffset;
+                }
                 newItem.CachedRectTransform.anchoredPosition3D = pos;
                 if (SupportScrollBar)
                 {
                     if (IsVertList)
+                    {
                         SetItemSize(curIndex, newItem.CachedRectTransform.rect.height, newItem.Padding);
+                    }
                     else
+                    {
                         SetItemSize(curIndex, newItem.CachedRectTransform.rect.width, newItem.Padding);
+                    }
                 }
 
                 mItemList.Add(newItem);
@@ -701,18 +888,29 @@ namespace SuperScrollView
         {
             RecycleAllItem();
             var newItem = GetNewItemByIndex(firstItemIndex);
-            if (newItem == null) return;
+            if (newItem == null)
+            {
+                return;
+            }
             if (IsVertList)
+            {
                 pos.x = newItem.StartPosOffset;
+            }
             else
+            {
                 pos.y = newItem.StartPosOffset;
+            }
             newItem.CachedRectTransform.anchoredPosition3D = pos;
             if (SupportScrollBar)
             {
                 if (IsVertList)
+                {
                     SetItemSize(firstItemIndex, newItem.CachedRectTransform.rect.height, newItem.Padding);
+                }
                 else
+                {
                     SetItemSize(firstItemIndex, newItem.CachedRectTransform.rect.width, newItem.Padding);
+                }
             }
             mItemList.Add(newItem);
             UpdateContentSize();
@@ -724,10 +922,19 @@ namespace SuperScrollView
 
         private void RecycleItemTmp( LoopListViewItem2 item )
         {
-            if (item == null) return;
-            if (string.IsNullOrEmpty(item.ItemPrefabName)) return;
+            if (item == null)
+            {
+                return;
+            }
+            if (string.IsNullOrEmpty(item.ItemPrefabName))
+            {
+                return;
+            }
             ItemPool pool = null;
-            if (mItemPoolDict.TryGetValue(item.ItemPrefabName, out pool) == false) return;
+            if (mItemPoolDict.TryGetValue(item.ItemPrefabName, out pool) == false)
+            {
+                return;
+            }
             pool.RecycleItem(item);
         }
 
@@ -735,13 +942,19 @@ namespace SuperScrollView
         private void ClearAllTmpRecycledItem()
         {
             var count = mItemPoolList.Count;
-            for (var i = 0; i < count; ++i) mItemPoolList[i].ClearTmpRecycledItem();
+            for (var i = 0; i < count; ++i)
+            {
+                mItemPoolList[i].ClearTmpRecycledItem();
+            }
         }
 
 
         private void RecycleAllItem()
         {
-            foreach (var item in mItemList) RecycleItemTmp(item);
+            foreach (var item in mItemList)
+            {
+                RecycleItemTmp(item);
+            }
             mItemList.Clear();
         }
 
@@ -750,12 +963,21 @@ namespace SuperScrollView
         {
             var pivot = rtf.pivot;
             if (ArrangeType == ListItemArrangeType.BottomToTop)
+            {
                 pivot.y = 0;
+            }
             else if (ArrangeType == ListItemArrangeType.TopToBottom)
+            {
                 pivot.y = 1;
+            }
             else if (ArrangeType == ListItemArrangeType.LeftToRight)
+            {
                 pivot.x = 0;
-            else if (ArrangeType == ListItemArrangeType.RightToLeft) pivot.x = 1;
+            }
+            else if (ArrangeType == ListItemArrangeType.RightToLeft)
+            {
+                pivot.x = 1;
+            }
             rtf.pivot = pivot;
         }
 
@@ -765,12 +987,21 @@ namespace SuperScrollView
             var pivot = rtf.pivot;
 
             if (ArrangeType == ListItemArrangeType.BottomToTop)
+            {
                 pivot.y = 0;
+            }
             else if (ArrangeType == ListItemArrangeType.TopToBottom)
+            {
                 pivot.y = 1;
+            }
             else if (ArrangeType == ListItemArrangeType.LeftToRight)
+            {
                 pivot.x = 0;
-            else if (ArrangeType == ListItemArrangeType.RightToLeft) pivot.x = 1;
+            }
+            else if (ArrangeType == ListItemArrangeType.RightToLeft)
+            {
+                pivot.x = 1;
+            }
             rtf.pivot = pivot;
         }
 
@@ -855,7 +1086,10 @@ namespace SuperScrollView
                 AdjustAnchor(rtf);
                 AdjustPivot(rtf);
                 var tItem = data.mItemPrefab.GetComponent<LoopListViewItem2>();
-                if (tItem == null) data.mItemPrefab.AddComponent<LoopListViewItem2>();
+                if (tItem == null)
+                {
+                    data.mItemPrefab.AddComponent<LoopListViewItem2>();
+                }
                 var pool = new ItemPool();
                 pool.Init(data.mItemPrefab, data.mPadding, data.mStartPosOffset, data.mInitCreateCount, ContainerTrans);
                 mItemPoolDict.Add(prefabName, pool);
@@ -865,7 +1099,10 @@ namespace SuperScrollView
 
         private void CacheDragPointerEventData( PointerEventData eventData )
         {
-            if (mPointerEventData == null) mPointerEventData = new PointerEventData(EventSystem.current);
+            if (mPointerEventData == null)
+            {
+                mPointerEventData = new PointerEventData(EventSystem.current);
+            }
             mPointerEventData.button = eventData.button;
             mPointerEventData.position = eventData.position;
             mPointerEventData.pointerPressRaycast = eventData.pointerPressRaycast;
@@ -874,10 +1111,19 @@ namespace SuperScrollView
 
         private LoopListViewItem2 GetNewItemByIndex( int index )
         {
-            if (SupportScrollBar && index < 0) return null;
-            if (ItemTotalCount > 0 && index >= ItemTotalCount) return null;
+            if (SupportScrollBar && index < 0)
+            {
+                return null;
+            }
+            if (ItemTotalCount > 0 && index >= ItemTotalCount)
+            {
+                return null;
+            }
             var newItem = mOnGetItemByIndex(this, index);
-            if (newItem == null) return null;
+            if (newItem == null)
+            {
+                return null;
+            }
             newItem.ItemIndex = index;
             newItem.ItemCreatedCheckFrameCount = mListUpdateCheckFrameCount;
             return newItem;
@@ -917,7 +1163,10 @@ namespace SuperScrollView
         private void AdjustPanelPos()
         {
             var count = mItemList.Count;
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
             UpdateAllShownItemsPos();
             var viewPortSize = ViewPortSize;
             var contentSize = GetContentPanelSize();
@@ -1074,20 +1323,32 @@ namespace SuperScrollView
 
         private void Update()
         {
-            if (mListViewInited == false) return;
+            if (mListViewInited == false)
+            {
+                return;
+            }
             if (mNeedAdjustVec)
             {
                 mNeedAdjustVec = false;
                 if (IsVertList)
                 {
-                    if (ScrollRect.velocity.y * mAdjustedVec.y > 0) ScrollRect.velocity = mAdjustedVec;
+                    if (ScrollRect.velocity.y * mAdjustedVec.y > 0)
+                    {
+                        ScrollRect.velocity = mAdjustedVec;
+                    }
                 }
                 else
                 {
-                    if (ScrollRect.velocity.x * mAdjustedVec.x > 0) ScrollRect.velocity = mAdjustedVec;
+                    if (ScrollRect.velocity.x * mAdjustedVec.x > 0)
+                    {
+                        ScrollRect.velocity = mAdjustedVec;
+                    }
                 }
             }
-            if (SupportScrollBar) mItemPosMgr.Update(false);
+            if (SupportScrollBar)
+            {
+                mItemPosMgr.Update(false);
+            }
             UpdateSnapMove();
             UpdateListView(mDistanceForRecycle0, mDistanceForRecycle1, mDistanceForNew0, mDistanceForNew1);
             ClearAllTmpRecycledItem();
@@ -1097,19 +1358,32 @@ namespace SuperScrollView
         //update snap move. if immediate is set true, then the snap move will finish at once.
         private void UpdateSnapMove( bool immediate = false, bool forceSendEvent = false )
         {
-            if (ItemSnapEnable == false) return;
+            if (ItemSnapEnable == false)
+            {
+                return;
+            }
             if (IsVertList)
+            {
                 UpdateSnapVertical(immediate, forceSendEvent);
+            }
             else
+            {
                 UpdateSnapHorizontal(immediate, forceSendEvent);
+            }
         }
 
 
         public void UpdateAllShownItemSnapData()
         {
-            if (ItemSnapEnable == false) return;
+            if (ItemSnapEnable == false)
+            {
+                return;
+            }
             var count = mItemList.Count;
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
             var pos = ContainerTrans.anchoredPosition3D;
             var tViewItem0 = mItemList[0];
             tViewItem0.CachedRectTransform.GetWorldCorners(mItemWorldCorners);
@@ -1194,18 +1468,26 @@ namespace SuperScrollView
 
         private void UpdateSnapVertical( bool immediate = false, bool forceSendEvent = false )
         {
-            if (ItemSnapEnable == false) return;
+            if (ItemSnapEnable == false)
+            {
+                return;
+            }
             var count = mItemList.Count;
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
             var pos = ContainerTrans.anchoredPosition3D;
             var needCheck = pos.y != mLastSnapCheckPos.y;
             mLastSnapCheckPos = pos;
             if (!needCheck)
+            {
                 if (mLeftSnapUpdateExtraCount > 0)
                 {
                     mLeftSnapUpdateExtraCount--;
                     needCheck = true;
                 }
+            }
             if (needCheck)
             {
                 var tViewItem0 = mItemList[0];
@@ -1282,8 +1564,12 @@ namespace SuperScrollView
                     var oldNearestItemIndex = CurSnapNearestItemIndex;
                     CurSnapNearestItemIndex = mItemList[curIndex].ItemIndex;
                     if (forceSendEvent || mItemList[curIndex].ItemIndex != oldNearestItemIndex)
+                    {
                         if (mOnSnapNearestChanged != null)
+                        {
                             mOnSnapNearestChanged(this, mItemList[curIndex]);
+                        }
+                    }
                 }
                 else
                 {
@@ -1297,8 +1583,14 @@ namespace SuperScrollView
             }
             var v = Mathf.Abs(ScrollRect.velocity.y);
             UpdateCurSnapData();
-            if (mCurSnapData.mSnapStatus != SnapStatus.SnapMoving) return;
-            if (v > 0) ScrollRect.StopMovement();
+            if (mCurSnapData.mSnapStatus != SnapStatus.SnapMoving)
+            {
+                return;
+            }
+            if (v > 0)
+            {
+                ScrollRect.StopMovement();
+            }
             var old = mCurSnapData.mCurSnapVal;
             mCurSnapData.mCurSnapVal = Mathf.SmoothDamp(mCurSnapData.mCurSnapVal, mCurSnapData.mTargetSnapVal,
                 ref mSmoothDumpVel, mSmoothDumpRate);
@@ -1311,7 +1603,10 @@ namespace SuperScrollView
                 if (mOnSnapItemFinished != null)
                 {
                     var targetItem = GetShownItemByItemIndex(CurSnapNearestItemIndex);
-                    if (targetItem != null) mOnSnapItemFinished(this, targetItem);
+                    if (targetItem != null)
+                    {
+                        mOnSnapItemFinished(this, targetItem);
+                    }
                 }
             }
             else
@@ -1345,18 +1640,27 @@ namespace SuperScrollView
 
             if (mCurSnapData.mSnapStatus == SnapStatus.SnapMoveFinish)
             {
-                if (mCurSnapData.mSnapTargetIndex == CurSnapNearestItemIndex) return;
+                if (mCurSnapData.mSnapTargetIndex == CurSnapNearestItemIndex)
+                {
+                    return;
+                }
                 mCurSnapData.mSnapStatus = SnapStatus.NoTargetSet;
             }
             if (mCurSnapData.mSnapStatus == SnapStatus.SnapMoving)
             {
-                if (mCurSnapData.mSnapTargetIndex == CurSnapNearestItemIndex || mCurSnapData.mIsForceSnapTo) return;
+                if (mCurSnapData.mSnapTargetIndex == CurSnapNearestItemIndex || mCurSnapData.mIsForceSnapTo)
+                {
+                    return;
+                }
                 mCurSnapData.mSnapStatus = SnapStatus.NoTargetSet;
             }
             if (mCurSnapData.mSnapStatus == SnapStatus.NoTargetSet)
             {
                 var nearestItem = GetShownItemByItemIndex(CurSnapNearestItemIndex);
-                if (nearestItem == null) return;
+                if (nearestItem == null)
+                {
+                    return;
+                }
                 mCurSnapData.mSnapTargetIndex = CurSnapNearestItemIndex;
                 mCurSnapData.mSnapStatus = SnapStatus.TargetHasSet;
                 mCurSnapData.mIsForceSnapTo = false;
@@ -1391,23 +1695,34 @@ namespace SuperScrollView
 
         public void ForceSnapUpdateCheck()
         {
-            if (mLeftSnapUpdateExtraCount <= 0) mLeftSnapUpdateExtraCount = 1;
+            if (mLeftSnapUpdateExtraCount <= 0)
+            {
+                mLeftSnapUpdateExtraCount = 1;
+            }
         }
 
         private void UpdateSnapHorizontal( bool immediate = false, bool forceSendEvent = false )
         {
-            if (ItemSnapEnable == false) return;
+            if (ItemSnapEnable == false)
+            {
+                return;
+            }
             var count = mItemList.Count;
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
             var pos = ContainerTrans.anchoredPosition3D;
             var needCheck = pos.x != mLastSnapCheckPos.x;
             mLastSnapCheckPos = pos;
             if (!needCheck)
+            {
                 if (mLeftSnapUpdateExtraCount > 0)
                 {
                     mLeftSnapUpdateExtraCount--;
                     needCheck = true;
                 }
+            }
             if (needCheck)
             {
                 var tViewItem0 = mItemList[0];
@@ -1485,8 +1800,12 @@ namespace SuperScrollView
                     var oldNearestItemIndex = CurSnapNearestItemIndex;
                     CurSnapNearestItemIndex = mItemList[curIndex].ItemIndex;
                     if (forceSendEvent || mItemList[curIndex].ItemIndex != oldNearestItemIndex)
+                    {
                         if (mOnSnapNearestChanged != null)
+                        {
                             mOnSnapNearestChanged(this, mItemList[curIndex]);
+                        }
+                    }
                 }
                 else
                 {
@@ -1500,8 +1819,14 @@ namespace SuperScrollView
             }
             var v = Mathf.Abs(ScrollRect.velocity.x);
             UpdateCurSnapData();
-            if (mCurSnapData.mSnapStatus != SnapStatus.SnapMoving) return;
-            if (v > 0) ScrollRect.StopMovement();
+            if (mCurSnapData.mSnapStatus != SnapStatus.SnapMoving)
+            {
+                return;
+            }
+            if (v > 0)
+            {
+                ScrollRect.StopMovement();
+            }
             var old = mCurSnapData.mCurSnapVal;
             mCurSnapData.mCurSnapVal = Mathf.SmoothDamp(mCurSnapData.mCurSnapVal, mCurSnapData.mTargetSnapVal,
                 ref mSmoothDumpVel, mSmoothDumpRate);
@@ -1514,7 +1839,10 @@ namespace SuperScrollView
                 if (mOnSnapItemFinished != null)
                 {
                     var targetItem = GetShownItemByItemIndex(CurSnapNearestItemIndex);
-                    if (targetItem != null) mOnSnapItemFinished(this, targetItem);
+                    if (targetItem != null)
+                    {
+                        mOnSnapItemFinished(this, targetItem);
+                    }
                 }
             }
             else
@@ -1538,48 +1866,83 @@ namespace SuperScrollView
 
         private bool CanSnap()
         {
-            if (IsDraging) return false;
+            if (IsDraging)
+            {
+                return false;
+            }
             if (mScrollBarClickEventListener != null)
+            {
                 if (mScrollBarClickEventListener.IsPressd)
+                {
                     return false;
+                }
+            }
 
             if (IsVertList)
             {
-                if (ContainerTrans.rect.height <= ViewPortHeight) return false;
+                if (ContainerTrans.rect.height <= ViewPortHeight)
+                {
+                    return false;
+                }
             }
             else
             {
-                if (ContainerTrans.rect.width <= ViewPortWidth) return false;
+                if (ContainerTrans.rect.width <= ViewPortWidth)
+                {
+                    return false;
+                }
             }
 
             float v = 0;
             if (IsVertList)
+            {
                 v = Mathf.Abs(ScrollRect.velocity.y);
+            }
             else
+            {
                 v = Mathf.Abs(ScrollRect.velocity.x);
-            if (v > mSnapVecThreshold) return false;
-            if (v < 2) return true;
+            }
+            if (v > mSnapVecThreshold)
+            {
+                return false;
+            }
+            if (v < 2)
+            {
+                return true;
+            }
             float diff = 3;
             var pos = ContainerTrans.anchoredPosition3D;
             if (ArrangeType == ListItemArrangeType.LeftToRight)
             {
                 var minX = mViewPortRectLocalCorners[2].x - ContainerTrans.rect.width;
-                if (pos.x < minX - diff || pos.x > diff) return false;
+                if (pos.x < minX - diff || pos.x > diff)
+                {
+                    return false;
+                }
             }
             else if (ArrangeType == ListItemArrangeType.RightToLeft)
             {
                 var maxX = mViewPortRectLocalCorners[1].x + ContainerTrans.rect.width;
-                if (pos.x > maxX + diff || pos.x < -diff) return false;
+                if (pos.x > maxX + diff || pos.x < -diff)
+                {
+                    return false;
+                }
             }
             else if (ArrangeType == ListItemArrangeType.TopToBottom)
             {
                 var maxY = mViewPortRectLocalCorners[0].y + ContainerTrans.rect.height;
-                if (pos.y > maxY + diff || pos.y < -diff) return false;
+                if (pos.y > maxY + diff || pos.y < -diff)
+                {
+                    return false;
+                }
             }
             else if (ArrangeType == ListItemArrangeType.BottomToTop)
             {
                 var minY = mViewPortRectLocalCorners[1].y - ContainerTrans.rect.height;
-                if (pos.y < minY - diff || pos.y > diff) return false;
+                if (pos.y < minY - diff || pos.y > diff)
+                {
+                    return false;
+                }
             }
             return true;
         }
@@ -1633,7 +1996,10 @@ namespace SuperScrollView
         {
             if (ItemTotalCount == 0)
             {
-                if (mItemList.Count > 0) RecycleAllItem();
+                if (mItemList.Count > 0)
+                {
+                    RecycleAllItem();
+                }
                 return false;
             }
             if (ArrangeType == ListItemArrangeType.TopToBottom)
@@ -1642,7 +2008,10 @@ namespace SuperScrollView
                 if (itemListCount == 0)
                 {
                     var curY = ContainerTrans.anchoredPosition3D.y;
-                    if (curY < 0) curY = 0;
+                    if (curY < 0)
+                    {
+                        curY = 0;
+                    }
                     var index = 0;
                     var pos = -curY;
                     if (SupportScrollBar)
@@ -1651,8 +2020,14 @@ namespace SuperScrollView
                         pos = -pos;
                     }
                     var newItem = GetNewItemByIndex(index);
-                    if (newItem == null) return false;
-                    if (SupportScrollBar) SetItemSize(index, newItem.CachedRectTransform.rect.height, newItem.Padding);
+                    if (newItem == null)
+                    {
+                        return false;
+                    }
+                    if (SupportScrollBar)
+                    {
+                        SetItemSize(index, newItem.CachedRectTransform.rect.height, newItem.Padding);
+                    }
                     mItemList.Add(newItem);
                     newItem.CachedRectTransform.anchoredPosition3D = new Vector3(newItem.StartPosOffset, pos, 0);
                     UpdateContentSize();
@@ -1714,7 +2089,9 @@ namespace SuperScrollView
                         else
                         {
                             if (SupportScrollBar)
+                            {
                                 SetItemSize(nIndex, newItem.CachedRectTransform.rect.height, newItem.Padding);
+                            }
                             mItemList.Add(newItem);
                             var y = tViewItem1.CachedRectTransform.anchoredPosition3D.y -
                                     tViewItem1.CachedRectTransform.rect.height - tViewItem1.Padding;
@@ -1722,7 +2099,10 @@ namespace SuperScrollView
                             UpdateContentSize();
                             CheckIfNeedUpdataItemPos();
 
-                            if (nIndex > mCurReadyMaxItemIndex) mCurReadyMaxItemIndex = nIndex;
+                            if (nIndex > mCurReadyMaxItemIndex)
+                            {
+                                mCurReadyMaxItemIndex = nIndex;
+                            }
                             return true;
                         }
                     }
@@ -1747,14 +2127,19 @@ namespace SuperScrollView
                         else
                         {
                             if (SupportScrollBar)
+                            {
                                 SetItemSize(nIndex, newItem.CachedRectTransform.rect.height, newItem.Padding);
+                            }
                             mItemList.Insert(0, newItem);
                             var y = tViewItem0.CachedRectTransform.anchoredPosition3D.y +
                                     newItem.CachedRectTransform.rect.height + newItem.Padding;
                             newItem.CachedRectTransform.anchoredPosition3D = new Vector3(newItem.StartPosOffset, y, 0);
                             UpdateContentSize();
                             CheckIfNeedUpdataItemPos();
-                            if (nIndex < mCurReadyMinItemIndex) mCurReadyMinItemIndex = nIndex;
+                            if (nIndex < mCurReadyMinItemIndex)
+                            {
+                                mCurReadyMinItemIndex = nIndex;
+                            }
                             return true;
                         }
                     }
@@ -1765,13 +2150,25 @@ namespace SuperScrollView
                 if (mItemList.Count == 0)
                 {
                     var curY = ContainerTrans.anchoredPosition3D.y;
-                    if (curY > 0) curY = 0;
+                    if (curY > 0)
+                    {
+                        curY = 0;
+                    }
                     var index = 0;
                     var pos = -curY;
-                    if (SupportScrollBar) GetPlusItemIndexAndPosAtGivenPos(-curY, ref index, ref pos);
+                    if (SupportScrollBar)
+                    {
+                        GetPlusItemIndexAndPosAtGivenPos(-curY, ref index, ref pos);
+                    }
                     var newItem = GetNewItemByIndex(index);
-                    if (newItem == null) return false;
-                    if (SupportScrollBar) SetItemSize(index, newItem.CachedRectTransform.rect.height, newItem.Padding);
+                    if (newItem == null)
+                    {
+                        return false;
+                    }
+                    if (SupportScrollBar)
+                    {
+                        SetItemSize(index, newItem.CachedRectTransform.rect.height, newItem.Padding);
+                    }
                     mItemList.Add(newItem);
                     newItem.CachedRectTransform.anchoredPosition3D = new Vector3(newItem.StartPosOffset, pos, 0);
                     UpdateContentSize();
@@ -1831,14 +2228,19 @@ namespace SuperScrollView
                         else
                         {
                             if (SupportScrollBar)
+                            {
                                 SetItemSize(nIndex, newItem.CachedRectTransform.rect.height, newItem.Padding);
+                            }
                             mItemList.Add(newItem);
                             var y = tViewItem1.CachedRectTransform.anchoredPosition3D.y +
                                     tViewItem1.CachedRectTransform.rect.height + tViewItem1.Padding;
                             newItem.CachedRectTransform.anchoredPosition3D = new Vector3(newItem.StartPosOffset, y, 0);
                             UpdateContentSize();
                             CheckIfNeedUpdataItemPos();
-                            if (nIndex > mCurReadyMaxItemIndex) mCurReadyMaxItemIndex = nIndex;
+                            if (nIndex > mCurReadyMaxItemIndex)
+                            {
+                                mCurReadyMaxItemIndex = nIndex;
+                            }
                             return true;
                         }
                     }
@@ -1862,14 +2264,19 @@ namespace SuperScrollView
                             return false;
                         }
                         if (SupportScrollBar)
+                        {
                             SetItemSize(nIndex, newItem.CachedRectTransform.rect.height, newItem.Padding);
+                        }
                         mItemList.Insert(0, newItem);
                         var y = tViewItem0.CachedRectTransform.anchoredPosition3D.y -
                                 newItem.CachedRectTransform.rect.height - newItem.Padding;
                         newItem.CachedRectTransform.anchoredPosition3D = new Vector3(newItem.StartPosOffset, y, 0);
                         UpdateContentSize();
                         CheckIfNeedUpdataItemPos();
-                        if (nIndex < mCurReadyMinItemIndex) mCurReadyMinItemIndex = nIndex;
+                        if (nIndex < mCurReadyMinItemIndex)
+                        {
+                            mCurReadyMinItemIndex = nIndex;
+                        }
                         return true;
                     }
                 }
@@ -1884,7 +2291,10 @@ namespace SuperScrollView
         {
             if (ItemTotalCount == 0)
             {
-                if (mItemList.Count > 0) RecycleAllItem();
+                if (mItemList.Count > 0)
+                {
+                    RecycleAllItem();
+                }
                 return false;
             }
             if (ArrangeType == ListItemArrangeType.LeftToRight)
@@ -1892,13 +2302,25 @@ namespace SuperScrollView
                 if (mItemList.Count == 0)
                 {
                     var curX = ContainerTrans.anchoredPosition3D.x;
-                    if (curX > 0) curX = 0;
+                    if (curX > 0)
+                    {
+                        curX = 0;
+                    }
                     var index = 0;
                     var pos = -curX;
-                    if (SupportScrollBar) GetPlusItemIndexAndPosAtGivenPos(-curX, ref index, ref pos);
+                    if (SupportScrollBar)
+                    {
+                        GetPlusItemIndexAndPosAtGivenPos(-curX, ref index, ref pos);
+                    }
                     var newItem = GetNewItemByIndex(index);
-                    if (newItem == null) return false;
-                    if (SupportScrollBar) SetItemSize(index, newItem.CachedRectTransform.rect.width, newItem.Padding);
+                    if (newItem == null)
+                    {
+                        return false;
+                    }
+                    if (SupportScrollBar)
+                    {
+                        SetItemSize(index, newItem.CachedRectTransform.rect.width, newItem.Padding);
+                    }
                     mItemList.Add(newItem);
                     newItem.CachedRectTransform.anchoredPosition3D = new Vector3(pos, newItem.StartPosOffset, 0);
                     UpdateContentSize();
@@ -1960,7 +2382,9 @@ namespace SuperScrollView
                         else
                         {
                             if (SupportScrollBar)
+                            {
                                 SetItemSize(nIndex, newItem.CachedRectTransform.rect.width, newItem.Padding);
+                            }
                             mItemList.Add(newItem);
                             var x = tViewItem1.CachedRectTransform.anchoredPosition3D.x +
                                     tViewItem1.CachedRectTransform.rect.width + tViewItem1.Padding;
@@ -1968,7 +2392,10 @@ namespace SuperScrollView
                             UpdateContentSize();
                             CheckIfNeedUpdataItemPos();
 
-                            if (nIndex > mCurReadyMaxItemIndex) mCurReadyMaxItemIndex = nIndex;
+                            if (nIndex > mCurReadyMaxItemIndex)
+                            {
+                                mCurReadyMaxItemIndex = nIndex;
+                            }
                             return true;
                         }
                     }
@@ -1993,14 +2420,19 @@ namespace SuperScrollView
                         else
                         {
                             if (SupportScrollBar)
+                            {
                                 SetItemSize(nIndex, newItem.CachedRectTransform.rect.width, newItem.Padding);
+                            }
                             mItemList.Insert(0, newItem);
                             var x = tViewItem0.CachedRectTransform.anchoredPosition3D.x -
                                     newItem.CachedRectTransform.rect.width - newItem.Padding;
                             newItem.CachedRectTransform.anchoredPosition3D = new Vector3(x, newItem.StartPosOffset, 0);
                             UpdateContentSize();
                             CheckIfNeedUpdataItemPos();
-                            if (nIndex < mCurReadyMinItemIndex) mCurReadyMinItemIndex = nIndex;
+                            if (nIndex < mCurReadyMinItemIndex)
+                            {
+                                mCurReadyMinItemIndex = nIndex;
+                            }
                             return true;
                         }
                     }
@@ -2011,7 +2443,10 @@ namespace SuperScrollView
                 if (mItemList.Count == 0)
                 {
                     var curX = ContainerTrans.anchoredPosition3D.x;
-                    if (curX < 0) curX = 0;
+                    if (curX < 0)
+                    {
+                        curX = 0;
+                    }
                     var index = 0;
                     var pos = -curX;
                     if (SupportScrollBar)
@@ -2020,8 +2455,14 @@ namespace SuperScrollView
                         pos = -pos;
                     }
                     var newItem = GetNewItemByIndex(index);
-                    if (newItem == null) return false;
-                    if (SupportScrollBar) SetItemSize(index, newItem.CachedRectTransform.rect.width, newItem.Padding);
+                    if (newItem == null)
+                    {
+                        return false;
+                    }
+                    if (SupportScrollBar)
+                    {
+                        SetItemSize(index, newItem.CachedRectTransform.rect.width, newItem.Padding);
+                    }
                     mItemList.Add(newItem);
                     newItem.CachedRectTransform.anchoredPosition3D = new Vector3(pos, newItem.StartPosOffset, 0);
                     UpdateContentSize();
@@ -2083,7 +2524,9 @@ namespace SuperScrollView
                         else
                         {
                             if (SupportScrollBar)
+                            {
                                 SetItemSize(nIndex, newItem.CachedRectTransform.rect.width, newItem.Padding);
+                            }
                             mItemList.Add(newItem);
                             var x = tViewItem1.CachedRectTransform.anchoredPosition3D.x -
                                     tViewItem1.CachedRectTransform.rect.width - tViewItem1.Padding;
@@ -2091,7 +2534,10 @@ namespace SuperScrollView
                             UpdateContentSize();
                             CheckIfNeedUpdataItemPos();
 
-                            if (nIndex > mCurReadyMaxItemIndex) mCurReadyMaxItemIndex = nIndex;
+                            if (nIndex > mCurReadyMaxItemIndex)
+                            {
+                                mCurReadyMaxItemIndex = nIndex;
+                            }
                             return true;
                         }
                     }
@@ -2116,14 +2562,19 @@ namespace SuperScrollView
                         else
                         {
                             if (SupportScrollBar)
+                            {
                                 SetItemSize(nIndex, newItem.CachedRectTransform.rect.width, newItem.Padding);
+                            }
                             mItemList.Insert(0, newItem);
                             var x = tViewItem0.CachedRectTransform.anchoredPosition3D.x +
                                     newItem.CachedRectTransform.rect.width + newItem.Padding;
                             newItem.CachedRectTransform.anchoredPosition3D = new Vector3(x, newItem.StartPosOffset, 0);
                             UpdateContentSize();
                             CheckIfNeedUpdataItemPos();
-                            if (nIndex < mCurReadyMinItemIndex) mCurReadyMinItemIndex = nIndex;
+                            if (nIndex < mCurReadyMinItemIndex)
+                            {
+                                mCurReadyMinItemIndex = nIndex;
+                            }
                             return true;
                         }
                     }
@@ -2139,15 +2590,30 @@ namespace SuperScrollView
             if (SupportScrollBar)
             {
                 var tTotalSize = mItemPosMgr.mTotalSize > 0 ? mItemPosMgr.mTotalSize - mLastItemPadding : 0;
-                if (tTotalSize < 0) tTotalSize = 0;
+                if (tTotalSize < 0)
+                {
+                    tTotalSize = 0;
+                }
                 return tTotalSize;
             }
             var count = mItemList.Count;
-            if (count == 0) return 0;
-            if (count == 1) return mItemList[0].ItemSize;
-            if (count == 2) return mItemList[0].ItemSizeWithPadding + mItemList[1].ItemSize;
+            if (count == 0)
+            {
+                return 0;
+            }
+            if (count == 1)
+            {
+                return mItemList[0].ItemSize;
+            }
+            if (count == 2)
+            {
+                return mItemList[0].ItemSizeWithPadding + mItemList[1].ItemSize;
+            }
             float s = 0;
-            for (var i = 0; i < count - 1; ++i) s += mItemList[i].ItemSizeWithPadding;
+            for (var i = 0; i < count - 1; ++i)
+            {
+                s += mItemList[i].ItemSizeWithPadding;
+            }
             s += mItemList[count - 1].ItemSize;
             return s;
         }
@@ -2156,7 +2622,10 @@ namespace SuperScrollView
         private void CheckIfNeedUpdataItemPos()
         {
             var count = mItemList.Count;
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
             if (ArrangeType == ListItemArrangeType.TopToBottom)
             {
                 var firstItem = mItemList[0];
@@ -2184,7 +2653,10 @@ namespace SuperScrollView
                     return;
                 }
                 if (lastItem.TopY > viewMaxY || lastItem.ItemIndex == mCurReadyMaxItemIndex && lastItem.TopY != viewMaxY
-                ) UpdateAllShownItemsPos();
+                )
+                {
+                    UpdateAllShownItemsPos();
+                }
             }
             else if (ArrangeType == ListItemArrangeType.LeftToRight)
             {
@@ -2198,7 +2670,9 @@ namespace SuperScrollView
                 }
                 if (lastItem.RightX > viewMaxX ||
                     lastItem.ItemIndex == mCurReadyMaxItemIndex && lastItem.RightX != viewMaxX)
+                {
                     UpdateAllShownItemsPos();
+                }
             }
             else if (ArrangeType == ListItemArrangeType.RightToLeft)
             {
@@ -2212,7 +2686,9 @@ namespace SuperScrollView
                 }
                 if (-lastItem.LeftX > viewMaxX ||
                     lastItem.ItemIndex == mCurReadyMaxItemIndex && -lastItem.LeftX != viewMaxX)
+                {
                     UpdateAllShownItemsPos();
+                }
             }
         }
 
@@ -2220,14 +2696,20 @@ namespace SuperScrollView
         private void UpdateAllShownItemsPos()
         {
             var count = mItemList.Count;
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
 
             mAdjustedVec = (ContainerTrans.anchoredPosition3D - mLastFrameContainerPos) / Time.deltaTime;
 
             if (ArrangeType == ListItemArrangeType.TopToBottom)
             {
                 float pos = 0;
-                if (SupportScrollBar) pos = -GetItemPos(mItemList[0].ItemIndex);
+                if (SupportScrollBar)
+                {
+                    pos = -GetItemPos(mItemList[0].ItemIndex);
+                }
                 var pos1 = mItemList[0].CachedRectTransform.anchoredPosition3D.y;
                 var d = pos - pos1;
                 var curY = pos;
@@ -2247,7 +2729,10 @@ namespace SuperScrollView
             else if (ArrangeType == ListItemArrangeType.BottomToTop)
             {
                 float pos = 0;
-                if (SupportScrollBar) pos = GetItemPos(mItemList[0].ItemIndex);
+                if (SupportScrollBar)
+                {
+                    pos = GetItemPos(mItemList[0].ItemIndex);
+                }
                 var pos1 = mItemList[0].CachedRectTransform.anchoredPosition3D.y;
                 var d = pos - pos1;
                 var curY = pos;
@@ -2267,7 +2752,10 @@ namespace SuperScrollView
             else if (ArrangeType == ListItemArrangeType.LeftToRight)
             {
                 float pos = 0;
-                if (SupportScrollBar) pos = GetItemPos(mItemList[0].ItemIndex);
+                if (SupportScrollBar)
+                {
+                    pos = GetItemPos(mItemList[0].ItemIndex);
+                }
                 var pos1 = mItemList[0].CachedRectTransform.anchoredPosition3D.x;
                 var d = pos - pos1;
                 var curX = pos;
@@ -2287,7 +2775,10 @@ namespace SuperScrollView
             else if (ArrangeType == ListItemArrangeType.RightToLeft)
             {
                 float pos = 0;
-                if (SupportScrollBar) pos = -GetItemPos(mItemList[0].ItemIndex);
+                if (SupportScrollBar)
+                {
+                    pos = -GetItemPos(mItemList[0].ItemIndex);
+                }
                 var pos1 = mItemList[0].CachedRectTransform.anchoredPosition3D.x;
                 var d = pos - pos1;
                 var curX = pos;
@@ -2319,12 +2810,16 @@ namespace SuperScrollView
             if (IsVertList)
             {
                 if (ContainerTrans.rect.height != size)
+                {
                     ContainerTrans.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size);
+                }
             }
             else
             {
                 if (ContainerTrans.rect.width != size)
+                {
                     ContainerTrans.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size);
+                }
             }
         }
 

@@ -22,6 +22,15 @@ namespace SsitEngine.Core.ReferencePool
         /// </summary>
         private sealed class ReferenceCollection
         {
+            #region 变量
+
+            /// <summary>
+            ///     引用队列
+            /// </summary>
+            private readonly Queue<IReference> m_References;
+
+            #endregion
+
             #region 构造及初始化
 
             /// <summary>
@@ -52,7 +61,10 @@ namespace SsitEngine.Core.ReferencePool
                 reference.Clear();
                 lock (m_References)
                 {
-                    if (m_References.Contains(reference)) return;
+                    if (m_References.Contains(reference))
+                    {
+                        return;
+                    }
 
                     m_References.Enqueue(reference);
                 }
@@ -60,15 +72,6 @@ namespace SsitEngine.Core.ReferencePool
                 ReleaseReferenceCount++;
                 UsingReferenceCount--;
             }
-
-            #endregion
-
-            #region 变量
-
-            /// <summary>
-            ///     引用队列
-            /// </summary>
-            private readonly Queue<IReference> m_References;
 
             #endregion
 
@@ -99,13 +102,19 @@ namespace SsitEngine.Core.ReferencePool
             /// <returns>返回指定类型</returns>
             public T Acquire<T>() where T : class, IReference, new()
             {
-                if (typeof(T) != ReferenceType) throw new SsitEngineException("Type is invalid.");
+                if (typeof(T) != ReferenceType)
+                {
+                    throw new SsitEngineException("Type is invalid.");
+                }
 
                 UsingReferenceCount++;
                 AcquireReferenceCount++;
                 lock (m_References)
                 {
-                    if (m_References.Count > 0) return (T) m_References.Dequeue();
+                    if (m_References.Count > 0)
+                    {
+                        return (T) m_References.Dequeue();
+                    }
                 }
                 //没有话就new()
                 AddReferenceCount++;
@@ -122,7 +131,10 @@ namespace SsitEngine.Core.ReferencePool
                 AcquireReferenceCount++;
                 lock (m_References)
                 {
-                    if (m_References.Count > 0) return m_References.Dequeue();
+                    if (m_References.Count > 0)
+                    {
+                        return m_References.Dequeue();
+                    }
                 }
 
                 AddReferenceCount++;
@@ -140,12 +152,18 @@ namespace SsitEngine.Core.ReferencePool
             /// <param name="count"></param>
             public void Add<T>( int count ) where T : class, IReference, new()
             {
-                if (typeof(T) != ReferenceType) throw new SsitEngineException("Type is invalid.");
+                if (typeof(T) != ReferenceType)
+                {
+                    throw new SsitEngineException("Type is invalid.");
+                }
 
                 lock (m_References)
                 {
                     AddReferenceCount += count;
-                    while (count-- > 0) m_References.Enqueue(new T());
+                    while (count-- > 0)
+                    {
+                        m_References.Enqueue(new T());
+                    }
                 }
             }
 
@@ -158,7 +176,10 @@ namespace SsitEngine.Core.ReferencePool
                 lock (m_References)
                 {
                     AddReferenceCount += count;
-                    while (count-- > 0) m_References.Enqueue((IReference) Activator.CreateInstance(ReferenceType));
+                    while (count-- > 0)
+                    {
+                        m_References.Enqueue((IReference) Activator.CreateInstance(ReferenceType));
+                    }
                 }
             }
 
@@ -174,10 +195,16 @@ namespace SsitEngine.Core.ReferencePool
             {
                 lock (m_References)
                 {
-                    if (count > m_References.Count) count = m_References.Count;
+                    if (count > m_References.Count)
+                    {
+                        count = m_References.Count;
+                    }
 
                     RemoveReferenceCount += count;
-                    while (count-- > 0) m_References.Dequeue();
+                    while (count-- > 0)
+                    {
+                        m_References.Dequeue();
+                    }
                 }
             }
 

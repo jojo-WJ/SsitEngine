@@ -17,7 +17,7 @@ namespace SsitEngine.Editor
                 ScriptableObject.CreateInstance<CreateUIFormScriptAsset>(),
                 GetSelectedPathOrFallback() + "/New Script.cs",
                 null,
-                "Assets/Editor/AutoCreateScript/ScriptsTemplate/UIFormClass.txt");
+                $"{EditorFileUtility.AutoScriptPATH}UIFormClass.txt");
         }
 
         [MenuItem("Assets/Create/SsitScripts/Ssit DataBase", false, 80)]
@@ -27,7 +27,7 @@ namespace SsitEngine.Editor
                 ScriptableObject.CreateInstance<CreateDataBaseScriptAsset>(),
                 GetSelectedPathOrFallback() + "/New Script.cs",
                 null,
-                "Assets/Editor/AutoCreateScript/ScriptsTemplate/DataBaseClass.txt");
+                $"{EditorFileUtility.AutoScriptPATH}DataBaseClass.txt");
         }
 
         [MenuItem("Assets/Create/SsitScripts/Ssit DataProxy", false, 90)]
@@ -37,7 +37,7 @@ namespace SsitEngine.Editor
                 ScriptableObject.CreateInstance<CreateDataProxyScriptAsset>(),
                 GetSelectedPathOrFallback() + "/New Script.cs",
                 null,
-                "Assets/Editor/AutoCreateScript/ScriptsTemplate/DataProxyClass.txt");
+                $"{EditorFileUtility.AutoScriptPATH}DataProxyClass.txt");
         }
 
         [MenuItem("Assets/Create/SsitScripts/Ssit Procedure", false, 90)]
@@ -47,13 +47,13 @@ namespace SsitEngine.Editor
                 ScriptableObject.CreateInstance<CreateProcedureScriptAsset>(),
                 GetSelectedPathOrFallback() + "/New Script.cs",
                 null,
-                "Assets/Editor/AutoCreateScript/ScriptsTemplate/ProcedureClass.txt");
+                $"{EditorFileUtility.AutoScriptPATH}ProcedureClass.txt");
         }
 
         public static string GetSelectedPathOrFallback()
         {
-            string path = "Assets";
-            foreach (UnityEngine.Object obj in Selection.GetFiltered(typeof(UnityEngine.Object), SelectionMode.Assets))
+            var path = "Assets";
+            foreach (var obj in Selection.GetFiltered(typeof(Object), SelectionMode.Assets))
             {
                 path = AssetDatabase.GetAssetPath(obj);
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))
@@ -64,7 +64,6 @@ namespace SsitEngine.Editor
             }
             return path;
         }
-
     }
 
 
@@ -72,120 +71,120 @@ namespace SsitEngine.Editor
     {
         public override void Action( int instanceId, string pathName, string resourceFile )
         {
-            UnityEngine.Object o = CreateScriptAssetFromTemplate(pathName, resourceFile);
+            var o = CreateScriptAssetFromTemplate(pathName, resourceFile);
             ProjectWindowUtil.ShowCreatedAsset(o);
         }
 
-        internal static UnityEngine.Object CreateScriptAssetFromTemplate( string pathName, string resourceFile )
+        internal static Object CreateScriptAssetFromTemplate( string pathName, string resourceFile )
         {
-            string fullPath = Path.GetFullPath(pathName);
-            StreamReader streamReader = new StreamReader(resourceFile);
-            string text = streamReader.ReadToEnd();
+            var fullPath = Path.GetFullPath(pathName);
+            var streamReader = new StreamReader(resourceFile);
+            var text = streamReader.ReadToEnd();
             streamReader.Close();
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(pathName);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(pathName);
 
             text = Regex.Replace(text, "UIFormClass", fileNameWithoutExtension);
 
-            bool encoderShouldEmitUTF8Identifier = true;
-            bool throwOnInvalidBytes = false;
-            UTF8Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier, throwOnInvalidBytes);
-            bool append = false;
-            StreamWriter streamWriter = new StreamWriter(fullPath, append, encoding);
+            var encoderShouldEmitUTF8Identifier = true;
+            var throwOnInvalidBytes = false;
+            var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier, throwOnInvalidBytes);
+            var append = false;
+            var streamWriter = new StreamWriter(fullPath, append, encoding);
             streamWriter.Write(text);
             streamWriter.Close();
             AssetDatabase.ImportAsset(pathName);
-            return AssetDatabase.LoadAssetAtPath(pathName, typeof(UnityEngine.Object));
+            return AssetDatabase.LoadAssetAtPath(pathName, typeof(Object));
         }
     }
 
-    class CreateDataBaseScriptAsset : EndNameEditAction
+    internal class CreateDataBaseScriptAsset : EndNameEditAction
     {
         public override void Action( int instanceId, string pathName, string resourceFile )
         {
-            UnityEngine.Object o = CreateScriptAssetFromTemplate(pathName, resourceFile);
+            var o = CreateScriptAssetFromTemplate(pathName, resourceFile);
             ProjectWindowUtil.ShowCreatedAsset(o);
         }
 
-        internal static UnityEngine.Object CreateScriptAssetFromTemplate( string pathName, string resourceFile )
+        internal static Object CreateScriptAssetFromTemplate( string pathName, string resourceFile )
         {
-            string fullPath = Path.GetFullPath(pathName);
-            StreamReader streamReader = new StreamReader(resourceFile);
-            string text = streamReader.ReadToEnd();
+            var fullPath = Path.GetFullPath(pathName);
+            var streamReader = new StreamReader(resourceFile);
+            var text = streamReader.ReadToEnd();
             streamReader.Close();
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(pathName);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(pathName);
 
             text = Regex.Replace(text, "DataBaseClass", fileNameWithoutExtension);
 
-            bool encoderShouldEmitUTF8Identifier = true;
-            bool throwOnInvalidBytes = false;
-            UTF8Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier, throwOnInvalidBytes);
-            bool append = false;
-            StreamWriter streamWriter = new StreamWriter(fullPath, append, encoding);
+            var encoderShouldEmitUTF8Identifier = true;
+            var throwOnInvalidBytes = false;
+            var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier, throwOnInvalidBytes);
+            var append = false;
+            var streamWriter = new StreamWriter(fullPath, append, encoding);
             streamWriter.Write(text);
             streamWriter.Close();
             AssetDatabase.ImportAsset(pathName);
-            return AssetDatabase.LoadAssetAtPath(pathName, typeof(UnityEngine.Object));
+            return AssetDatabase.LoadAssetAtPath(pathName, typeof(Object));
         }
     }
 
-    class CreateDataProxyScriptAsset : EndNameEditAction
+    internal class CreateDataProxyScriptAsset : EndNameEditAction
     {
         public override void Action( int instanceId, string pathName, string resourceFile )
         {
-            UnityEngine.Object o = CreateScriptAssetFromTemplate(pathName, resourceFile);
+            var o = CreateScriptAssetFromTemplate(pathName, resourceFile);
             ProjectWindowUtil.ShowCreatedAsset(o);
         }
 
-        internal static UnityEngine.Object CreateScriptAssetFromTemplate( string pathName, string resourceFile )
+        internal static Object CreateScriptAssetFromTemplate( string pathName, string resourceFile )
         {
-            string fullPath = Path.GetFullPath(pathName);
-            StreamReader streamReader = new StreamReader(resourceFile);
-            string text = streamReader.ReadToEnd();
+            var fullPath = Path.GetFullPath(pathName);
+            var streamReader = new StreamReader(resourceFile);
+            var text = streamReader.ReadToEnd();
             streamReader.Close();
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(pathName);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(pathName);
             text = Regex.Replace(text, "DataProxyClass", fileNameWithoutExtension);
 
-            bool encoderShouldEmitUTF8Identifier = true;
-            bool throwOnInvalidBytes = false;
-            UTF8Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier, throwOnInvalidBytes);
-            bool append = false;
-            StreamWriter streamWriter = new StreamWriter(fullPath, append, encoding);
+            var encoderShouldEmitUTF8Identifier = true;
+            var throwOnInvalidBytes = false;
+            var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier, throwOnInvalidBytes);
+            var append = false;
+            var streamWriter = new StreamWriter(fullPath, append, encoding);
             streamWriter.Write(text);
             streamWriter.Close();
             AssetDatabase.ImportAsset(pathName);
-            return AssetDatabase.LoadAssetAtPath(pathName, typeof(UnityEngine.Object));
+            return AssetDatabase.LoadAssetAtPath(pathName, typeof(Object));
         }
     }
 
     /// <summary>
     /// 创建进程脚本资源
     /// </summary>
-    class CreateProcedureScriptAsset : EndNameEditAction
+    internal class CreateProcedureScriptAsset : EndNameEditAction
     {
         public override void Action( int instanceId, string pathName, string resourceFile )
         {
-            UnityEngine.Object o = CreateScriptAssetFromTemplate(pathName, resourceFile);
+            var o = CreateScriptAssetFromTemplate(pathName, resourceFile);
             ProjectWindowUtil.ShowCreatedAsset(o);
         }
 
-        internal static UnityEngine.Object CreateScriptAssetFromTemplate( string pathName, string resourceFile )
+        internal static Object CreateScriptAssetFromTemplate( string pathName, string resourceFile )
         {
-            string fullPath = Path.GetFullPath(pathName);
-            StreamReader streamReader = new StreamReader(resourceFile);
-            string text = streamReader.ReadToEnd();
+            var fullPath = Path.GetFullPath(pathName);
+            var streamReader = new StreamReader(resourceFile);
+            var text = streamReader.ReadToEnd();
             streamReader.Close();
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(pathName);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(pathName);
             text = Regex.Replace(text, "ProcedureClass", fileNameWithoutExtension);
 
-            bool encoderShouldEmitUTF8Identifier = true;
-            bool throwOnInvalidBytes = false;
-            UTF8Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier, throwOnInvalidBytes);
-            bool append = false;
-            StreamWriter streamWriter = new StreamWriter(fullPath, append, encoding);
+            var encoderShouldEmitUTF8Identifier = true;
+            var throwOnInvalidBytes = false;
+            var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier, throwOnInvalidBytes);
+            var append = false;
+            var streamWriter = new StreamWriter(fullPath, append, encoding);
             streamWriter.Write(text);
             streamWriter.Close();
             AssetDatabase.ImportAsset(pathName);
-            return AssetDatabase.LoadAssetAtPath(pathName, typeof(UnityEngine.Object));
+            return AssetDatabase.LoadAssetAtPath(pathName, typeof(Object));
         }
     }
 }

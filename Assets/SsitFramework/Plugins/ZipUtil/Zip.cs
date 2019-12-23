@@ -41,10 +41,12 @@ public class ZipUtil
         using (var zip = new ZipFile())
         {
             foreach (var file in files)
+            {
                 if (file.EndsWith("\\"))
                 {
                     zip.AddDirectory(file);
                 }
+            }
             zip.Save(zipFileName);
         }
 #elif UNITY_ANDROID

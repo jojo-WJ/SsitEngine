@@ -32,7 +32,10 @@ namespace SsitEngine.Unity.SsitInput
         {
             var center = Vector2.zero;
             var touches = Input.touches;
-            for (var i = 0; i < Input.touchCount; i++) center += touches[i].position;
+            for (var i = 0; i < Input.touchCount; i++)
+            {
+                center += touches[i].position;
+            }
             return center / Input.touchCount;
         }
 
@@ -44,8 +47,12 @@ namespace SsitEngine.Unity.SsitInput
         {
             var touches = Input.touches;
             for (var i = 0; i < Input.touchCount; i++)
+            {
                 if (touches[i].phase == TouchPhase.Moved)
+                {
                     return true;
+                }
+            }
             return false;
         }
 

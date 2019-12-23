@@ -6,6 +6,7 @@
 *│　创建时间：2019/4/11 15:10:36                     
 *└──────────────────────────────────────────────────────────────┘
 */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,10 +20,9 @@ namespace SsitEngine.QuestManager
     [Serializable]
     public class QuestTemplate
     {
+        [SerializeField] private List<Step> steps; // Steps taken.
+
         public string version = "1.1.0";
-        
-        [SerializeField]
-        private List<Step> steps; // Steps taken.
 
         public QuestTemplate()
         {
@@ -31,33 +31,31 @@ namespace SsitEngine.QuestManager
 
         public QuestTemplate( QuestTemplate plan, Step step )
         {
-            this.steps = new List<Step>();
+            steps = new List<Step>();
             if (plan != null)
-                this.steps.AddRange(plan.steps);
+            {
+                steps.AddRange(plan.steps);
+            }
             if (step != null)
+            {
                 steps.Add(step);
+            }
         }
 
         public List<Step> Steps
         {
-            get
-            {
-                return steps;
-            }
+            get => steps;
 
-            set
-            {
-                steps = value;
-            }
+            set => steps = value;
         }
 
         public void AddStep( Step step )
         {
-            if (this.steps == null)
+            if (steps == null)
             {
-                this.steps = new List<Step>();
+                steps = new List<Step>();
             }
-            this.steps.Add(step);
+            steps.Add(step);
         }
 
         public int GetAllScore()
@@ -68,7 +66,7 @@ namespace SsitEngine.QuestManager
         public override string ToString()
         {
             var s = string.Empty;
-            for (int i = 0; i < steps.Count; i++)
+            for (var i = 0; i < steps.Count; i++)
             {
                 s += steps[i] + ", ";
             }

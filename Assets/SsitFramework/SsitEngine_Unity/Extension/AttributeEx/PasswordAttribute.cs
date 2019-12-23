@@ -1,37 +1,37 @@
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
-#endif 
+
+#endif
 public class PasswordAttribute : PropertyAttribute
 {
+    public char mask = '*';
+    public int maxLength = 2147483647;
+    public int minLength;
+    public bool useMask = true;
 
-	public char mask = '*';
-	public bool useMask = true;
-	public int minLength = 0;
-	public int maxLength = 2147483647;
+    public PasswordAttribute()
+    {
+    }
 
-	public PasswordAttribute ()
-	{
-	}
+    public PasswordAttribute( int minLength, int maxLength )
+    {
+        this.minLength = minLength;
+        this.maxLength = maxLength;
+    }
 
-	public PasswordAttribute (int minLength, int maxLength)
-	{
-		this.minLength = minLength;
-		this.maxLength = maxLength;
-	}
-	
-	public PasswordAttribute (int minLength, bool useMask)
-	{
-		this.useMask = useMask;
-		this.minLength = minLength;
-	}
-	
-	public PasswordAttribute (int minLength, int maxLength, bool useMask)
-	{
-		this.useMask = useMask;
-		this.minLength = minLength;
-		this.maxLength = maxLength;
-	}
+    public PasswordAttribute( int minLength, bool useMask )
+    {
+        this.useMask = useMask;
+        this.minLength = minLength;
+    }
+
+    public PasswordAttribute( int minLength, int maxLength, bool useMask )
+    {
+        this.useMask = useMask;
+        this.minLength = minLength;
+        this.maxLength = maxLength;
+    }
 }
 
 
@@ -39,15 +39,17 @@ public class PasswordAttribute : PropertyAttribute
 [CustomPropertyDrawer(typeof(PasswordAttribute))]
 public class PasswordDrawer : PropertyDrawer
 {
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    private PasswordAttribute passwordAttribute => (PasswordAttribute) attribute;
+
+    public override void OnGUI( Rect position, SerializedProperty property, GUIContent label )
     {
         if (!IsSupported(property))
         {
             return;
         }
 
-        string password = property.stringValue;
-        int maxLength = passwordAttribute.maxLength;
+        var password = property.stringValue;
+        var maxLength = passwordAttribute.maxLength;
         position.height = 16;
         if (property.stringValue.Length > maxLength)
         {
@@ -69,26 +71,28 @@ public class PasswordDrawer : PropertyDrawer
         }
     }
 
-    void DrawHelpBox(Rect position)
+    private void DrawHelpBox( Rect position )
     {
         position.x += 10;
         position.y += 20;
         position.width -= 10;
         position.height += 10;
-        EditorGUI.HelpBox(position, string.Format("Password must contain at least {0} characters!", passwordAttribute.minLength), MessageType.Error);
+        EditorGUI.HelpBox(position,
+            string.Format("Password must contain at least {0} characters!", passwordAttribute.minLength),
+            MessageType.Error);
     }
 
-    bool IsSupported(SerializedProperty property)
+    private bool IsSupported( SerializedProperty property )
     {
         return property.propertyType == SerializedPropertyType.String;
     }
 
-    bool IsValid(SerializedProperty property)
+    private bool IsValid( SerializedProperty property )
     {
         return property.stringValue.Length < passwordAttribute.minLength;
     }
 
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+    public override float GetPropertyHeight( SerializedProperty property, GUIContent label )
     {
         if (IsSupported(property))
         {
@@ -99,14 +103,5 @@ public class PasswordDrawer : PropertyDrawer
         }
         return base.GetPropertyHeight(property, label);
     }
-
-    PasswordAttribute passwordAttribute
-    {
-        get
-        {
-            return (PasswordAttribute)attribute;
-        }
-    }
-
 }
 #endif

@@ -105,13 +105,21 @@ namespace SsitEngine.Unity.Unity
                 _viewAll = value;
                 var keys = new List<string>();
                 foreach (DictionaryEntry de in songStatus)
+                {
                     keys.Add(de.Key.ToString());
+                }
 
                 foreach (var key in keys)
+                {
                     if (_viewAll)
+                    {
                         songStatus[key] = VIEW;
+                    }
                     else
+                    {
                         songStatus[key] = HIDE;
+                    }
+                }
             }
         }
     }

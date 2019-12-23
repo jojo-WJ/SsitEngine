@@ -1,8 +1,5 @@
-﻿using UnityEngine;
-
-namespace SsitEngine.QuestManager
+﻿namespace SsitEngine.QuestManager
 {
-
     public abstract class RewardSystem
     {
         /// <summary>
@@ -14,6 +11,6 @@ namespace SsitEngine.QuestManager
         public abstract int DetermineReward( int points, Quest quest );
 
 
-        public abstract int DetermineReward(int points, QuestNode questNode);
+        public abstract int DetermineReward( int points, QuestNode questNode );
     }
 }

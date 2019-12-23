@@ -97,11 +97,15 @@ namespace SsitEngine.Unity.WebRequest.Task
                         //        //成功
                         //        //通知服务器删除文件
                         //        //完成回调
+                    {
                         UserData.CompleteAction?.Invoke(path);
+                    }
                     //yield return LoadBundleFinish();
                     else
                         //        //失败
+                    {
                         Debug.LogError("md5 failed,资源异常，请重新下载");
+                    }
                     //        //下载数据错误
                 }
             }
@@ -111,7 +115,10 @@ namespace SsitEngine.Unity.WebRequest.Task
         private IEnumerator ValidNewVersionBundle()
         {
             var filePath = Application.persistentDataPath + "/File.txt";
-            if (!File.Exists(filePath)) yield break;
+            if (!File.Exists(filePath))
+            {
+                yield break;
+            }
 
             var strs = File.ReadAllLines(filePath);
             var ver = strs[0].Split('|')[0];
@@ -152,7 +159,9 @@ namespace SsitEngine.Unity.WebRequest.Task
                         yield break;
                     }
                     if (UserData.RequestProcessAction != null)
+                    {
                         UserData.RequestProcessAction.Invoke(m_uwr.downloadProgress);
+                    }
 
                     yield return 1;
                 }
@@ -164,7 +173,10 @@ namespace SsitEngine.Unity.WebRequest.Task
                         Done = true;
                         yield break;
                     }
-                    if (UserData.RequestProcessAction != null) UserData.RequestProcessAction.Invoke(1.0f);
+                    if (UserData.RequestProcessAction != null)
+                    {
+                        UserData.RequestProcessAction.Invoke(1.0f);
+                    }
 
                     var result = JsonUtility.FromJson<ValidBundleResult>(m_uwr.downloadHandler.text);
                     if (result == null)
@@ -175,17 +187,25 @@ namespace SsitEngine.Unity.WebRequest.Task
 
                     if (result.code == 200)
                     {
-                        if (UserData.CompleteAction != null) UserData.CompleteAction.Invoke(result);
+                        if (UserData.CompleteAction != null)
+                        {
+                            UserData.CompleteAction.Invoke(result);
+                        }
 
                         // 通知服务器下载完成
                         if (!string.IsNullOrEmpty(result.data.bundleUuid))
+                        {
                             Engine.Instance.Platform.StartPlatCoroutine(LoadBundleFinish(result.data.bundleUuid));
+                        }
                     }
                     else
                     {
                         Debug.LogError(m_uwr.downloadHandler.text);
 
-                        if (UserData.FailedAction != null) UserData.FailedAction.Invoke(result.message);
+                        if (UserData.FailedAction != null)
+                        {
+                            UserData.FailedAction.Invoke(result.message);
+                        }
 
                         //errorCallBack?.Invoke();
                     }

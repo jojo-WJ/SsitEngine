@@ -26,7 +26,10 @@ namespace SsitEngine.Unity.SsitInput
         {
             get
             {
-                if (m_cam == null) m_cam = Camera.main;
+                if (m_cam == null)
+                {
+                    m_cam = Camera.main;
+                }
                 return m_cam;
             }
         }
@@ -74,13 +77,20 @@ namespace SsitEngine.Unity.SsitInput
         public override void OnUpdate( float elapsed )
         {
             if (m_inputHandlerHelper == null)
+            {
                 return;
+            }
             m_inputHandlerHelper.Update();
 
             if (m_inputDeviceMaps == null)
+            {
                 return;
+            }
 
-            for (var i = 0; i < m_inputDeviceMaps.Length; i++) m_inputDeviceMaps[i].Update();
+            for (var i = 0; i < m_inputDeviceMaps.Length; i++)
+            {
+                m_inputDeviceMaps[i].Update();
+            }
         }
 
         /// <summary>
@@ -89,10 +99,15 @@ namespace SsitEngine.Unity.SsitInput
         public override void Shutdown()
         {
             if (isShutdown || m_inputDeviceMaps == null)
+            {
                 return;
+            }
             isShutdown = true;
 
-            for (var i = 0; i < m_inputDeviceMaps.Length; i++) m_inputDeviceMaps[i].Destroy();
+            for (var i = 0; i < m_inputDeviceMaps.Length; i++)
+            {
+                m_inputDeviceMaps[i].Destroy();
+            }
 
             m_inputDeviceMaps = null;
         }
@@ -138,9 +153,15 @@ namespace SsitEngine.Unity.SsitInput
         /// <returns></returns>
         public bool IsDeviceSet( string deviceName )
         {
-            if (m_inputDeviceMaps != null) return m_inputDeviceMaps.First(x => x.DeviceName == deviceName) != null;
+            if (m_inputDeviceMaps != null)
+            {
+                return m_inputDeviceMaps.First(x => x.DeviceName == deviceName) != null;
+            }
 
-            if (Engine.Debug) SsitDebug.Debug("当前系统无此名称的驱动");
+            if (Engine.Debug)
+            {
+                SsitDebug.Debug("当前系统无此名称的驱动");
+            }
             return false;
         }
 
@@ -152,7 +173,10 @@ namespace SsitEngine.Unity.SsitInput
         public void EnableDevice( string deviceName, bool enable )
         {
             var device = GetDeviceByName(deviceName);
-            if (device != null) device.Enable = enable;
+            if (device != null)
+            {
+                device.Enable = enable;
+            }
         }
 
         /// <summary>
@@ -163,9 +187,15 @@ namespace SsitEngine.Unity.SsitInput
         /// <returns></returns>
         public T GetDeviceByName<T>( string DeviceName ) where T : InputDeviceBase
         {
-            if (m_inputDeviceMaps != null) return m_inputDeviceMaps.First(x => x.DeviceName == DeviceName) as T;
+            if (m_inputDeviceMaps != null)
+            {
+                return m_inputDeviceMaps.First(x => x.DeviceName == DeviceName) as T;
+            }
 
-            if (Engine.Debug) SsitDebug.Debug("当前系统无此名称的驱动");
+            if (Engine.Debug)
+            {
+                SsitDebug.Debug("当前系统无此名称的驱动");
+            }
             return null;
         }
 
@@ -177,9 +207,15 @@ namespace SsitEngine.Unity.SsitInput
         /// <returns></returns>
         public InputDeviceBase GetDeviceByName( string DeviceName )
         {
-            if (m_inputDeviceMaps != null) return m_inputDeviceMaps.First(x => x.DeviceName == DeviceName);
+            if (m_inputDeviceMaps != null)
+            {
+                return m_inputDeviceMaps.First(x => x.DeviceName == DeviceName);
+            }
 
-            if (Engine.Debug) SsitDebug.Debug("当前系统无此名称的驱动");
+            if (Engine.Debug)
+            {
+                SsitDebug.Debug("当前系统无此名称的驱动");
+            }
             return null;
         }
 
@@ -195,7 +231,9 @@ namespace SsitEngine.Unity.SsitInput
         public void RegisterDeviceMsg( InputDeviceBase device, params ushort[] msgList )
         {
             for (var i = 0; i < msgList.Length; i++)
+            {
                 Facade.Instance.RegisterObservers(this, msgList[i], device.HandleNotification);
+            }
         }
 
         /// <summary>
@@ -205,7 +243,10 @@ namespace SsitEngine.Unity.SsitInput
         /// <param name="msgList"></param>
         public void UnRegisterDeviceMsg( InputDeviceBase device, params ushort[] msgList )
         {
-            for (var i = 0; i < msgList.Length; i++) Facade.Instance.RemoveObservers(this, msgList[i]);
+            for (var i = 0; i < msgList.Length; i++)
+            {
+                Facade.Instance.RemoveObservers(this, msgList[i]);
+            }
         }
 
         #endregion

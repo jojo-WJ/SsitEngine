@@ -25,7 +25,10 @@ namespace SsitEngine.Unity
             var totalSecond = (int) (time - 3600 * totalHour) % 60;
 
             var timeText = string.Format("{0:D2}:{1:D2}:{2:D2}", totalHour, totalMinute, totalSecond);
-            if (targetText != null) targetText.text = timeText;
+            if (targetText != null)
+            {
+                targetText.text = timeText;
+            }
         }
 
         /// <summary>
@@ -87,7 +90,10 @@ namespace SsitEngine.Unity
             if (canvas)
             {
                 var gGroup = canvas.GetComponent<CanvasGroup>();
-                if (gGroup) gGroup.alpha = value;
+                if (gGroup)
+                {
+                    gGroup.alpha = value;
+                }
             }
         }
 
@@ -103,7 +109,10 @@ namespace SsitEngine.Unity
             if (canvas)
             {
                 var gGroup = canvas.GetOrAddComponent<CanvasGroup>();
-                if (gGroup) gGroup.alpha = value;
+                if (gGroup)
+                {
+                    gGroup.alpha = value;
+                }
             }
         }
     }

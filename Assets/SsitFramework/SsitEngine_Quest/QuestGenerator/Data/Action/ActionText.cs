@@ -1,34 +1,29 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// Action text for a quest node state.
     /// </summary>
     [Serializable]
     public class ActionStateText
     {
-        [SerializeField]
-        private string m_dialogueText;
+        [SerializeField] private string m_alertText;
 
-        [SerializeField]
-        private string m_journalText;
+        [SerializeField] private string m_dialogueText;
 
-        [SerializeField]
-        private string m_hudText;
+        [SerializeField] private string m_hudText;
 
-        [SerializeField]
-        private string m_alertText;
+        [SerializeField] private string m_journalText;
 
         /// <summary>
         /// Shown in dialogue UI when the task created by this action is active.
         /// </summary>
         public string dialogueText
         {
-            get { return m_dialogueText; }
-            set { m_dialogueText = value; }
+            get => m_dialogueText;
+            set => m_dialogueText = value;
         }
 
         /// <summary>
@@ -36,8 +31,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string journalText
         {
-            get { return m_journalText; }
-            set { m_journalText = value; }
+            get => m_journalText;
+            set => m_journalText = value;
         }
 
         /// <summary>
@@ -45,8 +40,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string hudText
         {
-            get { return m_hudText; }
-            set { m_hudText = value; }
+            get => m_hudText;
+            set => m_hudText = value;
         }
 
         /// <summary>
@@ -54,10 +49,9 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string alertText
         {
-            get { return m_alertText; }
-            set { m_alertText = value; }
+            get => m_alertText;
+            set => m_alertText = value;
         }
-
     }
 
     /// <summary>
@@ -66,25 +60,25 @@ namespace SsitEngine.QuestManager
     [Serializable]
     public class ActionText
     {
-
-        [Tooltip("Text to use when the task is active. Optionally specify message to send when node becomes active; use ':' to separate message and parameter.")]
+        [Tooltip(
+            "Text to use when the task is active. Optionally specify message to send when node becomes active; use ':' to separate message and parameter.")]
         [SerializeField]
         private ActionStateText m_activeText = new ActionStateText();
 
-        [Tooltip("Text to use when the task is complete. Optionally specify message to send when node is completed; use ':' to separate message and parameter.")]
+        [Tooltip(
+            "Text to use when the task is complete. Optionally specify message to send when node is completed; use ':' to separate message and parameter.")]
         [SerializeField]
         private ActionStateText m_completedText = new ActionStateText();
 
-        [SerializeField]
-        private string m_successText;
+        [SerializeField] private string m_successText;
 
         /// <summary>
         /// Text to use when the task is active.
         /// </summary>
         public ActionStateText activeText
         {
-            get { return m_activeText; }
-            set { m_activeText = value; }
+            get => m_activeText;
+            set => m_activeText = value;
         }
 
         /// <summary>
@@ -92,8 +86,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public ActionStateText completedText
         {
-            get { return m_completedText; }
-            set { m_completedText = value; }
+            get => m_completedText;
+            set => m_completedText = value;
         }
 
         /// <summary>
@@ -101,10 +95,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string successText
         {
-            get { return m_successText; }
-            set { m_successText = value; }
+            get => m_successText;
+            set => m_successText = value;
         }
-
     }
-
 }

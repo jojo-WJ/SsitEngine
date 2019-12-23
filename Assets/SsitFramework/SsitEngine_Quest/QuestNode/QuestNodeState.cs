@@ -1,6 +1,5 @@
 ﻿namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// 任务节点可以处于的状态。注意任务是
     /// 总体状态由questState指定
@@ -21,7 +20,5 @@
         /// 条件满足
         /// </summary>
         True
-
     }
-
 }

@@ -22,9 +22,15 @@ namespace SsitEngine
         /// <returns>格式化后的字符串。</returns>
         public static string Format( string format, object arg0 )
         {
-            if (format == null) throw new SsitEngineException("Format is invalid.");
+            if (format == null)
+            {
+                throw new SsitEngineException("Format is invalid.");
+            }
 
-            if (s_cachedStringBuilder == null) s_cachedStringBuilder = new StringBuilder();
+            if (s_cachedStringBuilder == null)
+            {
+                s_cachedStringBuilder = new StringBuilder();
+            }
             s_cachedStringBuilder.Length = 0;
             s_cachedStringBuilder.AppendFormat(format, arg0);
             return s_cachedStringBuilder.ToString();
@@ -39,8 +45,14 @@ namespace SsitEngine
         /// <returns>格式化后的字符串。</returns>
         public static string Format( string format, object arg0, object arg1 )
         {
-            if (format == null) throw new SsitEngineException("Format is invalid.");
-            if (s_cachedStringBuilder == null) s_cachedStringBuilder = new StringBuilder();
+            if (format == null)
+            {
+                throw new SsitEngineException("Format is invalid.");
+            }
+            if (s_cachedStringBuilder == null)
+            {
+                s_cachedStringBuilder = new StringBuilder();
+            }
             s_cachedStringBuilder.Length = 0;
             s_cachedStringBuilder.AppendFormat(format, arg0, arg1);
             return s_cachedStringBuilder.ToString();
@@ -54,10 +66,19 @@ namespace SsitEngine
         /// <returns>格式化后的字符串。</returns>
         public static string Format( string format, params object[] args )
         {
-            if (format == null) throw new SsitEngineException("Format is invalid.");
+            if (format == null)
+            {
+                throw new SsitEngineException("Format is invalid.");
+            }
 
-            if (args == null) throw new SsitEngineException("Args is invalid.");
-            if (s_cachedStringBuilder == null) s_cachedStringBuilder = new StringBuilder();
+            if (args == null)
+            {
+                throw new SsitEngineException("Args is invalid.");
+            }
+            if (s_cachedStringBuilder == null)
+            {
+                s_cachedStringBuilder = new StringBuilder();
+            }
             s_cachedStringBuilder.Length = 0;
             s_cachedStringBuilder.AppendFormat(format, args);
             return s_cachedStringBuilder.ToString();
@@ -92,7 +113,10 @@ namespace SsitEngine
         /// <returns>完整名称。</returns>
         public static string GetFullName( Type type, string name )
         {
-            if (type == null) throw new SsitEngineException("Type is invalid.");
+            if (type == null)
+            {
+                throw new SsitEngineException("Type is invalid.");
+            }
 
             var typeName = type.FullName;
             return string.IsNullOrEmpty(name) ? typeName : Format("{0}.{1}", typeName, name);
@@ -105,7 +129,10 @@ namespace SsitEngine
         /// <returns>编辑器显示名称。</returns>
         public static string FieldNameForDisplay( string fieldName )
         {
-            if (string.IsNullOrEmpty(fieldName)) return string.Empty;
+            if (string.IsNullOrEmpty(fieldName))
+            {
+                return string.Empty;
+            }
 
             var str = Regex.Replace(fieldName, @"^m_", string.Empty);
             str = Regex.Replace(str, @"((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", @" $1").TrimStart();
@@ -209,7 +236,9 @@ namespace SsitEngine
         public static string ToSerializedElement( string s )
         {
             if (s.Contains(",") || s.Contains("\"") || s.Contains("\n"))
+            {
                 return s.Replace(",", CommaTag).Replace("\"", DoubleQuoteTag).Replace("\n", NewlineTag);
+            }
             return s;
         }
 
@@ -221,7 +250,9 @@ namespace SsitEngine
         public static string FromSerializedElement( string s )
         {
             if (s.Contains(CommaTag) || s.Contains(DoubleQuoteTag) || s.Contains(NewlineTag))
+            {
                 return s.Replace(CommaTag, ",").Replace(DoubleQuoteTag, "\"").Replace(NewlineTag, "\n");
+            }
             return s;
         }
 
@@ -365,9 +396,13 @@ namespace SsitEngine
 
             var showTime = "";
             if (days == 0)
+            {
                 showTime = Format("{0:D2}:{1:D2}:{2:D2}", hours, minutes, seconds);
+            }
             else
+            {
                 showTime = Format("{0:D2}:{1:D2}:{2:D2}:{3:D2}", days, hours, minutes, seconds);
+            }
 
             return showTime;
         }

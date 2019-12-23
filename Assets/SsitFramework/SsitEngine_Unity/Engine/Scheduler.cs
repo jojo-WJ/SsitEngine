@@ -352,6 +352,7 @@ namespace SsitEngine.Unity
         {
             var count = ActiveUpdateEventCount;
             for (var i = 0; i < count; ++i)
+            {
                 if (ActiveUpdateEvents[i].EndTime <= Time.time)
                 {
                     var prevCount = ActiveUpdateEventCount;
@@ -365,6 +366,7 @@ namespace SsitEngine.Unity
                         i = Mathf.Max(i - diff, 0);
                     }
                 }
+            }
         }
 
         /// <summary>
@@ -375,6 +377,7 @@ namespace SsitEngine.Unity
         {
             var count = ActiveFixedUpdateEventCount;
             for (var i = 0; i < count; ++i)
+            {
                 if (ActiveFixedUpdateEvents[i].EndTime <= Time.time)
                 {
                     var prevCount = ActiveFixedUpdateEventCount;
@@ -388,6 +391,7 @@ namespace SsitEngine.Unity
                         i = Mathf.Max(i - diff, 0);
                     }
                 }
+            }
         }
 
         /// <summary>
@@ -399,7 +403,10 @@ namespace SsitEngine.Unity
         public static ScheduledEventBase Schedule( float delay, Action action )
         {
             // Objects may be wanting to be scheduled as the game is stopping but the Scheduler has already been destroyed. Ensure the Scheduler is still valid.
-            if (Instance == null) return null;
+            if (Instance == null)
+            {
+                return null;
+            }
 
             return Instance.AddEventInternal(delay, ScheduledEventBase.InvokeLocation.Update, action);
         }
@@ -413,7 +420,10 @@ namespace SsitEngine.Unity
         public static ScheduledEventBase ScheduleFixed( float delay, Action action )
         {
             // Objects may be wanting to be scheduled as the game is stopping but the Scheduler has already been destroyed. Ensure the Scheduler is still valid.
-            if (Instance == null) return null;
+            if (Instance == null)
+            {
+                return null;
+            }
 
             return Instance.AddEventInternal(delay, ScheduledEventBase.InvokeLocation.FixedUpdate, action);
         }
@@ -429,7 +439,10 @@ namespace SsitEngine.Unity
             Action action )
         {
             // Don't add the event if the game hasn't started.
-            if (enabled == false) return null;
+            if (enabled == false)
+            {
+                return null;
+            }
 
             if (delay == 0)
             {
@@ -485,7 +498,10 @@ namespace SsitEngine.Unity
         public static ScheduledEventBase Schedule<T>( float delay, Action<T> action, T value )
         {
             // Objects may be wanting to be scheduled as the game is stopping but the Scheduler has already been destroyed. Ensure the Scheduler is still valid.
-            if (Instance == null) return null;
+            if (Instance == null)
+            {
+                return null;
+            }
 
             return Instance.AddEventInternal(delay, ScheduledEventBase.InvokeLocation.Update, action, value);
         }
@@ -500,7 +516,10 @@ namespace SsitEngine.Unity
         public static ScheduledEventBase ScheduleFixed<T>( float delay, Action<T> action, T value )
         {
             // Objects may be wanting to be scheduled as the game is stopping but the Scheduler has already been destroyed. Ensure the Scheduler is still valid.
-            if (Instance == null) return null;
+            if (Instance == null)
+            {
+                return null;
+            }
 
             return Instance.AddEventInternal(delay, ScheduledEventBase.InvokeLocation.FixedUpdate, action, value);
         }
@@ -539,7 +558,10 @@ namespace SsitEngine.Unity
         public static ScheduledEventBase Schedule<T, U>( float delay, Action<T, U> action, T value1, U value2 )
         {
             // Objects may be wanting to be scheduled as the game is stopping but the Scheduler has already been destroyed. Ensure the Scheduler is still valid.
-            if (Instance == null) return null;
+            if (Instance == null)
+            {
+                return null;
+            }
 
             return Instance.AddEventInternal(delay, ScheduledEventBase.InvokeLocation.Update, action, value1, value2);
         }
@@ -555,7 +577,10 @@ namespace SsitEngine.Unity
         public static ScheduledEventBase ScheduleFixed<T, U>( float delay, Action<T, U> action, T value1, U value2 )
         {
             // Objects may be wanting to be scheduled as the game is stopping but the Scheduler has already been destroyed. Ensure the Scheduler is still valid.
-            if (Instance == null) return null;
+            if (Instance == null)
+            {
+                return null;
+            }
 
             return Instance.AddEventInternal(delay, ScheduledEventBase.InvokeLocation.FixedUpdate, action, value1,
                 value2);
@@ -598,7 +623,10 @@ namespace SsitEngine.Unity
             V value3 )
         {
             // Objects may be wanting to be scheduled as the game is stopping but the Scheduler has already been destroyed. Ensure the Scheduler is still valid.
-            if (Instance == null) return null;
+            if (Instance == null)
+            {
+                return null;
+            }
 
             return Instance.AddEventInternal(delay, ScheduledEventBase.InvokeLocation.Update, action, value1, value2,
                 value3);
@@ -617,7 +645,10 @@ namespace SsitEngine.Unity
             U value2, V value3 )
         {
             // Objects may be wanting to be scheduled as the game is stopping but the Scheduler has already been destroyed. Ensure the Scheduler is still valid.
-            if (Instance == null) return null;
+            if (Instance == null)
+            {
+                return null;
+            }
 
             return Instance.AddEventInternal(delay, ScheduledEventBase.InvokeLocation.FixedUpdate, action, value1,
                 value2, value3);
@@ -656,7 +687,10 @@ namespace SsitEngine.Unity
         public static void Cancel( ScheduledEventBase scheduledEvent )
         {
             // Objects may be wanting to be cancelled as the game is stopping but the Scheduler has already been destroyed. Ensure the Scheduler is still valid.
-            if (s_Instance == null) return;
+            if (s_Instance == null)
+            {
+                return;
+            }
 
             Instance.CancelEventInternal(scheduledEvent);
         }
@@ -667,7 +701,10 @@ namespace SsitEngine.Unity
         /// <param name="scheduledEvent">The event to cancel.</param>
         private void CancelEventInternal( ScheduledEventBase scheduledEvent )
         {
-            if (scheduledEvent == null) return;
+            if (scheduledEvent == null)
+            {
+                return;
+            }
 
             if (scheduledEvent != null && scheduledEvent.Active)
             {
@@ -713,11 +750,15 @@ namespace SsitEngine.Unity
             // An end time of -1 indicates that the event reoccurs forever and must manually be cancelled.
             if (scheduledEvent.EndTime != -1)
                 // Remove the event from the list before the invoke to prevent the invoked method from adding a new event and changing the order.
+            {
                 RemoveActiveEvent(index, scheduledEvent.Location);
+            }
             scheduledEvent.Invoke();
             if (scheduledEvent.EndTime != -1)
                 // 回收引用
+            {
                 ReferencePool.Release((IReference) scheduledEvent);
+            }
         }
 
         /// <summary>
@@ -731,7 +772,9 @@ namespace SsitEngine.Unity
             {
                 ActiveUpdateEvents[index].Active = false;
                 for (var i = index + 1; i < ActiveUpdateEventCount; ++i)
+                {
                     ActiveUpdateEvents[i - 1] = ActiveUpdateEvents[i];
+                }
                 ActiveUpdateEventCount--;
                 ActiveUpdateEvents[ActiveUpdateEventCount] = null;
             }
@@ -739,7 +782,9 @@ namespace SsitEngine.Unity
             {
                 ActiveFixedUpdateEvents[index].Active = false;
                 for (var i = index + 1; i < ActiveFixedUpdateEventCount; ++i)
+                {
                     ActiveFixedUpdateEvents[i - 1] = ActiveFixedUpdateEvents[i];
+                }
                 ActiveFixedUpdateEventCount--;
                 ActiveFixedUpdateEvents[ActiveFixedUpdateEventCount] = null;
             }

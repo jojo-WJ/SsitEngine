@@ -51,17 +51,17 @@ namespace SsitEngine.Unity.NetSocket
         public delegate void ReceiveCallBack( bool isSuccess, ErrorSockets error, string expection, byte[] byteData,
             string strMsg );
 
+        private readonly byte[] dataBuffer; //1kb
+
+        private readonly SocketBuffer receiveBuffer;
+
 
         private Socket clientSocket;
-
-        private readonly byte[] dataBuffer; //1kb
 
         private NormalNetCallBack m_callBackConnect;
         private NormalNetCallBack m_callBackDisConnect;
         private ReceiveCallBack m_callBackReceive;
         private NormalNetCallBack m_callBackSend;
-
-        private readonly SocketBuffer receiveBuffer;
 
 
         public NetSocket()
@@ -93,7 +93,10 @@ namespace SsitEngine.Unity.NetSocket
                 var address = IPAddress.Parse(ip);
                 var point = new IPEndPoint(address, port);
                 var connectAr = clientSocket.BeginConnect(point, ConnectCallBack, clientSocket);
-                if (!WriteDot(connectAr)) connectBack(false, ErrorSockets.ConnectTimeOut, "连接超时");
+                if (!WriteDot(connectAr))
+                {
+                    connectBack(false, ErrorSockets.ConnectTimeOut, "连接超时");
+                }
             }
         }
 
@@ -146,7 +149,9 @@ namespace SsitEngine.Unity.NetSocket
                 var length = clientSocket.EndReceive(ar);
                 if (length == 0)
                     //Debug.LogError(" RecceiveCallBack   数据长度为0");
+                {
                     return;
+                }
                 receiveBuffer.RecevByte(dataBuffer, length);
             }
             catch (Exception e)
@@ -160,7 +165,9 @@ namespace SsitEngine.Unity.NetSocket
         public void AsyncSend( byte[] data )
         {
             if (data == null || data.Length == 0 || clientSocket == null)
+            {
                 m_callBackSend(false, ErrorSockets.SendError, "error");
+            }
             if (clientSocket.Connected != true)
             {
                 m_callBackSend(false, ErrorSockets.SendError, "未连接");
@@ -171,7 +178,10 @@ namespace SsitEngine.Unity.NetSocket
 
 
                 // Debug.Log(" send.Length==" + data.Length);
-                if (!WriteDot(send)) m_callBackSend(false, ErrorSockets.SendTimeOut, "发送超时");
+                if (!WriteDot(send))
+                {
+                    m_callBackSend(false, ErrorSockets.SendTimeOut, "发送超时");
+                }
             }
         }
 
@@ -181,9 +191,13 @@ namespace SsitEngine.Unity.NetSocket
             {
                 var byteSend = clientSocket.EndSend(ar);
                 if (byteSend > 0)
+                {
                     m_callBackSend(true, ErrorSockets.Success, "发送成功");
+                }
                 else
+                {
                     m_callBackSend(false, ErrorSockets.SendZeroByte, "发送异常");
+                }
             }
             catch (Exception e)
             {
@@ -207,7 +221,10 @@ namespace SsitEngine.Unity.NetSocket
                 else
                 {
                     var dis = clientSocket.BeginDisconnect(false, DisConnectCallBack, clientSocket);
-                    if (!WriteDot(dis)) m_callBackDisConnect(false, ErrorSockets.DisConnectionTimeOut, "超时");
+                    if (!WriteDot(dis))
+                    {
+                        m_callBackDisConnect(false, ErrorSockets.DisConnectionTimeOut, "超时");
+                    }
                 }
             }
             catch (Exception e)
@@ -247,7 +264,10 @@ namespace SsitEngine.Unity.NetSocket
             while (ar.IsCompleted == false)
             {
                 i++;
-                if (i > 30) return false;
+                if (i > 30)
+                {
+                    return false;
+                }
                 Thread.Sleep(100);
             }
 
@@ -261,7 +281,10 @@ namespace SsitEngine.Unity.NetSocket
 
         public bool isConnect()
         {
-            if (clientSocket != null) return clientSocket.Connected;
+            if (clientSocket != null)
+            {
+                return clientSocket.Connected;
+            }
             return false;
         }
 

@@ -6,8 +6,9 @@
 *│　创建时间：2019/4/1 12:00:33                     
 *└──────────────────────────────────────────────────────────────┘
 */
-using UnityEngine;
+
 using System;
+using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
@@ -20,10 +21,12 @@ namespace SsitEngine.QuestManager
         /// 空
         /// </summary>
         None,
+
         /// <summary>
         /// 整型
         /// </summary>
         Int,
+
         /// <summary>
         /// 字符串
         /// </summary>
@@ -36,25 +39,45 @@ namespace SsitEngine.QuestManager
     [Serializable]
     public class MessageValue
     {
-        [Tooltip("Type of optional value to pass with message.")]
-        [SerializeField]
-        private MessageValueType m_valueType = MessageValueType.None;
-
-        [Tooltip("Optional int value to pass with message.")]
-        [SerializeField]
+        [Tooltip("Optional int value to pass with message.")] [SerializeField]
         private int m_intValue;
 
-        [Tooltip("Optional string value to pass with message.")]
-        [SerializeField]
+        [Tooltip("Optional string value to pass with message.")] [SerializeField]
         private string m_stringValue;
+
+        [Tooltip("Type of optional value to pass with message.")] [SerializeField]
+        private MessageValueType m_valueType = MessageValueType.None;
+
+        public MessageValue()
+        {
+        }
+
+        public MessageValue( int i )
+        {
+            m_valueType = MessageValueType.Int;
+            m_intValue = i;
+        }
+
+        public MessageValue( string s )
+        {
+            m_valueType = MessageValueType.String;
+            m_stringValue = s;
+        }
 
         /// <summary>
         /// Type of optional value to pass with message (int or string).
         /// </summary>
         public MessageValueType ValueType
         {
-            get { return m_valueType; }
-            set { m_valueType = value; if (value != MessageValueType.String) m_stringValue = null; }
+            get => m_valueType;
+            set
+            {
+                m_valueType = value;
+                if (value != MessageValueType.String)
+                {
+                    m_stringValue = null;
+                }
+            }
         }
 
         /// <summary>
@@ -62,8 +85,13 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public int IntValue
         {
-            get { return m_intValue; }
-            set { ValueType = MessageValueType.Int; m_intValue = value; m_stringValue = null; }
+            get => m_intValue;
+            set
+            {
+                ValueType = MessageValueType.Int;
+                m_intValue = value;
+                m_stringValue = null;
+            }
         }
 
         /// <summary>
@@ -71,24 +99,12 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string StringValue
         {
-            get { return m_stringValue; }
-            set { ValueType = MessageValueType.String; m_stringValue = value; }
-        }
-
-        public MessageValue()
-        {
-        }
-
-        public MessageValue(int i)
-        {
-            m_valueType = MessageValueType.Int;
-            m_intValue = i;
-        }
-
-        public MessageValue(string s)
-        {
-            m_valueType = MessageValueType.String;
-            m_stringValue = s;
+            get => m_stringValue;
+            set
+            {
+                ValueType = MessageValueType.String;
+                m_stringValue = value;
+            }
         }
 
         public override string ToString()
@@ -116,7 +132,5 @@ namespace SsitEngine.QuestManager
                     return string.Empty;
             }
         }
-
     }
-
 }

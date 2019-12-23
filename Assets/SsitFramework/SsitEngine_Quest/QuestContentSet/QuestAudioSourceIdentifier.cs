@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
@@ -31,8 +31,7 @@ namespace SsitEngine.QuestManager
         /// <summary>
         /// Use the soundManager's audio clip
         /// </summary>
-        SoundManager,
-
+        SoundManager
     }
 
     /// <summary>
@@ -41,22 +40,19 @@ namespace SsitEngine.QuestManager
     [Serializable]
     public class QuestAudioSourceIdentifier
     {
-
-        [Tooltip( "How to identify the audio source." )]
-        [SerializeField]
-        private QuestAudioSourceIdentifierType m_type = QuestAudioSourceIdentifierType.MainCamera;
-
-        [Tooltip( "Tag or GameObject name." )]
-        [SerializeField]
+        [Tooltip("Tag or GameObject name.")] [SerializeField]
         private string m_id = string.Empty;
+
+        [Tooltip("How to identify the audio source.")] [SerializeField]
+        private QuestAudioSourceIdentifierType m_type = QuestAudioSourceIdentifierType.MainCamera;
 
         /// <summary>
         /// How to identify the audio source.
         /// </summary>
         public QuestAudioSourceIdentifierType type
         {
-            get { return m_type; }
-            set { m_type = value; }
+            get => m_type;
+            set => m_type = value;
         }
 
         /// <summary>
@@ -64,8 +60,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string id
         {
-            get { return m_id; }
-            set { m_id = value; }
+            get => m_id;
+            set => m_id = value;
         }
 
         /// <summary>
@@ -75,13 +71,19 @@ namespace SsitEngine.QuestManager
         public void Play( AudioClip audioClip )
         {
             var audioSource = FindAudioSource();
-            if (audioSource != null) audioSource.PlayOneShot( audioClip );
+            if (audioSource != null)
+            {
+                audioSource.PlayOneShot(audioClip);
+            }
         }
 
         private AudioSource FindAudioSource()
         {
             var go = FindAudioSourceGameObject();
-            if (go == null) return null;
+            if (go == null)
+            {
+                return null;
+            }
             var audioSource = go.GetComponent<AudioSource>();
             if (audioSource == null)
             {
@@ -98,18 +100,17 @@ namespace SsitEngine.QuestManager
             {
                 default:
                 case QuestAudioSourceIdentifierType.MainCamera:
-                    return (Camera.main != null) ? Camera.main.gameObject : null;
+                    return Camera.main != null ? Camera.main.gameObject : null;
                 case QuestAudioSourceIdentifierType.QuestMachine:
-                    return (QuestManager.Instance != null) ? QuestManager.Instance.gameObject : null;
+                    return QuestManager.Instance != null ? QuestManager.Instance.gameObject : null;
                 case QuestAudioSourceIdentifierType.GameObjectWithTag:
-                    return GameObject.FindGameObjectWithTag( id );
+                    return GameObject.FindGameObjectWithTag(id);
                 case QuestAudioSourceIdentifierType.GameObjectWithName:
-                    return GameObject.Find( id );
+                    return GameObject.Find(id);
                 case QuestAudioSourceIdentifierType.SoundManager:
                     //todo:完成音效管理器的接入
                     return null;
             }
         }
     }
-
 }

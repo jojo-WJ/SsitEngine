@@ -51,7 +51,10 @@ namespace SsitEngine.Unity.WebRequest.Task
                     !string.IsNullOrEmpty(m_uwr.GetResponseHeader("errmsg")))
                 {
                     var msg = m_uwr.error;
-                    if (string.IsNullOrEmpty(msg)) msg = m_uwr.GetResponseHeader("errmsg");
+                    if (string.IsNullOrEmpty(msg))
+                    {
+                        msg = m_uwr.GetResponseHeader("errmsg");
+                    }
 
                     UserData?.FailedAction?.Invoke(msg);
                     Done = true;
@@ -90,9 +93,13 @@ namespace SsitEngine.Unity.WebRequest.Task
                     var str = FileUtils.CreateFile(path, m_uwr.downloadHandler.data, m_uwr.downloadHandler.data.Length,
                         Application.persistentDataPath);
                     if (string.IsNullOrEmpty(str))
+                    {
                         UserData.FailedAction?.Invoke("本地文件存储失败：" + Application.persistentDataPath + "/" + path);
+                    }
                     else
+                    {
                         UserData.CompleteAction?.Invoke(str);
+                    }
                 }
 
                 Done = true;
@@ -124,11 +131,13 @@ namespace SsitEngine.Unity.WebRequest.Task
                     yield break;
                 }
                 if (UserData.RequestProcessAction != null)
+                {
                     while (!m_uwr.isDone)
                     {
                         UserData.RequestProcessAction.Invoke(m_uwr.uploadProgress);
                         yield return 1;
                     }
+                }
 
                 if (m_uwr.isDone)
                 {

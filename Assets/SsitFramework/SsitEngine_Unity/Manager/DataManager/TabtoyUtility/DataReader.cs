@@ -49,7 +49,10 @@ namespace Tabtoy
 
         private void ConsumeData( int size )
         {
-            if (!IsDataEnough(size)) throw new Exception("Out of struct bound");
+            if (!IsDataEnough(size))
+            {
+                throw new Exception("Out of struct bound");
+            }
         }
 
         private bool IsDataEnough( int size )
@@ -60,17 +63,26 @@ namespace Tabtoy
         public bool ReadHeader()
         {
             var tag = ReadString();
-            if (tag != "TABTOY") return false;
+            if (tag != "TABTOY")
+            {
+                return false;
+            }
 
             var ver = ReadInt32();
-            if (ver != CombineFileVersion) return false;
+            if (ver != CombineFileVersion)
+            {
+                return false;
+            }
 
             return true;
         }
 
         public int ReadTag()
         {
-            if (IsDataEnough(sizeof(int))) return ReadInt32();
+            if (IsDataEnough(sizeof(int)))
+            {
+                return ReadInt32();
+            }
 
             return -1;
         }

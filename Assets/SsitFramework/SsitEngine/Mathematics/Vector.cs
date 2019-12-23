@@ -127,7 +127,9 @@ namespace SsitEngine.Mathematics
         public static bool operator ==( Vector lhs, Vector rhs )
         {
             if (lhs.x == rhs.x)
+            {
                 return lhs.y == rhs.y;
+            }
             return false;
         }
 

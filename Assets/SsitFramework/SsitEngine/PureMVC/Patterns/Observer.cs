@@ -77,7 +77,9 @@ namespace SsitEngine.PureMVC.Patterns
             lock (m_syncRoot)
             {
                 if (obj is IObserver observer)
+                {
                     return NotifyContext.Equals(observer.NotifyContext) && NotifyMethod.Equals(observer.NotifyMethod);
+                }
                 return NotifyContext.Equals(obj);
             }
         }

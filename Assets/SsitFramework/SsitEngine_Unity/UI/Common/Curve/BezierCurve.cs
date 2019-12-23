@@ -24,7 +24,9 @@ namespace SsitEngine.Unity.UI.Common.Curve
             {
                 var num = 0.0f;
                 for (var key = 0.0f; key < (double) MaxKey; key += 0.05f)
+                {
                     num += Vector3.Distance(GetPointAt(key), GetPointAt(key + 0.05f));
+                }
                 return num;
             }
         }

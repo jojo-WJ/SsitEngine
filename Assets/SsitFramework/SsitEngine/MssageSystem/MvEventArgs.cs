@@ -172,7 +172,9 @@ namespace SsitEngine
             m_msgId = 0;
             if (Body is BaseEventArgs)
                 // 回收引用
+            {
                 ReferencePool.Release((IReference) Body);
+            }
             Body = null;
             Values = null;
         }

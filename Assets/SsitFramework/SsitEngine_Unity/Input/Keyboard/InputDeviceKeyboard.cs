@@ -38,7 +38,9 @@ namespace SsitEngine.Unity.SsitInput
         public InputDeviceKeyboard( IInputHandlerHelper inputHandlerHelper ) : base(inputHandlerHelper)
         {
             if (IsDeviceSupport)
+            {
                 InitKeyCodeListener();
+            }
         }
 
         /// <summary>
@@ -70,16 +72,31 @@ namespace SsitEngine.Unity.SsitInput
         /// </summary>
         public override void Update()
         {
-            if (m_keyCodeListenerList.Count == 0) return;
+            if (m_keyCodeListenerList.Count == 0)
+            {
+                return;
+            }
 
             var key = KeyCode.None;
 
             var moveDirection = Vector3.zero;
 
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) moveDirection += Vector3.left;
-            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) moveDirection += Vector3.right;
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) moveDirection += Vector3.back;
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) moveDirection += Vector3.forward;
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+            {
+                moveDirection += Vector3.left;
+            }
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+            {
+                moveDirection += Vector3.right;
+            }
+            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+            {
+                moveDirection += Vector3.back;
+            }
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+            {
+                moveDirection += Vector3.forward;
+            }
             if (Input.GetKey(KeyCode.Q))
             {
                 moveDirection += Vector3.down;
@@ -96,11 +113,15 @@ namespace SsitEngine.Unity.SsitInput
             if (!Mathf.Approximately(moveDirection.sqrMagnitude, 0))
             {
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                {
                     moveDirection *= config.movAttachSpeed;
+                }
 
                 inputHandlerHelper.MoveCamera(Vector3.zero, moveDirection);
                 if (OnKeyCodeDetected != null)
+                {
                     OnKeyCodeDetected(this, new KeyCodeEventArgs(key, Vector2.zero, moveDirection));
+                }
             }
         }
 

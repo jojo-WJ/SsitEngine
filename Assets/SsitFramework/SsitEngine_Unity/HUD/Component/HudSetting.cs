@@ -22,7 +22,9 @@ namespace SsitEngine.Unity.HUD
         public void CopySettings( HudElement element )
         {
             if (element == null)
+            {
                 return;
+            }
 
             // misc
             Prefabs = element.Prefabs;

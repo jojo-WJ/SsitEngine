@@ -24,7 +24,10 @@ namespace SsitEngine.Core
         {
             Data = default;
 
-            if (Data == null) Data = new T();
+            if (Data == null)
+            {
+                Data = new T();
+            }
             IsUsing = false;
         }
 
@@ -69,7 +72,10 @@ namespace SsitEngine.Core
         {
             get
             {
-                if (instance == null) instance = new Pool<T>();
+                if (instance == null)
+                {
+                    instance = new Pool<T>();
+                }
 
                 return instance;
             }
@@ -156,7 +162,10 @@ namespace SsitEngine.Core
         /// </summary>
         public void Destroy()
         {
-            if (objectManager != null) objectManager.Clear();
+            if (objectManager != null)
+            {
+                objectManager.Clear();
+            }
 
             objectManager = null;
             loadFunc0 = null;
@@ -180,16 +189,22 @@ namespace SsitEngine.Core
         public T GetFreeObject()
         {
             for (var i = 0; i < objectManager.Count; i++)
+            {
                 if (!objectManager[i].IsUsing)
                 {
                     objectManager[i].IsUsing = true;
                     return objectManager[i].Data;
                 }
+            }
             PoolDataBase<T> tmpData = null;
             if (loadFunc0 != null)
+            {
                 tmpData = new PoolDataBase<T>(loadFunc0());
+            }
             else
+            {
                 tmpData = new PoolDataBase<T>();
+            }
 
             tmpData.IsUsing = true;
             objectManager.Add(tmpData);
@@ -206,6 +221,7 @@ namespace SsitEngine.Core
         public T GetFreeObject( int id )
         {
             for (var i = 0; i < objectManager.Count; i++)
+            {
                 if (!objectManager[i].IsUsing)
                 {
                     var isRet = !(condition != null && !condition(id, objectManager[i].Data));
@@ -215,8 +231,12 @@ namespace SsitEngine.Core
                         return objectManager[i].Data;
                     }
                 }
+            }
             var data = loadFunc1(id);
-            if (data == null) SsitDebug.Error("回调为空");
+            if (data == null)
+            {
+                SsitDebug.Error("回调为空");
+            }
             var tmpData = new PoolDataBase<T>(data);
 
             tmpData.IsUsing = true;
@@ -233,11 +253,13 @@ namespace SsitEngine.Core
         public virtual void ReleaseObject( T data )
         {
             for (var i = 0; i < objectManager.Count; i++)
+            {
                 if (data.Equals(objectManager[i].Data))
                 {
                     objectManager[i].IsUsing = false;
                     break;
                 }
+            }
             ClearPool();
         }
 
@@ -249,16 +271,24 @@ namespace SsitEngine.Core
             ushort tmpCount = 0;
             var clearList = new List<PoolDataBase<T>>();
             for (var i = 0; i < objectManager.Count; i++)
+            {
                 if (!objectManager[i].IsUsing)
                 {
                     tmpCount++;
-                    if (tmpCount > sameExistCount) clearList.Add(objectManager[i]);
+                    if (tmpCount > sameExistCount)
+                    {
+                        clearList.Add(objectManager[i]);
+                    }
                 }
+            }
 
             for (var i = 0; i < clearList.Count; i++)
             {
                 objectManager.Remove(clearList[i]);
-                if (OnDestoryAction != null) OnDestoryAction(objectManager[i].Data);
+                if (OnDestoryAction != null)
+                {
+                    OnDestoryAction(objectManager[i].Data);
+                }
             }
         }
     }

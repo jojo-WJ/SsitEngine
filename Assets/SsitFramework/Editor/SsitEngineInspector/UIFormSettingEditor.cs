@@ -7,9 +7,9 @@
 *└──────────────────────────────────────────────────────────────┘
 */
 
-using SsitEngine.Unity.UI;
 using System.Collections.Generic;
 using System.IO;
+using SsitEngine.Unity.UI;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,19 +18,13 @@ namespace SsitEngine.Editor.SsitEngineInspector
     [CustomEditor(typeof(UIFormSettings), true)]
     public class UIFormSettingsEditor : UnityEditor.Editor
     {
-        protected UIFormSettings Target
-        {
-            get
-            {
-                return target as UIFormSettings;
-            }
-        }
+        protected UIFormSettings Target => target as UIFormSettings;
 
         [MenuItem("Tools/UI Form Settings &F")]
         protected static void FocusSettings()
         {
-            string str = string.Format("Assets/Resources/{0}.asset", "UI/Settings/UIFormSettings");
-            UIFormSettings uiFormSettings = AssetDatabase.LoadAssetAtPath(str, typeof(UIFormSettings)) as UIFormSettings;
+            var str = string.Format("Assets/Resources/{0}.asset", "UI/Settings/UIFormSettings");
+            var uiFormSettings = AssetDatabase.LoadAssetAtPath(str, typeof(UIFormSettings)) as UIFormSettings;
             if (uiFormSettings == null)
             {
                 RequireDirectory($"{Application.dataPath}/Resources/UI/Settings/UIFormSettings.asset");
@@ -42,24 +36,28 @@ namespace SsitEngine.Editor.SsitEngineInspector
 
         private static void RequireDirectory( string path )
         {
-            string directoryName = Path.GetDirectoryName(path);
+            var directoryName = Path.GetDirectoryName(path);
             if (Directory.Exists(directoryName))
+            {
                 return;
+            }
             Directory.CreateDirectory(directoryName);
         }
 
         protected bool CheckRepeated<T>( ICollection<T> collections )
         {
-            HashSet<T> objSet = new HashSet<T>(collections);
+            var objSet = new HashSet<T>(collections);
             return collections.Count != objSet.Count;
         }
 
         protected bool CheckNullOrEmpty( IEnumerable<string> enums )
         {
-            foreach (string str in enums)
+            foreach (var str in enums)
             {
                 if (string.IsNullOrEmpty(str))
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -76,9 +74,13 @@ namespace SsitEngine.Editor.SsitEngineInspector
         {
             base.OnInspectorGUI();
             if (Target.layers.Count == 0)
+            {
                 return;
+            }
             if (CheckNullOrEmpty(Target.layers))
+            {
                 EditorGUILayout.HelpBox("The elements in the Layers can not be empty.", MessageType.Error, true);
+            }
             else if (CheckRepeated(Target.layers))
             {
                 EditorGUILayout.HelpBox("The elements in the Layers can not be repeated.", MessageType.Error, true);
@@ -86,7 +88,9 @@ namespace SsitEngine.Editor.SsitEngineInspector
             else
             {
                 if (!GUILayout.Button("Create Folder For Prefab dont attempt"))
+                {
                     return;
+                }
                 CreateFolderForPrefab(Target.layers);
                 AssetDatabase.Refresh();
             }

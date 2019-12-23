@@ -96,9 +96,15 @@ namespace SsitEngine.Core.TaskPool
         /// </summary>
         public void Shutdown()
         {
-            while (FreeAgentCount > 0) m_FreeAgents.Pop().Shutdown();
+            while (FreeAgentCount > 0)
+            {
+                m_FreeAgents.Pop().Shutdown();
+            }
 
-            foreach (var workingAgent in m_WorkingAgents) workingAgent.Shutdown();
+            foreach (var workingAgent in m_WorkingAgents)
+            {
+                workingAgent.Shutdown();
+            }
             m_WorkingAgents.Clear();
 
             m_WaitingTasks.Clear();
@@ -110,7 +116,10 @@ namespace SsitEngine.Core.TaskPool
         /// <param name="agent">要增加的任务代理。</param>
         public void AddAgent( ITaskAgent<T> agent )
         {
-            if (agent == null) throw new SsitEngineException("Task agent is invalid.");
+            if (agent == null)
+            {
+                throw new SsitEngineException("Task agent is invalid.");
+            }
 
             agent.Initialize();
             m_FreeAgents.Push(agent);
@@ -122,7 +131,10 @@ namespace SsitEngine.Core.TaskPool
         /// <param name="agent">要增加的任务代理。</param>
         public void AddWorkAgent( ITaskAgent<T> agent, T task, float realElapseSeconds )
         {
-            if (agent == null) throw new SsitEngineException("Task agent is invalid.");
+            if (agent == null)
+            {
+                throw new SsitEngineException("Task agent is invalid.");
+            }
 
             agent.Initialize();
             agent.Start(task, realElapseSeconds);
@@ -138,15 +150,22 @@ namespace SsitEngine.Core.TaskPool
             var current = m_WaitingTasks.First;
             while (current != null)
             {
-                if (task.Priority > current.Value.Priority) break;
+                if (task.Priority > current.Value.Priority)
+                {
+                    break;
+                }
 
                 current = current.Next;
             }
 
             if (current != null)
+            {
                 m_WaitingTasks.AddBefore(current, task);
+            }
             else
+            {
                 m_WaitingTasks.AddLast(task);
+            }
         }
 
         /// <summary>
@@ -157,14 +176,17 @@ namespace SsitEngine.Core.TaskPool
         public T RemoveTask( ulong serialId )
         {
             foreach (var waitingTask in m_WaitingTasks)
+            {
                 if (waitingTask.Id == serialId)
                 {
                     m_WaitingTasks.Remove(waitingTask);
                     waitingTask.Shutdown();
                     return waitingTask;
                 }
+            }
 
             foreach (var workingAgent in m_WorkingAgents)
+            {
                 if (workingAgent.Task.Id == serialId)
                 {
                     workingAgent.Reset();
@@ -172,6 +194,7 @@ namespace SsitEngine.Core.TaskPool
                     m_WorkingAgents.Remove(workingAgent);
                     return workingAgent.Task;
                 }
+            }
 
             return default;
         }
@@ -184,14 +207,17 @@ namespace SsitEngine.Core.TaskPool
         public bool RemoveTask( ITask task )
         {
             foreach (var waitingTask in m_WaitingTasks)
+            {
                 if (waitingTask.Id == task.Id)
                 {
                     m_WaitingTasks.Remove(waitingTask);
                     waitingTask.Shutdown();
                     return m_WaitingTasks.Remove(waitingTask);
                 }
+            }
 
             foreach (var workingAgent in m_WorkingAgents)
+            {
                 if (workingAgent.Task.Id == task.Id)
                 {
                     workingAgent.Reset();
@@ -199,6 +225,7 @@ namespace SsitEngine.Core.TaskPool
                     m_WorkingAgents.Remove(workingAgent);
                     return true;
                 }
+            }
 
             return false;
         }

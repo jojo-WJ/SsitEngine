@@ -31,7 +31,10 @@ namespace SsitEngine.Unity
 
         public static string GetPathWithoutFileExtension( string filePath )
         {
-            if (string.IsNullOrEmpty(filePath) || filePath.LastIndexOf('.') < 0) return filePath;
+            if (string.IsNullOrEmpty(filePath) || filePath.LastIndexOf('.') < 0)
+            {
+                return filePath;
+            }
 
             return filePath.Substring(0, filePath.LastIndexOf('.'));
         }
@@ -40,7 +43,10 @@ namespace SsitEngine.Unity
         {
             filePath = FixedPath(filePath);
 
-            if (string.IsNullOrEmpty(filePath) || filePath.LastIndexOf('/') < 0) return filePath;
+            if (string.IsNullOrEmpty(filePath) || filePath.LastIndexOf('/') < 0)
+            {
+                return filePath;
+            }
 
             return filePath.Substring(0, filePath.LastIndexOf('/'));
         }

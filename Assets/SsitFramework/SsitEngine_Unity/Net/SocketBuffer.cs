@@ -7,15 +7,15 @@
     {
         public delegate void CallBackReceiveOver( byte[] allData );
 
+        private readonly byte[] headBytes;
+
+        private readonly CallBackReceiveOver m_callBackReceiveOver;
+
         private int allDataLengh = -1; //这类数据总长度
         private byte[] allRecData; //数据拼接用
 
         private int curRecLength; //当前接收长度
-
-        private readonly byte[] headBytes;
         private byte headLength = 4;
-
-        private readonly CallBackReceiveOver m_callBackReceiveOver;
 
         public SocketBuffer( byte headLength, CallBackReceiveOver receiveOver )
         {
@@ -27,7 +27,9 @@
         public void RecevByte( byte[] recByte, int reallength )
         {
             if (reallength == 0)
+            {
                 return;
+            }
             if (curRecLength < headBytes.Length)
             {
                 RecvHead(recByte, reallength);
@@ -36,11 +38,17 @@
             {
                 var tmpLength = curRecLength + reallength;
                 if (tmpLength == allDataLengh)
+                {
                     RecvOneAll(recByte, reallength);
+                }
                 else if (tmpLength > allDataLengh) //接收到的比要接的大
+                {
                     RecvLarger(recByte, reallength);
+                }
                 else //实际接收到的　比要的小
+                {
                     RecvSmall(recByte, reallength);
+                }
             }
         }
 
@@ -141,7 +149,10 @@
         {
             var tmpLength = allDataLengh - curRecLength;
             //Debug.Log(" =====tmpLength == " + tmpLength);
-            if (tmpLength == 0) return;
+            if (tmpLength == 0)
+            {
+                return;
+            }
 
             FileUtils.MemCpy(allRecData, recvByte, curRecLength, tmpLength);
             curRecLength += tmpLength;
@@ -179,7 +190,10 @@
         {
             // Debug.Log("RecvOneMsgOver over");
 
-            if (m_callBackReceiveOver != null) m_callBackReceiveOver(GetOneMsg());
+            if (m_callBackReceiveOver != null)
+            {
+                m_callBackReceiveOver(GetOneMsg());
+            }
             curRecLength = 0;
             allDataLengh = 0;
             allRecData = null;

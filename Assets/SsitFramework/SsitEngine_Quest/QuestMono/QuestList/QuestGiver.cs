@@ -1,31 +1,29 @@
-﻿using SsitEngine.DebugLog;
+﻿using System.Collections.Generic;
+using SsitEngine.DebugLog;
 using SsitEngine.Unity;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// A GameObject that can offer quests. 
     /// </summary>
     public class QuestGiver : IdentifiableQuestListContainer
     {
-
         #region Serialized Fields
 
-
-        [Tooltip("What to show in dialogue when quest giver only has completed quests.")]
-        [SerializeField]
+        [Tooltip("What to show in dialogue when quest giver only has completed quests.")] [SerializeField]
         private CompletedQuestDialogueMode m_completedQuestDialogueMode = CompletedQuestDialogueMode.SameAsGlobal;
 
-        [Tooltip("The quest dialogue UI to use when conversing with the player. If unassigned, uses the default dialogue UI.")]
+        [Tooltip(
+            "The quest dialogue UI to use when conversing with the player. If unassigned, uses the default dialogue UI.")]
         [SerializeField]
-        private UnityEngine.Object m_questDialogueUI;
+        private Object m_questDialogueUI;
 
-        [Tooltip("Frequency in seconds at which to check quest cooldowns in case a quest becomes offerable again and should update the indicator UI. Set to zero to bypass checking.")]
+        [Tooltip(
+            "Frequency in seconds at which to check quest cooldowns in case a quest becomes offerable again and should update the indicator UI. Set to zero to bypass checking.")]
         [SerializeField]
-        private float m_cooldownCheckFrequency = 0;
+        private float m_cooldownCheckFrequency;
 
         #endregion
 
@@ -52,10 +50,7 @@ namespace SsitEngine.QuestManager
                         return m_completedQuestDialogueMode;
                 }
             }
-            set
-            {
-                m_completedQuestDialogueMode = value;
-            }
+            set => m_completedQuestDialogueMode = value;
         }
 
 
@@ -64,13 +59,20 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public float CooldownCheckFrequency
         {
-            get { return m_cooldownCheckFrequency; }
-            set { m_cooldownCheckFrequency = value; if (Application.isPlaying) RestartCooldownCheckInvokeRepeating(); }
+            get => m_cooldownCheckFrequency;
+            set
+            {
+                m_cooldownCheckFrequency = value;
+                if (Application.isPlaying)
+                {
+                    RestartCooldownCheckInvokeRepeating();
+                }
+            }
         }
 
         public static string GetDisplayName( QuestGiver questGiver )
         {
-            return (questGiver != null) ? questGiver.displayName : string.Empty;
+            return questGiver != null ? questGiver.displayName : string.Empty;
         }
 
         #endregion
@@ -81,13 +83,15 @@ namespace SsitEngine.QuestManager
         protected List<Quest> NonOfferableQuests { get; set; }
         protected List<Quest> OfferableQuests { get; set; }
         protected List<Quest> ActiveQuests { get; set; }
+
         protected List<Quest> CompletedQuests { get; set; }
+
         //protected QuestEntity QuestEntity { get; set; }
         protected GameObject Player { get; set; }
         protected QuestParticipantTextInfo PlayerTextInfo { get; set; }
         protected QuestListContainer PlayerQuestListContainer { get; set; }
 
-        private QuestParticipantTextInfo m_myQuestGiverTextinfo = null;
+        private QuestParticipantTextInfo m_myQuestGiverTextinfo;
 
         protected QuestParticipantTextInfo myQuestGiverTextInfo
         {
@@ -116,7 +120,9 @@ namespace SsitEngine.QuestManager
         {
             base.OnEnable();
             if (CooldownCheckFrequency > 0)
+            {
                 InvokeRepeating("UpdateCooldowns", CooldownCheckFrequency, CooldownCheckFrequency);
+            }
         }
 
         public override void OnDisable()
@@ -129,16 +135,20 @@ namespace SsitEngine.QuestManager
         {
             CancelInvoke("UpdateCooldowns");
             if (CooldownCheckFrequency > 0)
+            {
                 InvokeRepeating("UpdateCooldowns", CooldownCheckFrequency, CooldownCheckFrequency);
+            }
         }
 
         private void UpdateCooldowns()
         {
-            for (int i = 0; i < questList.Count; i++)
+            for (var i = 0; i < questList.Count; i++)
             {
                 var quest = questList[i];
                 if (quest != null && quest.GetState() == QuestState.WaitingToStart)
+                {
                     quest.UpdateCooldown();
+                }
             }
         }
 
@@ -199,7 +209,6 @@ namespace SsitEngine.QuestManager
                 quest.ClearQuestIndicatorStates();
                 base.DeleteQuest(questID);
             }
-
         }
 
         /// <summary>
@@ -207,8 +216,11 @@ namespace SsitEngine.QuestManager
         /// </summary>
         protected void DeleteUnavailableQuests()
         {
-            if (questList == null || questList.Count == 0) return;
-            for (int i = questList.Count - 1; i >= 0; i--)
+            if (questList == null || questList.Count == 0)
+            {
+                return;
+            }
+            for (var i = questList.Count - 1; i >= 0; i--)
             {
                 var quest = questList[i];
                 if (quest != null && quest.TimesAccepted >= quest.MaxTimes)
@@ -220,10 +232,13 @@ namespace SsitEngine.QuestManager
 
         protected void AssignGiverIDToQuests()
         {
-            for (int i = 0; i < questList.Count; i++)
+            for (var i = 0; i < questList.Count; i++)
             {
                 var quest = questList[i];
-                if (quest == null) continue;
+                if (quest == null)
+                {
+                    continue;
+                }
                 quest.AssignQuestGiver(myQuestGiverTextInfo);
             }
         }
@@ -234,11 +249,15 @@ namespace SsitEngine.QuestManager
         /// <param name="quest"></param>
         public override Quest AddQuest( Quest quest )
         {
-            if (quest == null) return null;
+            if (quest == null)
+            {
+                return null;
+            }
             var instance = base.AddQuest(quest);
             instance.AssignQuestGiver(myQuestGiverTextInfo);
             return instance;
         }
+
         #endregion
 
         #region Record Quests By State
@@ -260,11 +279,17 @@ namespace SsitEngine.QuestManager
         {
             ActiveQuests.Clear();
             CompletedQuests.Clear();
-            if (PlayerQuestListContainer == null || PlayerQuestListContainer.questList == null) return;
-            for (int i = 0; i < PlayerQuestListContainer.questList.Count; i++)
+            if (PlayerQuestListContainer == null || PlayerQuestListContainer.questList == null)
+            {
+                return;
+            }
+            for (var i = 0; i < PlayerQuestListContainer.questList.Count; i++)
             {
                 var quest = PlayerQuestListContainer.questList[i];
-                if (quest == null) continue;
+                if (quest == null)
+                {
+                    continue;
+                }
                 var questState = quest.GetState();
                 if (string.Equals(quest.QuestGiverId, id))
                 {
@@ -291,9 +316,12 @@ namespace SsitEngine.QuestManager
         /// </summary>
         protected virtual void RemoveCompletedQuestsWithNoDialogue()
         {
-            if (CompletedQuests == null || CompletedQuests.Count == 0) return;
+            if (CompletedQuests == null || CompletedQuests.Count == 0)
+            {
+                return;
+            }
             var info = new QuestParticipantTextInfo(id, displayName, image);
-            for (int i = CompletedQuests.Count - 1; i >= 0; i--)
+            for (var i = CompletedQuests.Count - 1; i >= 0; i--)
             {
                 if (!CompletedQuests[i].HasContent(QuestContentCategory.Dialogue, info))
                 {
@@ -309,22 +337,35 @@ namespace SsitEngine.QuestManager
         {
             NonOfferableQuests.Clear();
             OfferableQuests.Clear();
-            if (questList == null) return;
-            if (PlayerQuestListContainer == null || PlayerQuestListContainer.questList == null) return;
-            for (int i = 0; i < questList.Count; i++)
+            if (questList == null)
+            {
+                return;
+            }
+            if (PlayerQuestListContainer == null || PlayerQuestListContainer.questList == null)
+            {
+                return;
+            }
+            for (var i = 0; i < questList.Count; i++)
             {
                 var quest = questList[i];
-                if (quest == null || quest.GetState() != QuestState.WaitingToStart) continue;
+                if (quest == null || quest.GetState() != QuestState.WaitingToStart)
+                {
+                    continue;
+                }
 
                 // Check if the player is already doing a copy of this quest:
                 var playerCopy = PlayerQuestListContainer.FindQuest(quest.Id);
-                var isPlayerCopyActive = (playerCopy != null && playerCopy.GetState() == QuestState.Active);
+                var isPlayerCopyActive = playerCopy != null && playerCopy.GetState() == QuestState.Active;
 
                 // And check if the player is already doing a similar procedurally-generated quest by this giver:
-                if (IsDoingSimilarGeneratedQuest(quest, PlayerQuestListContainer)) isPlayerCopyActive = true;
+                if (IsDoingSimilarGeneratedQuest(quest, PlayerQuestListContainer))
+                {
+                    isPlayerCopyActive = true;
+                }
 
                 quest.UpdateCooldown();
-                if (quest.CanOffer && !isPlayerCopyActive && (playerCopy == null || playerCopy.TimesAccepted < quest.MaxTimes))
+                if (quest.CanOffer && !isPlayerCopyActive &&
+                    (playerCopy == null || playerCopy.TimesAccepted < quest.MaxTimes))
                 {
                     OfferableQuests.Add(quest);
                 }
@@ -337,19 +378,30 @@ namespace SsitEngine.QuestManager
 
         protected virtual bool IsDoingSimilarGeneratedQuest( Quest quest, QuestListContainer playerQuestListContainer )
         {
-            if (quest == null || playerQuestListContainer == null || !quest.IsProcedurallyGenerated || ActiveQuests == null) return false;
+            if (quest == null || playerQuestListContainer == null || !quest.IsProcedurallyGenerated ||
+                ActiveQuests == null)
+            {
+                return false;
+            }
             // Check active quests given by this giver:
-            for (int i = 0; i < ActiveQuests.Count; i++)
+            for (var i = 0; i < ActiveQuests.Count; i++)
             {
                 var activeQuest = ActiveQuests[i];
-                if (activeQuest == null) continue;
+                if (activeQuest == null)
+                {
+                    continue;
+                }
                 if (activeQuest.TagDictionary.ContainsTag(QuestMachineTags.ACTION) &&
                     quest.TagDictionary.ContainsTag(QuestMachineTags.ACTION) &&
-                    string.Equals(activeQuest.TagDictionary.dict[QuestMachineTags.ACTION], quest.TagDictionary.dict[QuestMachineTags.ACTION]) &&
+                    string.Equals(activeQuest.TagDictionary.dict[QuestMachineTags.ACTION],
+                        quest.TagDictionary.dict[QuestMachineTags.ACTION]) &&
                     activeQuest.TagDictionary.ContainsTag(QuestMachineTags.TARGET) &&
                     quest.TagDictionary.ContainsTag(QuestMachineTags.TARGET) &&
-                    string.Equals(activeQuest.TagDictionary.dict[QuestMachineTags.TARGET], quest.TagDictionary.dict[QuestMachineTags.TARGET]))
+                    string.Equals(activeQuest.TagDictionary.dict[QuestMachineTags.TARGET],
+                        quest.TagDictionary.dict[QuestMachineTags.TARGET]))
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -357,7 +409,6 @@ namespace SsitEngine.QuestManager
         #endregion
 
         #region Dialogue
-
 
         /// <summary>
         /// Starts dialogue with the player. The content of the dialogue will depend on the quest giver's
@@ -367,24 +418,33 @@ namespace SsitEngine.QuestManager
         public virtual void StartDialogue( GameObject player )
         {
             if (player == null)
+            {
                 Debug.LogWarning("StartDialogue player is null");
+            }
             //if (QuestDialogueUi == null || player == null) return;
 
             // Record quests related to this player and me:
-            this.Player = player;
-            PlayerTextInfo = new QuestParticipantTextInfo(QuestUtility.GetID(player), QuestUtility.GetDisplayName(player), null);
+            Player = player;
+            PlayerTextInfo =
+                new QuestParticipantTextInfo(QuestUtility.GetID(player), QuestUtility.GetDisplayName(player), null);
             PlayerQuestListContainer = player.GetComponent<QuestListContainer>();
             if (PlayerQuestListContainer == null && Debug.isDebugBuild)
             {
-                Debug.LogWarning("Quest Machine: Can't start dialogue with " + name + ". Player doesn't have a Quest Journal.", this);
+                Debug.LogWarning(
+                    "Quest Machine: Can't start dialogue with " + name + ". Player doesn't have a Quest Journal.",
+                    this);
                 return;
             }
             RecordQuestsByState();
 
             // Start the most appropriate dialogue based on the recorded quests:
             if (Engine.Debug)
-                SsitDebug.Debug("Quest Machine: " + name + ".StartDialogue: #offerable=" + OfferableQuests.Count + " #active=" + ActiveQuests.Count + " #completed=" + CompletedQuests.Count, this);
-            QuestUtility.SendNotification((ushort)EnQuestEvent.GreetMessage, player, this, id);
+            {
+                SsitDebug.Debug(
+                    "Quest Machine: " + name + ".StartDialogue: #offerable=" + OfferableQuests.Count + " #active=" +
+                    ActiveQuests.Count + " #completed=" + CompletedQuests.Count, this);
+            }
+            QuestUtility.SendNotification((ushort) EnQuestEvent.GreetMessage, player, this, id);
             //if (ActiveQuests.Count + OfferableQuests.Count >= 2)
             //{
             //    QuestDialogueUi.ShowQuestList(myQuestGiverTextInfo, ActiveQuestsUiContents.contentList, ActiveQuests, OfferableQuestsUiContents.contentList, OfferableQuests, OnSelectQuest);
@@ -414,8 +474,7 @@ namespace SsitEngine.QuestManager
             //        QuestDialogueUi.ShowContents(myQuestGiverTextInfo, NoQuestsUiContents.contentList);
             //    }
             //}
-            QuestUtility.SendNotification((ushort)EnQuestEvent.GreetedMessage, player, this, id);
-
+            QuestUtility.SendNotification((ushort) EnQuestEvent.GreetedMessage, player, this, id);
         }
 
         /// <summary>
@@ -521,7 +580,8 @@ namespace SsitEngine.QuestManager
         /// <param name="quest">Quest to give to quester.</param>
         /// <param name="questerTextInfo">Quester's text info.</param>
         /// <param name="questerQuestListContainer">Quester's quest list container.</param>
-        public virtual void GiveQuestToQuester( Quest quest, QuestParticipantTextInfo questerTextInfo, QuestListContainer questerQuestListContainer, QuestCompleteMode mode = QuestCompleteMode.SingleComplet )
+        public virtual void GiveQuestToQuester( Quest quest, QuestParticipantTextInfo questerTextInfo,
+            QuestListContainer questerQuestListContainer, QuestCompleteMode mode = QuestCompleteMode.SingleComplet )
         {
             if (quest == null)
             {
@@ -535,7 +595,8 @@ namespace SsitEngine.QuestManager
             }
             if (questerQuestListContainer == null)
             {
-                Debug.LogWarning("Quest Machine: " + name + ".GiveQuestToQuester - questerQuestListContainer is null.", this);
+                Debug.LogWarning("Quest Machine: " + name + ".GiveQuestToQuester - questerQuestListContainer is null.",
+                    this);
                 return;
             }
 
@@ -560,11 +621,13 @@ namespace SsitEngine.QuestManager
             questInstance.TimesAccepted = 1;
             if (questerQuestListContainer.questList.Count > 0)
             {
-                for (int i = questerQuestListContainer.questList.Count - 1; i >= 0; i--)
+                for (var i = questerQuestListContainer.questList.Count - 1; i >= 0; i--)
                 {
                     var inJournal = questerQuestListContainer.questList[i];
                     if (inJournal == null)
+                    {
                         continue;
+                    }
                     if (string.Equals(inJournal.Id, quest.Id) && inJournal.GetState() != QuestState.Active)
                     {
                         questInstance.TimesAccepted++;
@@ -575,8 +638,7 @@ namespace SsitEngine.QuestManager
             questerQuestListContainer.deletedStaticQuests.Remove(questInstance.Id);
             questerQuestListContainer.AddQuest(questInstance);
             questInstance.SetState(QuestState.Active);
-            QuestUtility.SendNotification((ushort)EnQuestEvent.RefreshIndicatorMessage, questInstance, null, null);
-
+            QuestUtility.SendNotification((ushort) EnQuestEvent.RefreshIndicatorMessage, questInstance, null, null);
         }
 
         /// <summary>
@@ -587,7 +649,9 @@ namespace SsitEngine.QuestManager
         /// <param name="quest">Quest to give to quester.</param>
         /// <param name="questerTextInfo">Quester's text info.</param>
         /// <param name="questerQuestListContainer">Quester's quest list container.</param>
-        public virtual void GiveQuestToQuester( Quest quest, QuestParticipantTextInfo questGiverTextInfo, QuestParticipantTextInfo questerTextInfo, QuestListContainer questerQuestListContainer, QuestCompleteMode mode = QuestCompleteMode.SingleComplet )
+        public virtual void GiveQuestToQuester( Quest quest, QuestParticipantTextInfo questGiverTextInfo,
+            QuestParticipantTextInfo questerTextInfo, QuestListContainer questerQuestListContainer,
+            QuestCompleteMode mode = QuestCompleteMode.SingleComplet )
         {
             if (quest == null)
             {
@@ -601,7 +665,8 @@ namespace SsitEngine.QuestManager
             }
             if (questerQuestListContainer == null)
             {
-                Debug.LogWarning("Quest Machine: " + name + ".GiveQuestToQuester - questerQuestListContainer is null.", this);
+                Debug.LogWarning("Quest Machine: " + name + ".GiveQuestToQuester - questerQuestListContainer is null.",
+                    this);
                 return;
             }
 
@@ -626,11 +691,13 @@ namespace SsitEngine.QuestManager
             questInstance.TimesAccepted = 1;
             if (questerQuestListContainer.questList.Count > 0)
             {
-                for (int i = questerQuestListContainer.questList.Count - 1; i >= 0; i--)
+                for (var i = questerQuestListContainer.questList.Count - 1; i >= 0; i--)
                 {
                     var inJournal = questerQuestListContainer.questList[i];
                     if (inJournal == null)
+                    {
                         continue;
+                    }
                     if (string.Equals(inJournal.Id, quest.Id) && inJournal.GetState() != QuestState.Active)
                     {
                         questInstance.TimesAccepted++;
@@ -641,8 +708,7 @@ namespace SsitEngine.QuestManager
             questerQuestListContainer.deletedStaticQuests.Remove(questInstance.Id);
             questerQuestListContainer.AddQuest(questInstance);
             questInstance.SetState(QuestState.Active);
-            QuestUtility.SendNotification((ushort)EnQuestEvent.RefreshIndicatorMessage, questInstance, null, null);
-
+            QuestUtility.SendNotification((ushort) EnQuestEvent.RefreshIndicatorMessage, questInstance, null, null);
         }
 
 
@@ -655,28 +721,39 @@ namespace SsitEngine.QuestManager
         /// <param name="questerQuestListContainer">Quester's quest list container.</param>
         public virtual void GiveQuestToQuester( Quest quest, QuestListContainer questerQuestListContainer )
         {
-            if (quest == null) return;
+            if (quest == null)
+            {
+                return;
+            }
             if (questerQuestListContainer == null)
             {
-                Debug.LogWarning("Quest Machine: " + name + ".GiveQuestToQuester - quester (QuestListContainer) is null.", this);
+                Debug.LogWarning(
+                    "Quest Machine: " + name + ".GiveQuestToQuester - quester (QuestListContainer) is null.", this);
                 return;
             }
             //var questerTextInfo = new QuestParticipantTextInfo(QuestMachineMessages.GetID(questerQuestListContainer.gameObject), QuestMachineMessages.GetDisplayName(questerQuestListContainer.gameObject), null, null);
-            var questerTextInfo = new QuestParticipantTextInfo(QuestUtility.GetID(questerQuestListContainer), QuestUtility.GetDisplayName(questerQuestListContainer), null);
+            var questerTextInfo = new QuestParticipantTextInfo(QuestUtility.GetID(questerQuestListContainer),
+                QuestUtility.GetDisplayName(questerQuestListContainer), null);
 
             GiveQuestToQuester(quest, questerTextInfo, questerQuestListContainer);
         }
 
-        public virtual void GiveQuestToQuester( Quest quest, QuestParticipantTextInfo questGiverTextInfo, QuestListContainer questerQuestListContainer )
+        public virtual void GiveQuestToQuester( Quest quest, QuestParticipantTextInfo questGiverTextInfo,
+            QuestListContainer questerQuestListContainer )
         {
-            if (quest == null) return;
+            if (quest == null)
+            {
+                return;
+            }
             if (questerQuestListContainer == null)
             {
-                Debug.LogWarning("Quest Machine: " + name + ".GiveQuestToQuester - quester (QuestListContainer) is null.", this);
+                Debug.LogWarning(
+                    "Quest Machine: " + name + ".GiveQuestToQuester - quester (QuestListContainer) is null.", this);
                 return;
             }
             //var questerTextInfo = new QuestParticipantTextInfo(QuestMachineMessages.GetID(questerQuestListContainer.gameObject), QuestMachineMessages.GetDisplayName(questerQuestListContainer.gameObject), null, null);
-            var questerTextInfo = new QuestParticipantTextInfo(QuestUtility.GetID(questerQuestListContainer), QuestUtility.GetDisplayName(questerQuestListContainer), null);
+            var questerTextInfo = new QuestParticipantTextInfo(QuestUtility.GetID(questerQuestListContainer),
+                QuestUtility.GetDisplayName(questerQuestListContainer), null);
 
             GiveQuestToQuester(quest, questGiverTextInfo, questerTextInfo, questerQuestListContainer);
         }
@@ -700,8 +777,11 @@ namespace SsitEngine.QuestManager
         /// <param name="questerQuestListContainer">Quester's QuestListContainer.</param>
         public virtual void GiveAllQuestsToQuester( QuestListContainer questerQuestListContainer )
         {
-            if (questerQuestListContainer == null || questList.Count == 0) return;
-            for (int i = questList.Count - 1; i >= 0; i--)
+            if (questerQuestListContainer == null || questList.Count == 0)
+            {
+                return;
+            }
+            for (var i = questList.Count - 1; i >= 0; i--)
             {
                 var quest = questList[i];
                 if (quest != null && !questerQuestListContainer.ContainsQuest(quest.Id))
@@ -726,12 +806,13 @@ namespace SsitEngine.QuestManager
         /// <param name="quester">Quester.</param>
         public virtual void GiveAllQuestsToQuester( GameObject quester )
         {
-            if (quester == null) return;
+            if (quester == null)
+            {
+                return;
+            }
             GiveAllQuestsToQuester(quester.GetComponent<QuestListContainer>());
         }
 
         #endregion
-
     }
-
 }

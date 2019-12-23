@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+
 #if (NET_4_6 || NETFX_CORE)
 using System.Threading.Tasks;
 #else
@@ -75,7 +76,10 @@ namespace SsitEngine.Unity
         {
             lock (LockObject)
             {
-                while (Actions.Count > 0) Actions.Dequeue()();
+                while (Actions.Count > 0)
+                {
+                    Actions.Dequeue()();
+                }
             }
         }
     }

@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using Object = UnityEngine.Object;
 #if UNITY_EDITOR
 using UnityEditor;
+
 #endif
 
 public class AssetBindingAttribute : PropertyAttribute
@@ -16,11 +19,31 @@ public class AssetBindingAttribute : PropertyAttribute
         /// 上升ascend
         /// </summary>
         ASC,
+
         /// <summary>
         /// 下降descend
         /// </summary>
         DESC
     }
+
+
+    /// <summary>
+    /// <para>检索的字典缓存</para>
+    /// </summary>
+    public static Dictionary<string, Type> assetTypes = new Dictionary<string, Type>();
+
+    /// <summary>
+    /// 是否检索完成
+    /// </summary>
+    public bool cache;
+
+
+    /// <summary>
+    /// <para>检索的顺序</para>
+    /// </summary>
+    public Direction direction = Direction.ASC;
+
+    public bool error;
 
     public int Limit = 10;
 
@@ -30,27 +53,9 @@ public class AssetBindingAttribute : PropertyAttribute
     /// </summary>
     public bool search = true;
 
-
-    /// <summary>
-    /// <para>检索的顺序</para>
-    /// </summary>
-    public Direction direction = Direction.ASC;
-
-    /// <summary>
-    /// 是否检索完成
-    /// </summary>
-    public bool cache = false;
-    public bool error = false;
-
-    public string[] subLableName;
     public string[] subAssetName;
 
-
-    /// <summary>
-    /// <para>检索的字典缓存</para>
-    /// </summary>
-    public static Dictionary<string, System.Type> assetTypes = new Dictionary<string, System.Type>();
-
+    public string[] subLableName;
 
 
     /// <summary>
@@ -58,35 +63,37 @@ public class AssetBindingAttribute : PropertyAttribute
     /// </summary>
     /// <param name="limit"></param>
     /// <param name="subAssetName"></param>
-    public AssetBindingAttribute(int limit, string[] subLabelName, string[] subAssetName)
+    public AssetBindingAttribute( int limit, string[] subLabelName, string[] subAssetName )
     {
-        this.Limit = limit;
+        Limit = limit;
         if (Mathf.Sign(limit) == 1)
         {
             limit = Mathf.Clamp(limit, 0, 10);
         }
-        this.subLableName = subLabelName;
+        subLableName = subLabelName;
         this.subAssetName = subAssetName;
     }
-    public AssetBindingAttribute(int limit, string[] subLabelName)
+
+    public AssetBindingAttribute( int limit, string[] subLabelName )
     {
-        this.Limit = limit;
+        Limit = limit;
         if (Mathf.Sign(limit) == 1)
         {
             limit = Mathf.Clamp(limit, 0, 10);
         }
-        this.subLableName = subLabelName;
+        subLableName = subLabelName;
     }
-    public AssetBindingAttribute(int limit)
+
+    public AssetBindingAttribute( int limit )
     {
-        this.Limit = limit;
+        Limit = limit;
         if (Mathf.Sign(limit) == 1)
         {
             limit = Mathf.Clamp(limit, 0, 10);
         }
     }
 
-    void InitAttribute()
+    private void InitAttribute()
     {
     }
 }
@@ -100,14 +107,13 @@ public class AssetBindingDrawer : PropertyDrawer
     /// GUI的高度
     /// </summary>
     private const int CONTENT_HEIGHT = 20;
-    public SerializedProperty rootProperty;
-    public int index = -1;
-    public AssetBindingAttribute BindingAttribute
-    {
-        get { return (AssetBindingAttribute)attribute; }
-    }
 
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+    public int index = -1;
+    public SerializedProperty rootProperty;
+
+    public AssetBindingAttribute BindingAttribute => (AssetBindingAttribute) attribute;
+
+    public override float GetPropertyHeight( SerializedProperty property, GUIContent label )
     {
         if (BindingAttribute.error)
         {
@@ -119,7 +125,7 @@ public class AssetBindingDrawer : PropertyDrawer
         return base.GetPropertyHeight(property, label);
     }
 
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    public override void OnGUI( Rect position, SerializedProperty property, GUIContent label )
     {
         EditorGUI.BeginDisabledGroup(true);
         if (rootProperty == null)
@@ -127,7 +133,7 @@ public class AssetBindingDrawer : PropertyDrawer
             //获取属性类对像的类型
             //System.Type type = property.serializedObject.targetObject.GetType();
             //FieldInfo field = type.GetField(this.fieldInfo.Name);
-            rootProperty = property.serializedObject.FindProperty(this.fieldInfo.Name);
+            rootProperty = property.serializedObject.FindProperty(fieldInfo.Name);
         }
         else
         {
@@ -176,7 +182,6 @@ public class AssetBindingDrawer : PropertyDrawer
                         }
                     }
                 }
-
             }
         }
         DrawCachedSingleProperty(position, property, label, index);
@@ -184,13 +189,13 @@ public class AssetBindingDrawer : PropertyDrawer
         GUI.color = Color.white;
     }
 
-    void DrawSingleProperty(Rect position, SerializedProperty property, GUIContent label, int index)
+    private void DrawSingleProperty( Rect position, SerializedProperty property, GUIContent label, int index )
     {
-        System.Type type = GetPropertyType(property);
-        foreach (string path in GetAllAssetPath())
+        var type = GetPropertyType(property);
+        foreach (var path in GetAllAssetPath())
         {
-            System.Type assetType = null;
-            UnityEngine.Object asset = null;
+            Type assetType = null;
+            Object asset = null;
 
             if (BindLabelSearchAttribute.assetTypes.TryGetValue(path, out assetType) == false)
             {
@@ -222,7 +227,8 @@ public class AssetBindingDrawer : PropertyDrawer
             }
         }
     }
-    void DrawCachedSingleProperty(Rect position, SerializedProperty property, GUIContent label, int index)
+
+    private void DrawCachedSingleProperty( Rect position, SerializedProperty property, GUIContent label, int index )
     {
         if (BindingAttribute.subLableName != null && index != -1)
         {
@@ -231,28 +237,29 @@ public class AssetBindingDrawer : PropertyDrawer
                 label.text = string.Format("{0}[{1}]", label.text, BindingAttribute.subLableName[index]);
             }
         }
-        Rect labelRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
+        var labelRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
         if (property.propertyType == SerializedPropertyType.ObjectReference)
         {
             property.objectReferenceValue = EditorGUI.ObjectField(labelRect, label, property.objectReferenceValue,
-           GetPropertyType(property), false);
+                GetPropertyType(property), false);
         }
         else
         {
             EditorGUI.PropertyField(position, property, label);
         }
     }
-    bool CheckLimit()
+
+    private bool CheckLimit()
     {
         if (rootProperty.arraySize > BindingAttribute.Limit)
         {
             rootProperty.DeleteArrayElementAtIndex(rootProperty.arraySize - 1);
             return false;
         }
-        else if (rootProperty.arraySize < BindingAttribute.Limit)
+        if (rootProperty.arraySize < BindingAttribute.Limit)
         {
-            int count = BindingAttribute.Limit - rootProperty.arraySize;
-            for (int i = 0; i < count; i++)
+            var count = BindingAttribute.Limit - rootProperty.arraySize;
+            for (var i = 0; i < count; i++)
             {
                 rootProperty.InsertArrayElementAtIndex(rootProperty.arraySize);
             }
@@ -260,10 +267,10 @@ public class AssetBindingDrawer : PropertyDrawer
         return true;
     }
 
-    int GetProperTyIndex(SerializedProperty property)
+    private int GetProperTyIndex( SerializedProperty property )
     {
-        string path = property.propertyPath;
-        int index = -1;
+        var path = property.propertyPath;
+        var index = -1;
         if (path.EndsWith("]"))
         {
             int.TryParse(path.Substring(path.Length - 2).Replace("]", ""), out index);
@@ -271,31 +278,34 @@ public class AssetBindingDrawer : PropertyDrawer
         }
         return -1;
     }
-    System.Type GetPropertyType(SerializedProperty property)
+
+    private Type GetPropertyType( SerializedProperty property )
     {
         return
             Assembly.Load("UnityEngine.dll")
                 .GetType("UnityEngine." + property.type.Replace("PPtr<$", "").Replace(">", ""));
     }
+
     /// <summary>
     /// 取得所有资源的路径
     /// </summary>
     /// <returns>
     /// The all asset path.
     /// </returns>
-    string[] GetAllAssetPath()
+    private string[] GetAllAssetPath()
     {
-        string[] allAssetPath = AssetDatabase.GetAllAssetPaths();
+        var allAssetPath = AssetDatabase.GetAllAssetPaths();
 
-        System.Array.Sort(allAssetPath);
+        Array.Sort(allAssetPath);
 
         if (BindingAttribute.direction.Equals(BindLabelSearchAttribute.Direction.DESC))
         {
-            System.Array.Reverse(allAssetPath);
+            Array.Reverse(allAssetPath);
         }
         return allAssetPath;
     }
-    void DrawHelpBox(Rect position, int index, string message)
+
+    private void DrawHelpBox( Rect position, int index, string message )
     {
         if (index != rootProperty.arraySize - 1)
         {

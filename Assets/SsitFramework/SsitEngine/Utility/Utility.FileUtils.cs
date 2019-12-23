@@ -16,10 +16,16 @@ namespace SsitEngine
         public static string GetShortFilename( string filename )
         {
             var indexOfBackslash = filename.LastIndexOf("\\");
-            if (indexOfBackslash >= 0) return filename.Substring(indexOfBackslash + 1);
+            if (indexOfBackslash >= 0)
+            {
+                return filename.Substring(indexOfBackslash + 1);
+            }
 
             var indexOfSlash = filename.LastIndexOf("/");
-            if (indexOfSlash >= 0) return filename.Substring(indexOfSlash + 1);
+            if (indexOfSlash >= 0)
+            {
+                return filename.Substring(indexOfSlash + 1);
+            }
 
             return filename;
         }
@@ -32,10 +38,16 @@ namespace SsitEngine
         public static string GetFileDirectory( string filename )
         {
             var indexOfBackslash = filename.LastIndexOf("\\");
-            if (indexOfBackslash >= 0) return filename.Substring(0, indexOfBackslash);
+            if (indexOfBackslash >= 0)
+            {
+                return filename.Substring(0, indexOfBackslash);
+            }
 
             var indexOfSlash = filename.LastIndexOf("/");
-            if (indexOfSlash >= 0) return filename.Substring(0, indexOfSlash);
+            if (indexOfSlash >= 0)
+            {
+                return filename.Substring(0, indexOfSlash);
+            }
 
             return null;
         }
@@ -48,14 +60,22 @@ namespace SsitEngine
         public static string GetFilenameWithoutExtension( string filename )
         {
             var indexOfDot = filename.LastIndexOf('.');
-            if (indexOfDot < 0) return null;
+            if (indexOfDot < 0)
+            {
+                return null;
+            }
 
             var indexOfBackslash = filename.LastIndexOf("\\");
             if (indexOfBackslash >= 0)
+            {
                 return filename.Substring(indexOfBackslash + 1, indexOfDot - indexOfBackslash - 1);
+            }
 
             var indexOfSlash = filename.LastIndexOf("/");
-            if (indexOfSlash >= 0) return filename.Substring(indexOfSlash + 1, indexOfDot - indexOfSlash - 1);
+            if (indexOfSlash >= 0)
+            {
+                return filename.Substring(indexOfSlash + 1, indexOfDot - indexOfSlash - 1);
+            }
 
             return null;
         }
@@ -68,7 +88,10 @@ namespace SsitEngine
         public static string GetFileExtension( string filename )
         {
             var lastDot = filename.LastIndexOf('.');
-            if (lastDot < 0) return null;
+            if (lastDot < 0)
+            {
+                return null;
+            }
 
             return filename.Substring(lastDot).ToLowerInvariant();
         }
@@ -84,10 +107,16 @@ namespace SsitEngine
             if (path == filename)
             {
                 var indexOfBackslash = path.LastIndexOf("\\");
-                if (indexOfBackslash >= 0) return path.Substring(indexOfBackslash + 1);
+                if (indexOfBackslash >= 0)
+                {
+                    return path.Substring(indexOfBackslash + 1);
+                }
 
                 var indexOfSlash = path.LastIndexOf("/");
-                if (indexOfSlash >= 0) return path.Substring(indexOfSlash + 1);
+                if (indexOfSlash >= 0)
+                {
+                    return path.Substring(indexOfSlash + 1);
+                }
 
                 return path;
             }
@@ -104,7 +133,10 @@ namespace SsitEngine
         {
             try
             {
-                if (filename == null) return new byte[0];
+                if (filename == null)
+                {
+                    return new byte[0];
+                }
 
                 return File.ReadAllBytes(filename.Replace('\\', '/'));
             }

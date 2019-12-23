@@ -36,7 +36,10 @@ namespace SsitEngine.Core.EventPool
         public EventPool( EventPoolMode mode )
         {
             m_eventHandlers = new Dictionary<ushort, LinkedList<EventHandler<T>>>();
-            if (mode != EventPoolMode.AllowFireNowHandler) m_events = new Queue<Event>();
+            if (mode != EventPoolMode.AllowFireNowHandler)
+            {
+                m_events = new Queue<Event>();
+            }
             m_eventPoolMode = mode;
             m_defaultHandler = null;
         }
@@ -59,7 +62,9 @@ namespace SsitEngine.Core.EventPool
         public void Update( float elapseSeconds, float realElapseSeconds )
         {
             if (m_eventPoolMode == EventPoolMode.AllowFireNowHandler)
+            {
                 return;
+            }
             lock (m_events)
             {
                 while (m_events.Count > 0)
@@ -86,7 +91,9 @@ namespace SsitEngine.Core.EventPool
         public void Clear()
         {
             if (m_eventPoolMode == EventPoolMode.AllowFireNowHandler)
+            {
                 return;
+            }
             lock (m_events)
             {
                 m_events.Clear();
@@ -101,7 +108,10 @@ namespace SsitEngine.Core.EventPool
         public int Count( ushort id )
         {
             LinkedList<EventHandler<T>> handlers = null;
-            if (m_eventHandlers.TryGetValue(id, out handlers)) return handlers.Count;
+            if (m_eventHandlers.TryGetValue(id, out handlers))
+            {
+                return handlers.Count;
+            }
 
             return 0;
         }
@@ -114,10 +124,16 @@ namespace SsitEngine.Core.EventPool
         /// <returns>是否存在事件处理函数。</returns>
         public bool Check( ushort id, EventHandler<T> handler )
         {
-            if (handler == null) throw new SsitEngineException("Event handler is invalid.");
+            if (handler == null)
+            {
+                throw new SsitEngineException("Event handler is invalid.");
+            }
 
             LinkedList<EventHandler<T>> handlers = null;
-            if (!m_eventHandlers.TryGetValue(id, out handlers)) return false;
+            if (!m_eventHandlers.TryGetValue(id, out handlers))
+            {
+                return false;
+            }
 
             return handlers.Contains(handler);
         }
@@ -129,7 +145,10 @@ namespace SsitEngine.Core.EventPool
         /// <param name="handler">要订阅的事件处理函数。</param>
         public void Subscribe( ushort id, EventHandler<T> handler )
         {
-            if (handler == null) throw new SsitEngineException("Event handler is invalid.");
+            if (handler == null)
+            {
+                throw new SsitEngineException("Event handler is invalid.");
+            }
 
             LinkedList<EventHandler<T>> handlers = null;
             if (!m_eventHandlers.TryGetValue(id, out handlers))
@@ -160,15 +179,22 @@ namespace SsitEngine.Core.EventPool
         /// <param name="handler">要取消订阅的事件处理函数。</param>
         public void Unsubscribe( ushort id, EventHandler<T> handler )
         {
-            if (handler == null) throw new SsitEngineException("Event handler is invalid.");
+            if (handler == null)
+            {
+                throw new SsitEngineException("Event handler is invalid.");
+            }
 
             LinkedList<EventHandler<T>> handlers = null;
             if (!m_eventHandlers.TryGetValue(id, out handlers))
+            {
                 throw new SsitEngineException(TextUtils.Format("Event '{0}' not exists any handler.", id.ToString()));
+            }
 
             if (!handlers.Remove(handler))
+            {
                 throw new SsitEngineException(TextUtils.Format("Event '{0}' not exists specified handler.",
                     id.ToString()));
+            }
         }
 
         /// <summary>
@@ -188,7 +214,9 @@ namespace SsitEngine.Core.EventPool
         public void Fire( object sender, T e )
         {
             if (m_eventPoolMode == EventPoolMode.AllowFireNowHandler)
+            {
                 return;
+            }
             var eventNode = new Event(sender, e);
             lock (m_events)
             {
@@ -238,8 +266,10 @@ namespace SsitEngine.Core.EventPool
             ReferencePool.ReferencePool.Release((IReference) e);
 
             if (noHandlerException)
+            {
                 throw new SsitEngineException(TextUtils.Format("Event '{0}' not allow no handler.",
                     eventId.ToString()));
+            }
         }
     }
 }

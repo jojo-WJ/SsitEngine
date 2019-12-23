@@ -18,7 +18,10 @@ namespace SsitEngine.Unity.Msic
         /// <param name="msgs"></param>
         public void RegisterMsg( params ushort[] msgs )
         {
-            for (var i = 0; i < msgs.Length; i++) Facade.Instance.RegisterObservers(this, msgs[i], HandleNotification);
+            for (var i = 0; i < msgs.Length; i++)
+            {
+                Facade.Instance.RegisterObservers(this, msgs[i], HandleNotification);
+            }
         }
 
         /// <summary>
@@ -27,7 +30,10 @@ namespace SsitEngine.Unity.Msic
         /// <param name="msgs"></param>
         public void UnRegisterMsg( params ushort[] msgs )
         {
-            for (var i = 0; i < msgs.Length; i++) Facade.Instance.RemoveObservers(this, msgs[i]);
+            for (var i = 0; i < msgs.Length; i++)
+            {
+                Facade.Instance.RemoveObservers(this, msgs[i]);
+            }
         }
 
         #endregion

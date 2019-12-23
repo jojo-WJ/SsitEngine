@@ -152,7 +152,10 @@ namespace SsitEngine.Unity.Scene
             var loadedSceneAssetNames = m_loadedSceneAssetNames.ToArray();
             foreach (var loadedSceneAssetName in loadedSceneAssetNames)
             {
-                if (IsSceneUnloading(loadedSceneAssetName)) continue;
+                if (IsSceneUnloading(loadedSceneAssetName))
+                {
+                    continue;
+                }
 
                 UnloadScene(loadedSceneAssetName);
             }
@@ -191,7 +194,10 @@ namespace SsitEngine.Unity.Scene
         /// <param name="resourceManager">资源管理器。</param>
         public void SetResourceManager( IResourceManager resourceManager )
         {
-            if (resourceManager == null) throw new SsitEngineException("Resource manager is invalid.");
+            if (resourceManager == null)
+            {
+                throw new SsitEngineException("Resource manager is invalid.");
+            }
 
             m_resourceManager = resourceManager;
         }
@@ -203,7 +209,10 @@ namespace SsitEngine.Unity.Scene
         /// <returns>场景是否已加载。</returns>
         public bool IsSceneLoaded( string sceneAssetName )
         {
-            if (string.IsNullOrEmpty(sceneAssetName)) throw new SsitEngineException("Scene asset name is invalid.");
+            if (string.IsNullOrEmpty(sceneAssetName))
+            {
+                throw new SsitEngineException("Scene asset name is invalid.");
+            }
 
             return m_loadedSceneAssetNames.Contains(sceneAssetName);
         }
@@ -215,7 +224,10 @@ namespace SsitEngine.Unity.Scene
         /// <returns>场景是否正在加载。</returns>
         public bool IsSceneLoading( string sceneAssetName )
         {
-            if (string.IsNullOrEmpty(sceneAssetName)) throw new SsitEngineException("Scene asset name is invalid.");
+            if (string.IsNullOrEmpty(sceneAssetName))
+            {
+                throw new SsitEngineException("Scene asset name is invalid.");
+            }
 
             return m_loadingSceneAssetNames.Contains(sceneAssetName);
         }
@@ -227,7 +239,10 @@ namespace SsitEngine.Unity.Scene
         /// <returns>场景是否正在卸载。</returns>
         public bool IsSceneUnloading( string sceneAssetName )
         {
-            if (string.IsNullOrEmpty(sceneAssetName)) throw new SsitEngineException("Scene asset name is invalid.");
+            if (string.IsNullOrEmpty(sceneAssetName))
+            {
+                throw new SsitEngineException("Scene asset name is invalid.");
+            }
 
             return m_unloadingSceneAssetNames.Contains(sceneAssetName);
         }
@@ -272,18 +287,30 @@ namespace SsitEngine.Unity.Scene
         public void LoadScene( string sceneAssetName, int priority = SsitFrameUtils.DefaultPriority,
             object userData = null )
         {
-            if (string.IsNullOrEmpty(sceneAssetName)) throw new SsitEngineException("Scene asset name is invalid.");
+            if (string.IsNullOrEmpty(sceneAssetName))
+            {
+                throw new SsitEngineException("Scene asset name is invalid.");
+            }
 
-            if (m_resourceManager == null) throw new SsitEngineException("You must set resource manager first.");
+            if (m_resourceManager == null)
+            {
+                throw new SsitEngineException("You must set resource manager first.");
+            }
 
             if (IsSceneUnloading(sceneAssetName))
+            {
                 throw new SsitEngineException(TextUtils.Format("Scene asset '{0}' is being unloaded.", sceneAssetName));
+            }
 
             if (IsSceneLoading(sceneAssetName))
+            {
                 throw new SsitEngineException(TextUtils.Format("Scene asset '{0}' is being loaded.", sceneAssetName));
+            }
 
             if (IsSceneLoaded(sceneAssetName))
+            {
                 throw new SsitEngineException(TextUtils.Format("Scene asset '{0}' is already loaded.", sceneAssetName));
+            }
 
             m_loadingSceneAssetNames.Add(sceneAssetName);
             m_resourceManager.LoadScene(sceneAssetName, priority, m_loadSceneCallbacks, userData);
@@ -293,9 +320,15 @@ namespace SsitEngine.Unity.Scene
         {
             Level = level;
             var resouceName = level.GetResoucesName();
-            if (string.IsNullOrEmpty(resouceName)) throw new SsitEngineException("Scene asset name is invalid.");
+            if (string.IsNullOrEmpty(resouceName))
+            {
+                throw new SsitEngineException("Scene asset name is invalid.");
+            }
 
-            if (m_resourceManager == null) throw new SsitEngineException("You must set resource manager first.");
+            if (m_resourceManager == null)
+            {
+                throw new SsitEngineException("You must set resource manager first.");
+            }
             level.Load();
             m_loadingSceneAssetNames.Add(level.GetResoucesName());
         }
@@ -307,9 +340,15 @@ namespace SsitEngine.Unity.Scene
         /// <param name="userData">用户自定义数据。</param>
         public void UnloadScene( string sceneAssetName, object userData = null )
         {
-            if (string.IsNullOrEmpty(sceneAssetName)) throw new SsitEngineException("Scene asset name is invalid.");
+            if (string.IsNullOrEmpty(sceneAssetName))
+            {
+                throw new SsitEngineException("Scene asset name is invalid.");
+            }
 
-            if (m_resourceManager == null) throw new SsitEngineException("You must set resource manager first.");
+            if (m_resourceManager == null)
+            {
+                throw new SsitEngineException("You must set resource manager first.");
+            }
 
             //if (IsSceneUnloading(sceneAssetName))
             //{
@@ -326,7 +365,10 @@ namespace SsitEngine.Unity.Scene
             //    throw new SsitEngineException(TextUtils.Format("Scene asset '{0}' is not loaded yet.", sceneAssetName));
             //}
 
-            if (Level != null) Level.Unload();
+            if (Level != null)
+            {
+                Level.Unload();
+            }
 
             //m_unloadingSceneAssetNames.Add(sceneAssetName);
             m_resourceManager.UnloadScene(sceneAssetName, m_unloadSceneCallbacks, userData);
@@ -340,11 +382,19 @@ namespace SsitEngine.Unity.Scene
         public void UnloadScene( Level level, object userData )
         {
             if (level == null)
+            {
                 return;
+            }
             var sceneAssetName = level.GetResoucesName();
-            if (string.IsNullOrEmpty(sceneAssetName)) throw new SsitEngineException("Scene asset name is invalid.");
+            if (string.IsNullOrEmpty(sceneAssetName))
+            {
+                throw new SsitEngineException("Scene asset name is invalid.");
+            }
 
-            if (m_resourceManager == null) throw new SsitEngineException("You must set resource manager first.");
+            if (m_resourceManager == null)
+            {
+                throw new SsitEngineException("You must set resource manager first.");
+            }
 
             //if (IsSceneUnloading(sceneAssetName))
             //{
@@ -372,11 +422,19 @@ namespace SsitEngine.Unity.Scene
         public void UnloadScene( Level level )
         {
             if (level == null)
+            {
                 return;
+            }
             var sceneAssetName = level.GetResoucesName();
-            if (string.IsNullOrEmpty(sceneAssetName)) throw new SsitEngineException("Scene asset name is invalid.");
+            if (string.IsNullOrEmpty(sceneAssetName))
+            {
+                throw new SsitEngineException("Scene asset name is invalid.");
+            }
 
-            if (m_resourceManager == null) throw new SsitEngineException("You must set resource manager first.");
+            if (m_resourceManager == null)
+            {
+                throw new SsitEngineException("You must set resource manager first.");
+            }
 
             //if (IsSceneUnloading(sceneAssetName))
             //{
@@ -405,7 +463,9 @@ namespace SsitEngine.Unity.Scene
             m_loadingSceneAssetNames.Remove(sceneAssetName);
             m_loadedSceneAssetNames.Add(sceneAssetName);
             if (m_loadSceneSuccessEventHandler != null)
+            {
                 m_loadSceneSuccessEventHandler(this, new LoadSceneSuccessEventArgs(sceneAssetName, duration, userData));
+            }
         }
 
         private void LoadSceneFailureCallback( string sceneAssetName, LoadResourceStatus status, string errorMessage,
@@ -428,16 +488,20 @@ namespace SsitEngine.Unity.Scene
         private void LoadSceneUpdateCallback( string sceneAssetName, float progress, object userData )
         {
             if (m_loadSceneUpdateEventHandler != null)
+            {
                 m_loadSceneUpdateEventHandler(this, new LoadSceneUpdateEventArgs(sceneAssetName, progress, userData));
+            }
         }
 
         private void LoadSceneDependencyAssetCallback( string sceneAssetName, string dependencyAssetName,
             int loadedCount, int totalCount, object userData )
         {
             if (m_loadSceneDependencyAssetEventHandler != null)
+            {
                 m_loadSceneDependencyAssetEventHandler(this,
                     new LoadSceneDependencyAssetEventArgs(sceneAssetName, dependencyAssetName, loadedCount, totalCount,
                         userData));
+            }
         }
 
         private void UnloadSceneSuccessCallback( string sceneAssetName, object userData )
@@ -445,7 +509,9 @@ namespace SsitEngine.Unity.Scene
             m_unloadingSceneAssetNames.Remove(sceneAssetName);
             m_loadedSceneAssetNames.Remove(sceneAssetName);
             if (m_unloadSceneSuccessEventHandler != null)
+            {
                 m_unloadSceneSuccessEventHandler(this, new UnloadSceneSuccessEventArgs(sceneAssetName, userData));
+            }
         }
 
         private void UnloadSceneFailureCallback( string sceneAssetName, object userData )

@@ -1,60 +1,66 @@
-using UnityEngine;
-using UnityEditor;
-
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
 using System.Text;
-using System;
+using System.Text.RegularExpressions;
+using UnityEditor;
+using UnityEngine;
 
-public static class LinqHelper {
-    public static TSource Fold<TSource>(this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func, TSource id)
+public static class LinqHelper
+{
+    public static TSource Fold<TSource>( this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func,
+        TSource id )
     {
-        TSource r = id;
+        var r = id;
         foreach (var s in source)
         {
             r = func(r, s);
         }
         return r;
     }
-    public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+
+    public static void ForEach<T>( this IEnumerable<T> source, Action<T> action )
     {
-        foreach (T element in source)
+        foreach (var element in source)
+        {
             action(element);
+        }
     }
-    public static IEnumerable<U> SelectI<U, T>(this IEnumerable<T> source, Func<T, int, U> action)
+
+    public static IEnumerable<U> SelectI<U, T>( this IEnumerable<T> source, Func<T, int, U> action )
     {
-        int i = 0;
+        var i = 0;
         foreach (var s in source)
         {
             yield return action(s, i);
             i += 1;
         }
     }
-    public static TSource Reduce<TSource>(this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func) where TSource : new()
+
+    public static TSource Reduce<TSource>( this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func )
+        where TSource : new()
     {
-        return Fold<TSource>(source, func, new TSource());
+        return Fold(source, func, new TSource());
     }
-    public static void ForEachI<T>(this IEnumerable<T> source, Action<T, int> action)
+
+    public static void ForEachI<T>( this IEnumerable<T> source, Action<T, int> action )
     {
-        int i = 0;
-        foreach (T element in source)
+        var i = 0;
+        foreach (var element in source)
         {
             action(element, i);
             i += 1;
         }
-
     }
 }
+
 public static class FindUnUnUsedUITexture
 {
-
-
-    static List<string> getUUIDsInFile(string path)
+    private static List<string> getUUIDsInFile( string path )
     {
-        StreamReader file = new StreamReader(path);
-        List<string> uuids = new List<string>();
+        var file = new StreamReader(path);
+        var uuids = new List<string>();
         string line;
         while ((line = file.ReadLine()) != null)
         {
@@ -68,12 +74,12 @@ public static class FindUnUnUsedUITexture
         file.Close();
         return uuids;
     }
+
     // Use this for initialization
     [MenuItem("Tools/UI冗余图片扫描")]
     public static void Scan()
     {
-
-        var uiPrefabRootDir = EditorUtility.OpenFolderPanel("选择UIPrefab目录",  "Assets","");
+        var uiPrefabRootDir = EditorUtility.OpenFolderPanel("选择UIPrefab目录", "Assets", "");
         if (string.IsNullOrEmpty(uiPrefabRootDir))
         {
             return;
@@ -84,17 +90,15 @@ public static class FindUnUnUsedUITexture
         {
             return;
         }
-        
+
         //find all meta and pic path
         var uuidReg = new Regex(@"guid: ([a-f0-9]{32})");
         var pngs = Directory.GetFiles(uiPicRootDir, "*.meta", SearchOption.AllDirectories)
-        .Select(p => "Assets/" + p.Replace('\\','/').Substring(Application.dataPath.Length+1))
-        .Where(p =>
-        {
-            return p.EndsWith(".png.meta") || p.EndsWith(".jpg.meta") || p.EndsWith(".tag.meta");
-        }).ToList();
+            .Select(p => "Assets/" + p.Replace('\\', '/').Substring(Application.dataPath.Length + 1))
+            .Where(p => { return p.EndsWith(".png.meta") || p.EndsWith(".jpg.meta") || p.EndsWith(".tag.meta"); })
+            .ToList();
         var uuid2path = new Dictionary<string, string>();
-        pngs.ForEachI((png, i) =>
+        pngs.ForEachI(( png, i ) =>
         {
             var matcher = uuidReg.Match(File.ReadAllText(png));
             var uuid = matcher.Groups[1].Value;
@@ -104,38 +108,40 @@ public static class FindUnUnUsedUITexture
             }
             else
             {
-                uuid2path.Add(uuid, png.Substring(0,png.Length-5));
+                uuid2path.Add(uuid, png.Substring(0, png.Length - 5));
             }
-            EditorUtility.DisplayProgressBar("扫描图片中", png, (float)i / pngs.Count);
-
+            EditorUtility.DisplayProgressBar("扫描图片中", png, (float) i / pngs.Count);
         });
 
         //find all prefab and search pic uuid
         var prefabs = Directory.GetFiles(uiPrefabRootDir, "*.prefab", SearchOption.AllDirectories);
-        var anims = Directory.GetFiles("Assets/", "*.anim", SearchOption.AllDirectories).Where(p => !p.Replace('\\', '/').Contains("Characters/"));
+        var anims = Directory.GetFiles("Assets/", "*.anim", SearchOption.AllDirectories)
+            .Where(p => !p.Replace('\\', '/').Contains("Characters/"));
         var allFiles = prefabs.Concat(anims).ToList();
         var alluuids = allFiles
-        .SelectI((f, i) => {
-            EditorUtility.DisplayProgressBar("获取引用关系", f, (float)i / allFiles.Count);
-            return getUUIDsInFile(f);
-        }).ToList().Aggregate((a, b) => a.Concat(b).ToList()).ToList();
+            .SelectI(( f, i ) =>
+            {
+                EditorUtility.DisplayProgressBar("获取引用关系", f, (float) i / allFiles.Count);
+                return getUUIDsInFile(f);
+            }).ToList().Aggregate(( a, b ) => a.Concat(b).ToList()).ToList();
         EditorUtility.ClearProgressBar();
         //rm used pic uuid
         var uuidshashset = new HashSet<string>(alluuids);
         var em = uuidshashset.GetEnumerator();
-        while(em.MoveNext())
+        while (em.MoveNext())
         {
             var uuid = em.Current;
             uuid2path.Remove(uuid);
         }
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.Append("UnUsedFiles: ");
         sb.Append(uuid2path.Count);
         sb.Append("\n");
-        uuid2path.ForEach(kv => sb.Append(kv.Value +"\n"));
+        uuid2path.ForEach(kv => sb.Append(kv.Value + "\n"));
 
         File.WriteAllText("Assets/unusedpic.txt", sb.ToString());
-        EditorUtility.DisplayDialog("扫描成功", string.Format("共找到{0}个冗余图片\n请在Assets/unsedpic.txt查看结果",uuid2path.Count), "ok");
+        EditorUtility.DisplayDialog("扫描成功", string.Format("共找到{0}个冗余图片\n请在Assets/unsedpic.txt查看结果", uuid2path.Count),
+            "ok");
     }
 }

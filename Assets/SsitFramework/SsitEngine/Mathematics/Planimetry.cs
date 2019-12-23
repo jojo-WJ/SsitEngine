@@ -26,7 +26,9 @@ namespace SsitEngine.Mathematics
             {
                 num = Math.Abs(L2.b - L1.b);
                 if (L1.k != 0.0 && L1.k != double.PositiveInfinity)
+                {
                     num /= Math.Sqrt(1.0 + Math.Pow(L1.k, 2.0));
+                }
             }
             return num;
         }
@@ -39,8 +41,7 @@ namespace SsitEngine.Mathematics
         {
             return L.k != 0.0
                 ? L.k != double.PositiveInfinity
-                    ?
-                    Math.Abs(L.k * v.x - v.y + L.b) / Math.Sqrt(1.0 + Math.Pow(L.k, 2.0))
+                    ? Math.Abs(L.k * v.x - v.y + L.b) / Math.Sqrt(1.0 + Math.Pow(L.k, 2.0))
                     : Math.Abs(v.x - L.b)
                 : Math.Abs(v.y - L.b);
         }
@@ -188,7 +189,9 @@ namespace SsitEngine.Mathematics
         public static List<Vector> GetIntersections( Line L1, Line L2 )
         {
             if (L1.k == L2.k)
+            {
                 return null;
+            }
             double x;
             double y;
             if (L1.k == double.PositiveInfinity)

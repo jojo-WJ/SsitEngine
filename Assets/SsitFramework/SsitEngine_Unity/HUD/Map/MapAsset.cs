@@ -46,7 +46,9 @@ namespace SsitEngine.Unity.HUD
         {
             var custom = CustomLayers.FirstOrDefault(cl => cl.name.Equals(name));
             if (custom != null)
+            {
                 return custom.instance;
+            }
 
             return null;
         }

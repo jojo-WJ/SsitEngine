@@ -55,7 +55,10 @@ namespace SsitEngine.Unity.ObjectPool
         /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
         public override void OnUpdate( float elapseSeconds )
         {
-            foreach (var objectPool in m_ObjectPools) objectPool.Value.OnUpdate(elapseSeconds);
+            foreach (var objectPool in m_ObjectPools)
+            {
+                objectPool.Value.OnUpdate(elapseSeconds);
+            }
         }
 
         /// <summary>
@@ -63,7 +66,10 @@ namespace SsitEngine.Unity.ObjectPool
         /// </summary>
         public override void Shutdown()
         {
-            foreach (var objectPool in m_ObjectPools) objectPool.Value.Shutdown();
+            foreach (var objectPool in m_ObjectPools)
+            {
+                objectPool.Value.Shutdown();
+            }
 
             m_ObjectPools.Clear();
         }
@@ -95,7 +101,10 @@ namespace SsitEngine.Unity.ObjectPool
         /// <inheritdoc />
         public bool HasObjectPool<T>( string name ) where T : ObjectBase
         {
-            if (string.IsNullOrEmpty(name)) throw new SsitEngineException("Full name is invalid.");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new SsitEngineException("Full name is invalid.");
+            }
 
             return m_ObjectPools.ContainsKey(name);
         }
@@ -103,10 +112,16 @@ namespace SsitEngine.Unity.ObjectPool
         /// <inheritdoc />
         public IObjectPool<T> GetObjectPool<T>( string name ) where T : ObjectBase
         {
-            if (string.IsNullOrEmpty(name)) throw new SsitEngineException("Full name is invalid.");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new SsitEngineException("Full name is invalid.");
+            }
 
             ObjectPoolBase objectPool = null;
-            if (m_ObjectPools.TryGetValue(name, out objectPool)) return objectPool as IObjectPool<T>;
+            if (m_ObjectPools.TryGetValue(name, out objectPool))
+            {
+                return objectPool as IObjectPool<T>;
+            }
 
             return null;
         }
@@ -117,7 +132,10 @@ namespace SsitEngine.Unity.ObjectPool
             if (sort)
             {
                 var results = new List<ObjectPoolBase>();
-                foreach (var objectPool in m_ObjectPools) results.Add(objectPool.Value);
+                foreach (var objectPool in m_ObjectPools)
+                {
+                    results.Add(objectPool.Value);
+                }
 
                 results.Sort(ObjectPoolComparer);
                 return results.ToArray();
@@ -126,7 +144,10 @@ namespace SsitEngine.Unity.ObjectPool
             {
                 var index = 0;
                 var results = new ObjectPoolBase[m_ObjectPools.Count];
-                foreach (var objectPool in m_ObjectPools) results[index++] = objectPool.Value;
+                foreach (var objectPool in m_ObjectPools)
+                {
+                    results[index++] = objectPool.Value;
+                }
 
                 return results;
             }
@@ -142,7 +163,10 @@ namespace SsitEngine.Unity.ObjectPool
         public void Release()
         {
             var objectPools = GetAllObjectPools(true);
-            foreach (var objectPool in objectPools) objectPool.Release();
+            foreach (var objectPool in objectPools)
+            {
+                objectPool.Release();
+            }
         }
 
         /// <summary>
@@ -151,7 +175,10 @@ namespace SsitEngine.Unity.ObjectPool
         public void ReleaseAllUnused()
         {
             var objectPools = GetAllObjectPools(true);
-            foreach (var objectPool in objectPools) objectPool.ReleaseAllUnused();
+            foreach (var objectPool in objectPools)
+            {
+                objectPool.ReleaseAllUnused();
+            }
         }
 
         #endregion
@@ -167,7 +194,10 @@ namespace SsitEngine.Unity.ObjectPool
         /// <inheritdoc />
         public bool DestroyObjectPool<T>( IObjectPool<T> objectPool ) where T : ObjectBase
         {
-            if (objectPool == null) throw new SsitEngineException("Object pool is invalid.");
+            if (objectPool == null)
+            {
+                throw new SsitEngineException("Object pool is invalid.");
+            }
 
             return InternalDestroyObjectPool(TextUtils.GetFullName<T>(objectPool.Name));
         }
@@ -181,8 +211,10 @@ namespace SsitEngine.Unity.ObjectPool
             SsitFunction<T> loadFunction = null, SsitFunction<bool> spawncondition = null ) where T : ObjectBase
         {
             if (HasObjectPool<T>(name))
+            {
                 throw new SsitEngineException(TextUtils.Format("Already exist object pool '{0}'.",
                     TextUtils.GetFullName<T>(name)));
+            }
 
             var objectPool = new ObjectPool<T>(name, allowMultiSpawn, autoReleaseInterval, capacity, expireTime,
                 priority, loadFunction, spawncondition);

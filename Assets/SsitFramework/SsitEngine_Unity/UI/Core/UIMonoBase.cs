@@ -50,7 +50,9 @@ namespace SsitEngine.Unity.UI
             m_widghtDic = new Dictionary<string, GameObject>(10);
             // 添加自身
             if (transform.CompareTag("_UIWidght") && !m_widghtDic.ContainsKey(transform.name))
+            {
                 m_widghtDic.Add(transform.name, transform.gameObject);
+            }
 
             AddComponentInChildren(transform);
         }
@@ -67,9 +69,14 @@ namespace SsitEngine.Unity.UI
             for (var i = 0; i < root.childCount; i++)
             {
                 if (root.GetChild(i).CompareTag("_UIWidght") && !m_widghtDic.ContainsKey(root.GetChild(i).name))
+                {
                     m_widghtDic.Add(root.GetChild(i).name, root.GetChild(i).gameObject);
+                }
 
-                if (root.GetChild(i).childCount > 0) AddComponentInChildren(root.GetChild(i));
+                if (root.GetChild(i).childCount > 0)
+                {
+                    AddComponentInChildren(root.GetChild(i));
+                }
             }
         }
 
@@ -80,7 +87,10 @@ namespace SsitEngine.Unity.UI
         /// <returns>如果目标控件不存在返回null，否则返回该控件的GameObject组件</returns>
         protected GameObject GetGameObject( string name )
         {
-            if (m_widghtDic.ContainsKey(name)) return m_widghtDic[name];
+            if (m_widghtDic.ContainsKey(name))
+            {
+                return m_widghtDic[name];
+            }
             throw new SsitEngineException("要获取的组件没有添加 '_UIWidght' 标签: " + name);
         }
 
@@ -107,7 +117,10 @@ namespace SsitEngine.Unity.UI
         protected RectTransform GetUITransform( string name )
         {
             var go = GetGameObject(name);
-            if (go == null) throw new SsitEngineException("要获取的组件为空：" + name);
+            if (go == null)
+            {
+                throw new SsitEngineException("要获取的组件为空：" + name);
+            }
 
             return go.GetComponent<RectTransform>();
         }
@@ -136,7 +149,10 @@ namespace SsitEngine.Unity.UI
         {
             var go = GetGameObject(name);
             var componet = go.GetComponent<T>();
-            if (componet == null) componet = go.AddComponent<T>();
+            if (componet == null)
+            {
+                componet = go.AddComponent<T>();
+            }
 
             return componet;
         }
@@ -156,7 +172,10 @@ namespace SsitEngine.Unity.UI
         /// </summary>
         protected void Destroy()
         {
-            if (m_widghtDic == null) return;
+            if (m_widghtDic == null)
+            {
+                return;
+            }
 
 
             m_widghtDic.Clear();
@@ -174,9 +193,13 @@ namespace SsitEngine.Unity.UI
         protected void SetText( Text uiText, string value )
         {
             if (uiText)
+            {
                 uiText.text = value;
+            }
             else
+            {
                 throw new SsitEngineException("The Text: " + name + "is null");
+            }
         }
 
         #endregion
@@ -194,9 +217,13 @@ namespace SsitEngine.Unity.UI
         {
             var btn = GetUIComponet<Button>(name);
             if (btn)
+            {
                 btn.onClick.AddListener(clickCallBack);
+            }
             else
+            {
                 throw new SsitEngineException("The button: " + name + "is null");
+            }
         }
 
         /// <summary>
@@ -211,9 +238,13 @@ namespace SsitEngine.Unity.UI
         {
             var btn = GetUIComponet<Button>(name);
             if (btn)
+            {
                 btn.onClick.AddListener(() => { clickCallBack.Invoke(btn.gameObject); });
+            }
             else
+            {
                 throw new SsitEngineException("The button: " + name + "is null");
+            }
         }
 
 
@@ -228,9 +259,13 @@ namespace SsitEngine.Unity.UI
         {
             var toggle = GetUIComponet<Toggle>(name);
             if (toggle)
+            {
                 toggle.onValueChanged.AddListener(isOn => { clickCallBack(toggle.gameObject, isOn); });
+            }
             else
+            {
                 throw new SsitEngineException("The toggle: " + name + "is null");
+            }
         }
 
         /// <summary>
@@ -244,9 +279,13 @@ namespace SsitEngine.Unity.UI
         {
             var t = GetUIComponet<Text>(name);
             if (t)
+            {
                 t.text = value;
+            }
             else
+            {
                 throw new SsitEngineException("The Text: " + name + "is null");
+            }
         }
 
         /// <summary>
@@ -268,7 +307,9 @@ namespace SsitEngine.Unity.UI
                     onValueChangedAction(inputField.gameObject, str);
                 });
                 if (onEndEditAction != null)
+                {
                     inputField.onEndEdit.AddListener(str => { onEndEditAction(inputField.gameObject, str); });
+                }
             }
             else
             {
@@ -287,9 +328,13 @@ namespace SsitEngine.Unity.UI
         {
             var slider = GetUIComponet<Slider>(name);
             if (slider)
+            {
                 slider.onValueChanged.AddListener(value => { onValueChangedAction(slider.gameObject, value); });
+            }
             else
+            {
                 throw new SsitEngineException("The Slider: " + name + "is null");
+            }
         }
 
         /// <summary>
@@ -303,9 +348,13 @@ namespace SsitEngine.Unity.UI
         {
             var scrollbar = GetUIComponet<Scrollbar>(name);
             if (scrollbar)
+            {
                 scrollbar.onValueChanged.AddListener(value => { onValueChangedAction(scrollbar.gameObject, value); });
+            }
             else
+            {
                 throw new SsitEngineException("The Scrollbar: " + name + "is null");
+            }
         }
 
         /// <summary>
@@ -319,12 +368,16 @@ namespace SsitEngine.Unity.UI
         {
             var dropdown = GetUIComponet<Dropdown>(name);
             if (dropdown)
+            {
                 dropdown.onValueChanged.AddListener(value =>
                 {
                     onValueChangedAction.Invoke(dropdown.gameObject, value);
                 });
+            }
             else
+            {
                 throw new SsitEngineException("The Dropdown: " + name + "is null");
+            }
         }
 
         /// <summary>
@@ -338,12 +391,16 @@ namespace SsitEngine.Unity.UI
         {
             var scrollRect = GetUIComponet<ScrollRect>(name);
             if (scrollRect)
+            {
                 scrollRect.onValueChanged.AddListener(pos =>
                 {
                     onValueChangedAction.Invoke(scrollRect.gameObject, pos);
                 });
+            }
             else
+            {
                 throw new SsitEngineException("The ScrollRect: " + name + "is null");
+            }
         }
 
         #region Trigger Event
@@ -564,12 +621,17 @@ namespace SsitEngine.Unity.UI
         private void AddTriggerEvent( string name, EventTriggerType eventId,
             UnityAction<GameObject, PointerEventData> action )
         {
-            if (action == null) return;
+            if (action == null)
+            {
+                return;
+            }
 
             var trigger = GetUIComponet<EventTrigger>(name);
 
             if (trigger == null)
+            {
                 trigger = GetGameObject(name).AddComponent<EventTrigger>();
+            }
 
             var entry = new EventTrigger.Entry();
 

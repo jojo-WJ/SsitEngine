@@ -86,15 +86,24 @@ namespace SsitEngine.Mathematics
         public static double Evaluate( KeyFrame[] frames, double t )
         {
             if (frames == null || frames.Length == 0)
+            {
                 return 0.0;
+            }
             var num = 0.0;
             if (frames.Length == 1)
+            {
                 num = frames[0].value;
+            }
             else if (t <= frames[0].time)
+            {
                 num = frames[0].value;
+            }
             else if (t >= frames[frames.Length - 1].time)
+            {
                 num = frames[frames.Length - 1].value;
+            }
             else
+            {
                 for (var index = 0; index < frames.Length; ++index)
                 {
                     if (index == frames[index].time)
@@ -108,6 +117,7 @@ namespace SsitEngine.Mathematics
                         break;
                     }
                 }
+            }
             return num;
         }
     }

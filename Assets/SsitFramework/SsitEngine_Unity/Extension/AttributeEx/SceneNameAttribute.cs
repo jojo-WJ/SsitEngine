@@ -1,14 +1,16 @@
-using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEngine;
+
 #endif
 public class SceneNameAttribute : PropertyAttribute
 {
-    public int selectedValue = 0;
     public bool enableOnly = true;
-    public SceneNameAttribute(bool enableOnly = true)
+    public int selectedValue;
+
+    public SceneNameAttribute( bool enableOnly = true )
     {
         this.enableOnly = enableOnly;
     }
@@ -20,18 +22,12 @@ public class SceneNameAttribute : PropertyAttribute
 [CustomPropertyDrawer(typeof(SceneNameAttribute))]
 public class SceneNameDrawer : PropertyDrawer
 {
-    private SceneNameAttribute sceneNameAttribute
-    {
-        get
-        {
-            return (SceneNameAttribute)attribute;
-        }
-    }
+    private SceneNameAttribute sceneNameAttribute => (SceneNameAttribute) attribute;
 
 
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    public override void OnGUI( Rect position, SerializedProperty property, GUIContent label )
     {
-        string[] sceneNames = GetEnabledSceneNames();
+        var sceneNames = GetEnabledSceneNames();
 
         if (sceneNames.Length == 0)
         {
@@ -39,22 +35,27 @@ public class SceneNameDrawer : PropertyDrawer
             return;
         }
 
-        int[] sceneNumbers = new int[sceneNames.Length];
+        var sceneNumbers = new int[sceneNames.Length];
 
         SetSceneNambers(sceneNumbers, sceneNames);
 
         if (!string.IsNullOrEmpty(property.stringValue))
+        {
             sceneNameAttribute.selectedValue = GetIndex(sceneNames, property.stringValue);
+        }
 
-        sceneNameAttribute.selectedValue = EditorGUI.IntPopup(position, label.text, sceneNameAttribute.selectedValue, sceneNames, sceneNumbers);
+        sceneNameAttribute.selectedValue = EditorGUI.IntPopup(position, label.text, sceneNameAttribute.selectedValue,
+            sceneNames, sceneNumbers);
 
         property.stringValue = sceneNames[sceneNameAttribute.selectedValue];
     }
 
-    string[] GetEnabledSceneNames()
+    private string[] GetEnabledSceneNames()
     {
-        List<EditorBuildSettingsScene> scenes = (sceneNameAttribute.enableOnly ? EditorBuildSettings.scenes.Where(scene => scene.enabled) : EditorBuildSettings.scenes).ToList();
-        HashSet<string> sceneNames = new HashSet<string>();
+        var scenes = (sceneNameAttribute.enableOnly
+            ? EditorBuildSettings.scenes.Where(scene => scene.enabled)
+            : EditorBuildSettings.scenes).ToList();
+        var sceneNames = new HashSet<string>();
         scenes.ForEach(scene =>
         {
             sceneNames.Add(scene.path.Substring(scene.path.LastIndexOf("/") + 1).Replace(".unity", string.Empty));
@@ -62,18 +63,18 @@ public class SceneNameDrawer : PropertyDrawer
         return sceneNames.ToArray();
     }
 
-    void SetSceneNambers(int[] sceneNumbers, string[] sceneNames)
+    private void SetSceneNambers( int[] sceneNumbers, string[] sceneNames )
     {
-        for (int i = 0; i < sceneNames.Length; i++)
+        for (var i = 0; i < sceneNames.Length; i++)
         {
             sceneNumbers[i] = i;
         }
     }
 
-    int GetIndex(string[] sceneNames, string sceneName)
+    private int GetIndex( string[] sceneNames, string sceneName )
     {
-        int result = 0;
-        for (int i = 0; i < sceneNames.Length; i++)
+        var result = 0;
+        for (var i = 0; i < sceneNames.Length; i++)
         {
             if (sceneName == sceneNames[i])
             {

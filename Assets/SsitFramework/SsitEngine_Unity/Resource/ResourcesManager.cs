@@ -23,14 +23,13 @@ namespace SsitEngine.Unity.Resource
     /// </summary>
     public class ResourcesManager : ManagerBase<ResourcesManager>, IResourceManager
     {
-        
         #region Interval
-        
+
         /// <summary>
         /// 资源辅助器
         /// </summary>
         public AssetLoaderHelper LoaderHelper { get; private set; }
-        
+
         /// <summary>
         /// 设置资源加载辅助器
         /// </summary>
@@ -38,7 +37,6 @@ namespace SsitEngine.Unity.Resource
         {
             LoaderHelper = helper;
         }
-
 
         #endregion
 
@@ -53,11 +51,15 @@ namespace SsitEngine.Unity.Resource
         public void LoadAsset<T>( string resPath, bool isAsync, UnityAction<T> complete ) where T : Object
         {
             if (isAsync)
+            {
                 LoaderHelper.SyncLoadAsset(resPath, complete);
+            }
             else
+            {
                 LoaderHelper.LoadAsset(resPath, complete);
+            }
         }
-        
+
         /// <summary>
         /// 加载通用资源
         /// </summary>
@@ -67,9 +69,13 @@ namespace SsitEngine.Unity.Resource
         public void LoadAsset<T>( int id, bool isAsync, UnityAction<T> complete ) where T : Object
         {
             if (isAsync)
+            {
                 LoaderHelper.SyncLoadAsset(id, complete);
+            }
             else
+            {
                 LoaderHelper.LoadAsset(id, complete);
+            }
         }
 
         /// <summary>
@@ -165,6 +171,7 @@ namespace SsitEngine.Unity.Resource
             var tempPath = GetFileWithOutExtension(uuid, Path.Combine(PathUtils.GetPersistentDataPath(), folderPath));
             Debug.Log($"LoadWebFile tempPath {tempPath}");
             if (IsExistFile(tempPath))
+            {
                 return Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo
                 {
                     Url = tempPath,
@@ -175,6 +182,7 @@ namespace SsitEngine.Unity.Resource
 
                     FailedAction = o => { failture?.Invoke(o); }
                 });
+            }
             return Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo
             {
                 Url = ConfigManager.HttpIpPort + HttpNetWorkAction.Download_File + uuid,
@@ -200,32 +208,30 @@ namespace SsitEngine.Unity.Resource
                 SsitDebug.Warning("请求的文件uuid为空");
                 return 0;
             }
-            string tempPath = GetFileWithOutExtension(uuid, Path.Combine(PathUtils.GetPersistentDataPath(), folderPath));
+            var tempPath = GetFileWithOutExtension(uuid, Path.Combine(PathUtils.GetPersistentDataPath(), folderPath));
             if (!IsExistFile(tempPath))
             {
-                return Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo()
+                return Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo
                 {
-
                     Url = ConfigManager.HttpIpPort + HttpNetWorkAction.Download_File + uuid,
                     FileType = ENRequestAssetType.EN_Texture,
                     WebRequestType = EnWebRequestType.EN_GET,
                     Uuid = uuid,
                     CompleteAction = o =>
                     {
-                        Texture2D t = o as Texture2D;
+                        var t = o as Texture2D;
 
                         if (t != null)
                         {
-                            Sprite icon = Sprite.Create(t, new Rect(0, 0, t.width, t.height), Vector2.zero);
+                            var icon = Sprite.Create(t, new Rect(0, 0, t.width, t.height), Vector2.zero);
                             complete.Invoke(icon);
                         }
                     }
-
                 });
             }
-            Debug.Log($" LoadWebSprite :: tempPath{ tempPath} ");
-            
-            return Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo()
+            Debug.Log($" LoadWebSprite :: tempPath{tempPath} ");
+
+            return Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo
             {
                 Url = tempPath,
                 FileType = ENRequestAssetType.EN_Texture,
@@ -233,17 +239,17 @@ namespace SsitEngine.Unity.Resource
                 Uuid = uuid,
                 CompleteAction = o =>
                 {
-                    Texture2D t = o as Texture2D;
+                    var t = o as Texture2D;
 
                     if (t != null)
                     {
-                        Sprite icon = Sprite.Create(t, new Rect(0, 0, t.width, t.height), Vector2.zero);
+                        var icon = Sprite.Create(t, new Rect(0, 0, t.width, t.height), Vector2.zero);
                         complete.Invoke(icon);
                     }
                 }
             });
         }
-        
+
         /// <summary>
         /// 服务器请求下载文件
         /// </summary>
@@ -252,50 +258,38 @@ namespace SsitEngine.Unity.Resource
         /// <param name="complete">下载完成回调</param>
         /// <param name="failture">下载失败回调</param>
         /// <param name="progress">下载进度回调【未实现等待需求添加】</param>
-        public void LoadWebTextFile( string uuid, string folderPath, UnityAction<string> complete, UnityAction<string> failture, UnityAction<float> progress = null )
+        public void LoadWebTextFile( string uuid, string folderPath, UnityAction<string> complete,
+            UnityAction<string> failture, UnityAction<float> progress = null )
         {
-            string tempPath = GetFileWithOutExtension(uuid, Path.Combine(PathUtils.GetPersistentDataPath(), folderPath));
+            var tempPath = GetFileWithOutExtension(uuid, Path.Combine(PathUtils.GetPersistentDataPath(), folderPath));
             if (!IsExistFile(tempPath))
             {
-                Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo()
+                Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo
                 {
                     Url = ConfigManager.HttpIpPort + HttpNetWorkAction.Download_File + uuid,
                     FileType = ENRequestAssetType.EN_Text,
                     WebRequestType = EnWebRequestType.EN_GET,
                     Uuid = uuid,
-                    CompleteAction = o =>
-                    {
-                        complete?.Invoke((string)o);
-                    },
+                    CompleteAction = o => { complete?.Invoke((string) o); },
 
-                    FailedAction = o =>
-                    {
-                        failture?.Invoke(o);
-                    }
+                    FailedAction = o => { failture?.Invoke(o); }
                 });
             }
             else
             {
                 Debug.Log($" LoadWebTextFile :: tempPath{tempPath} ");
 
-                Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo()
+                Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo
                 {
                     Url = tempPath,
                     FileType = ENRequestAssetType.EN_Text,
                     WebRequestType = EnWebRequestType.EN_GETMEMORY,
                     Uuid = uuid,
-                    CompleteAction = o =>
-                    {
-                        complete?.Invoke((string)o);
-                    },
+                    CompleteAction = o => { complete?.Invoke((string) o); },
 
-                    FailedAction = o =>
-                    {
-                        failture?.Invoke(o);
-                    }
+                    FailedAction = o => { failture?.Invoke(o); }
                 });
             }
-
         }
 
         /// <summary>
@@ -306,55 +300,42 @@ namespace SsitEngine.Unity.Resource
         /// <param name="complete">下载完成回调</param>
         /// <param name="failture">下载失败回调</param>
         /// <param name="progress">下载进度回调【未实现等待需求添加】</param>
-        public void LoadWebTextBytes( string uuid, string folderPath, UnityAction<byte[]> complete, UnityAction<string> failture, UnityAction<float> progress = null )
+        public void LoadWebTextBytes( string uuid, string folderPath, UnityAction<byte[]> complete,
+            UnityAction<string> failture, UnityAction<float> progress = null )
         {
-            string tempPath = GetFileWithOutExtension(uuid, Path.Combine(PathUtils.GetPersistentDataPath(), folderPath));
+            var tempPath = GetFileWithOutExtension(uuid, Path.Combine(PathUtils.GetPersistentDataPath(), folderPath));
 
             Debug.Log($" LoadWebTextBytes :: tempPath{tempPath} ");
             if (!IsExistFile(tempPath))
             {
-                Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo()
+                Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo
                 {
                     Url = ConfigManager.HttpIpPort + HttpNetWorkAction.Download_File + uuid,
                     FileType = ENRequestAssetType.EN_Text,
                     WebRequestType = EnWebRequestType.EN_GET,
-                    FileName = "byte",//add tag
+                    FileName = "byte", //add tag
                     Uuid = uuid,
-                    CompleteAction = o =>
-                    {
-                        complete?.Invoke((byte[])o);
-                    },
+                    CompleteAction = o => { complete?.Invoke((byte[]) o); },
 
-                    FailedAction = o =>
-                    {
-                        failture?.Invoke(o);
-                    }
+                    FailedAction = o => { failture?.Invoke(o); }
                 });
             }
             else
             {
-                Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo()
+                Engine.Instance.Platform.AddWebRequestTask(new WebRequestInfo
                 {
                     Url = tempPath,
                     FileType = ENRequestAssetType.EN_Text,
                     WebRequestType = EnWebRequestType.EN_GETMEMORY,
-                    FileName = "byte",//add tag
+                    FileName = "byte", //add tag
                     Uuid = uuid,
-                    CompleteAction = o =>
-                    {
-                        complete?.Invoke((byte[])o);
-                    },
+                    CompleteAction = o => { complete?.Invoke((byte[]) o); },
 
-                    FailedAction = o =>
-                    {
-                        failture?.Invoke(o);
-                    }
+                    FailedAction = o => { failture?.Invoke(o); }
                 });
             }
-
-
         }
-        
+
         #endregion
 
         #region 模块管理
@@ -404,7 +385,7 @@ namespace SsitEngine.Unity.Resource
         {
             LoaderHelper?.SyncLoadAddressableSpriteAtlas(atlasId);
         }
-        
+
         /// <summary>
         /// 卸载图集
         /// </summary>
@@ -413,7 +394,7 @@ namespace SsitEngine.Unity.Resource
         {
             LoaderHelper?.UnLoadSpriteAtlasAsset(atlasId);
         }
-        
+
         /// <summary>
         /// 加入寻址后获取图片精灵
         /// </summary>

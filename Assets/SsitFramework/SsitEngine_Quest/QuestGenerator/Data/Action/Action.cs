@@ -4,41 +4,32 @@ using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// Actions are tasks that quest givers can ask questers to do to an entity.
     /// </summary>
     [Serializable]
     public class Action
     {
-        // This description field is for your public reference."
-        [TextArea]
-        [SerializeField]
-        private string m_description;
-
-        // The display name of this action.
-        [SerializeField]
-        private string m_displayName;
-
         // Content for each quest node state and UI category (dialogue, journal, HUD).
-        [SerializeField]
-        private ActionText m_actionText = new ActionText();
+        [SerializeField] private ActionText m_actionText = new ActionText();
 
         // this action/condition require check param
-        [SerializeField]
-        private string m_activeRequiredValue;
+        [SerializeField] private string m_activeRequiredValue;
 
         // this action/condition list
-        [SerializeField]
-        private List<ActionCompletion> m_completion;
+        [SerializeField] private List<ActionCompletion> m_completion;
+
+        // This description field is for your public reference."
+        [TextArea] [SerializeField] private string m_description;
+
+        // The display name of this action.
+        [SerializeField] private string m_displayName;
 
         //Send this to Message System when this action's node becomes active. Use ':' to separate parameter from message."
-        [SerializeField]
-        private string m_sendMessageOnActive;
+        [SerializeField] private string m_sendMessageOnActive;
 
         //Send this to Message System when this action's node is completed. Use ':' to separate parameter from message.
-        [SerializeField]
-        private string m_sendMessageOnCompletion;
+        [SerializeField] private string m_sendMessageOnCompletion;
 
         //[SerializeField]
         //private Motive[] m_motives;
@@ -54,8 +45,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string Description
         {
-            get { return m_description; }
-            set { m_description = value; }
+            get => m_description;
+            set => m_description = value;
         }
 
         /// <summary>
@@ -63,8 +54,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string DisplayName
         {
-            get { return m_displayName; }
-            set { m_displayName = value; }
+            get => m_displayName;
+            set => m_displayName = value;
         }
 
         /// <summary>
@@ -72,8 +63,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public ActionText ActionText
         {
-            get { return m_actionText; }
-            set { m_actionText = value; }
+            get => m_actionText;
+            set => m_actionText = value;
         }
 
         /// <summary>
@@ -81,8 +72,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public List<ActionCompletion> Completion
         {
-            get { return m_completion; }
-            set { m_completion = value; }
+            get => m_completion;
+            set => m_completion = value;
         }
 
         /// <summary>
@@ -90,15 +81,9 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string ActiveRequiredValue
         {
-            get
-            {
-                return m_activeRequiredValue;
-            }
+            get => m_activeRequiredValue;
 
-            set
-            {
-                m_activeRequiredValue = value;
-            }
+            set => m_activeRequiredValue = value;
         }
 
         /// <summary>
@@ -106,8 +91,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string SendMessageOnActive
         {
-            get { return m_sendMessageOnActive; }
-            set { m_sendMessageOnActive = value; }
+            get => m_sendMessageOnActive;
+            set => m_sendMessageOnActive = value;
         }
 
         /// <summary>
@@ -115,8 +100,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string SendMessageOnCompletion
         {
-            get { return m_sendMessageOnCompletion; }
-            set { m_sendMessageOnCompletion = value; }
+            get => m_sendMessageOnCompletion;
+            set => m_sendMessageOnCompletion = value;
         }
 
         //public Motive[] Motives
@@ -136,5 +121,4 @@ namespace SsitEngine.QuestManager
         //    set { m_effects = value; }
         //}
     }
-
 }

@@ -1,9 +1,9 @@
-using System.Linq;
-using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Animations;
 using System;
+using System.Linq;
+using UnityEngine;
 
 #endif
 
@@ -13,6 +13,18 @@ using System;
 public class AnimatorParameterAttribute : PropertyAttribute
 {
     /// <summary>
+    /// 参数定型
+    /// </summary>
+    public enum ParameterType
+    {
+        Float = 1,
+        Int = 3,
+        Bool = 4,
+        Trigger = 9,
+        None = 9999
+    }
+
+    /// <summary>
     /// 参数型。缺省不考虑类型
     /// </summary>
     public ParameterType parameterType = ParameterType.None;
@@ -20,12 +32,12 @@ public class AnimatorParameterAttribute : PropertyAttribute
     /// <summary>
     /// 现在选择中的索引
     /// </summary>
-    public int selectedValue = 0;
+    public int selectedValue;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AnimatorParameterAttribute"/> class.
     /// </summary>
-    public AnimatorParameterAttribute () : this(ParameterType.None)
+    public AnimatorParameterAttribute() : this(ParameterType.None)
     {
     }
 
@@ -35,21 +47,9 @@ public class AnimatorParameterAttribute : PropertyAttribute
     /// <param name='ParamaterType'>
     /// 指定为选择类型
     /// </param>
-    public AnimatorParameterAttribute (ParameterType parameterType)
+    public AnimatorParameterAttribute( ParameterType parameterType )
     {
         this.parameterType = parameterType;
-    }
-
-    /// <summary>
-    /// 参数定型
-    /// </summary>
-    public enum ParameterType
-    {
-        Float = 1,
-        Int = 3,
-        Bool = 4,
-        Trigger = 9,
-        None = 9999,
     }
 }
 
@@ -68,7 +68,9 @@ public class AnimatorParameterAttribute : PropertyAttribute
 [CustomPropertyDrawer(typeof(AnimatorParameterAttribute))]
 public class AnimatorParameterDrawer : PropertyDrawer
 {
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    private AnimatorParameterAttribute animatorParameterAttribute => (AnimatorParameterAttribute) attribute;
+
+    public override void OnGUI( Rect position, SerializedProperty property, GUIContent label )
     {
         var animatorController = GetAnimatorController(property);
 
@@ -109,11 +111,11 @@ public class AnimatorParameterDrawer : PropertyDrawer
             animatorParameterAttribute.selectedValue = matchIndex;
         }
 
-        animatorParameterAttribute.selectedValue = EditorGUI.IntPopup(position, label.text, animatorParameterAttribute.selectedValue,
+        animatorParameterAttribute.selectedValue = EditorGUI.IntPopup(position, label.text,
+            animatorParameterAttribute.selectedValue,
             eventNamesArray, SetOptionValues(eventNamesArray));
 
         property.stringValue = eventNamesArray[animatorParameterAttribute.selectedValue];
-
     }
 
     /// <summary>
@@ -125,8 +127,7 @@ public class AnimatorParameterDrawer : PropertyDrawer
     /// <param name='property'>
     /// Property.
     /// </param>
-
-    AnimatorController GetAnimatorController(SerializedProperty property)
+    private AnimatorController GetAnimatorController( SerializedProperty property )
     {
         var component = property.serializedObject.targetObject as Component;
 
@@ -147,7 +148,7 @@ public class AnimatorParameterDrawer : PropertyDrawer
             }
         }
 
-       return anim.runtimeAnimatorController as AnimatorController;
+        return anim.runtimeAnimatorController as AnimatorController;
     }
 
     /// <summary>
@@ -162,11 +163,10 @@ public class AnimatorParameterDrawer : PropertyDrawer
     /// <param name='index'>
     /// If set to <c>true</c> index.
     /// </param>
-
-    bool CanAddEventName(AnimatorControllerParameterType animatorControllerParameterType)
+    private bool CanAddEventName( AnimatorControllerParameterType animatorControllerParameterType )
     {
         return !(animatorParameterAttribute.parameterType != AnimatorParameterAttribute.ParameterType.None
-                 && (int)animatorControllerParameterType != (int)animatorParameterAttribute.parameterType);
+                 && (int) animatorControllerParameterType != (int) animatorParameterAttribute.parameterType);
     }
 
     /// <summary>
@@ -178,27 +178,19 @@ public class AnimatorParameterDrawer : PropertyDrawer
     /// <param name='eventNames'>
     /// Event names.
     /// </param>
-    int[] SetOptionValues(string[] eventNames)
+    private int[] SetOptionValues( string[] eventNames )
     {
-        int[] optionValues = new int[eventNames.Length];
-        for (int i = 0; i < eventNames.Length; i++)
+        var optionValues = new int[eventNames.Length];
+        for (var i = 0; i < eventNames.Length; i++)
         {
             optionValues[i] = i;
         }
         return optionValues;
     }
 
-    AnimatorParameterAttribute animatorParameterAttribute
+    private void DefaultInspector( Rect position, SerializedProperty property, GUIContent label )
     {
-        get
-        {
-            return (AnimatorParameterAttribute)attribute;
-        }
-    }
-
-    void DefaultInspector(Rect position, SerializedProperty property, GUIContent label)
-    {
-            EditorGUI.PropertyField(position, property, label);
+        EditorGUI.PropertyField(position, property, label);
     }
 }
 

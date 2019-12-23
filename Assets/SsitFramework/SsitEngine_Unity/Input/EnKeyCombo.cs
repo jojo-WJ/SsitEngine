@@ -2,10 +2,10 @@
 
 namespace SsitEngine.Unity.SsitInput
 {
-	/// <summary>
-	///     组和键
-	/// </summary>
-	[Flags]
+    /// <summary>
+    ///     组和键
+    /// </summary>
+    [Flags]
     public enum EnKeyCombo
     {
         FOCUS = 1,

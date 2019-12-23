@@ -16,11 +16,17 @@ namespace SsitEngine.Unity
         /// <returns></returns>
         public static GameObject FindTheChildNode( this GameObject go, string name, bool endsWith = false )
         {
-            if (endsWith ? go.transform.name == name : go.transform.name.EndsWith(name)) return go;
+            if (endsWith ? go.transform.name == name : go.transform.name.EndsWith(name))
+            {
+                return go;
+            }
             foreach (Transform child in go.transform)
             {
                 var result = child.FindDeepChild(name);
-                if (result != null) return result.gameObject;
+                if (result != null)
+                {
+                    return result.gameObject;
+                }
             }
 
             //SsitDebug.Warning(TextUtils.Format("查找对象不存在 {0}", name));
@@ -35,7 +41,9 @@ namespace SsitEngine.Unity
         {
             var searchTranformNode = FindTheChildNode(goParent, childName);
             if (searchTranformNode)
+            {
                 return searchTranformNode.gameObject.GetComponent<T>();
+            }
             return null;
         }
 
@@ -51,7 +59,9 @@ namespace SsitEngine.Unity
             GameObject searchTranformNode = null; //查找特定子节点
             searchTranformNode = FindTheChildNode(goParent, childName);
             if (searchTranformNode)
+            {
                 return searchTranformNode.gameObject.GetOrAddComponent<T>();
+            }
             return null;
         }
 
@@ -60,7 +70,9 @@ namespace SsitEngine.Unity
         {
             var com = go.GetComponent<T>();
             if (com != null)
+            {
                 return com;
+            }
             return go.AddComponent<T>();
         }
 
@@ -77,7 +89,10 @@ namespace SsitEngine.Unity
             if (go != null)
             {
                 var sub = go.transform.Find(subnode);
-                if (sub != null) return sub.GetComponent<T>();
+                if (sub != null)
+                {
+                    return sub.GetComponent<T>();
+                }
             }
             return null;
         }
@@ -91,7 +106,10 @@ namespace SsitEngine.Unity
         /// <returns>返回脚本组件</returns>
         public static T Get<T>( this Transform tr, string subnode ) where T : Component
         {
-            if (tr != null) return tr.gameObject.Get<T>(subnode);
+            if (tr != null)
+            {
+                return tr.gameObject.Get<T>(subnode);
+            }
             return null;
         }
 
@@ -104,7 +122,10 @@ namespace SsitEngine.Unity
         /// <returns>返回脚本组件</returns>
         public static T Get<T>( this Component cp, string subnode ) where T : Component
         {
-            if (cp != null) return cp.gameObject.Get<T>(subnode);
+            if (cp != null)
+            {
+                return cp.gameObject.Get<T>(subnode);
+            }
             return null;
         }
 
@@ -128,7 +149,10 @@ namespace SsitEngine.Unity
         public static GameObject Child( this Transform go, string subnode )
         {
             var tran = go.Find(subnode);
-            if (tran == null) return null;
+            if (tran == null)
+            {
+                return null;
+            }
             return tran.gameObject;
         }
 
@@ -139,7 +163,10 @@ namespace SsitEngine.Unity
         /// <param name="go">待清除父物体</param>
         public static void ClearAllChild( this GameObject go, bool immediate = false )
         {
-            if (go == null) return;
+            if (go == null)
+            {
+                return;
+            }
             go.transform.ClearAllChild(immediate);
         }
 
@@ -149,12 +176,21 @@ namespace SsitEngine.Unity
         /// <param name="tr">待清除父物体</param>
         public static void ClearAllChild( this Transform tr, bool immediate = false )
         {
-            if (tr == null) return;
+            if (tr == null)
+            {
+                return;
+            }
             for (var i = tr.childCount - 1; i >= 0; i--)
+            {
                 if (immediate)
+                {
                     Object.DestroyImmediate(tr.GetChild(i).gameObject);
+                }
                 else
+                {
                     Object.Destroy(tr.GetChild(i).gameObject);
+                }
+            }
         }
 
         /// <summary>Set layer include it's children.</summary>
@@ -162,7 +198,9 @@ namespace SsitEngine.Unity
         {
             gameObject.layer = layer;
             foreach (Component component in gameObject.transform)
+            {
                 component.gameObject.BroadcastLayer(layer);
+            }
         }
     }
 }

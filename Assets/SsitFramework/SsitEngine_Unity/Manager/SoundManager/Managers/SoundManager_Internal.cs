@@ -56,10 +56,14 @@ namespace SsitEngine.Unity.Sound
             {
                 isPaused = !isPaused;
                 if (audios[0].isPlaying)
+                {
                     audiosPaused[0] = true;
+                }
                 audios[0].Pause();
                 if (audios[1].isPlaying)
+                {
                     audiosPaused[1] = true;
+                }
                 audios[1].Pause();
                 PSFX(true);
             }
@@ -73,9 +77,13 @@ namespace SsitEngine.Unity.Sound
             if (isPaused)
             {
                 if (audiosPaused[0])
+                {
                     audios[0].Play();
+                }
                 if (audiosPaused[1])
+                {
                     audios[1].Play();
+                }
 
                 audiosPaused[0] = audiosPaused[1] = false;
 
@@ -92,8 +100,12 @@ namespace SsitEngine.Unity.Sound
         private AudioSource IsPlaying( AudioClip clip, bool regardlessOfCrossOut )
         {
             for (var i = 0; i < audios.Length; i++)
+            {
                 if (audios[i].isPlaying && audios[i].clip == clip && (regardlessOfCrossOut || !outCrossing[i]))
+                {
                     return audios[i];
+                }
+            }
             return null;
         }
 
@@ -103,16 +115,24 @@ namespace SsitEngine.Unity.Sound
         private bool IsPlaying()
         {
             for (var i = 0; i < audios.Length; i++)
+            {
                 if (audios[i].isPlaying)
+                {
                     return true;
+                }
+            }
             return false;
         }
 
         private int GetAudioSourceIndex( AudioSource source )
         {
             for (var i = 0; i < audios.Length; i++)
+            {
                 if (source == audios[i])
+                {
                     return i;
+                }
+            }
             return SOUNDMANAGER_FALSE;
         }
 
@@ -130,33 +150,49 @@ namespace SsitEngine.Unity.Sound
             {
                 //Both are playing, so figure out whos going to be playing when its over.
                 if (inCrossing[0] && inCrossing[1])
+                {
                     return SOUNDMANAGER_FALSE; //not possible!
+                }
                 if (inCrossing[0])
+                {
                     return 0;
+                }
                 if (inCrossing[1])
+                {
                     return 1;
+                }
                 return SOUNDMANAGER_FALSE; // not possible!
             }
             for (var i = 0; i < audios.Length; i++)
+            {
                 if (audios[i].isPlaying)
+                {
                     return i;
+                }
+            }
             return SOUNDMANAGER_FALSE;
         }
 
         private void SetNextSongInQueue()
         {
             if (currentSongIndex == -1)
+            {
                 return;
+            }
             if (currentSoundConnection == null || currentSoundConnection.soundsToPlay == null ||
                 currentSoundConnection.soundsToPlay.Count <= 0)
+            {
                 return;
+            }
             var nextSongPlaying = (currentSongIndex + 1) % currentSoundConnection.soundsToPlay.Count;
             var nextSong = currentSoundConnection.soundsToPlay[nextSongPlaying];
 
             var notPlaying = CheckWhosNotPlaying();
             if (audios[notPlaying] == null ||
                 audios[notPlaying].clip != null && !audios[notPlaying].clip.Equals(nextSong))
+            {
                 audios[notPlaying].clip = nextSong;
+            }
         }
 
         #region 模块化接口实现
@@ -248,7 +284,9 @@ namespace SsitEngine.Unity.Sound
         {
             var currentSources = gameObject.GetComponents<AudioSource>();
             foreach (var source in currentSources)
+            {
                 Destroy(source);
+            }
         }
 
         #endregion
@@ -263,12 +301,17 @@ namespace SsitEngine.Unity.Sound
         /// </summary>
         private void _PlayConnection( SoundConnection sc )
         {
-            if (offTheBGM || isPaused) return;
+            if (offTheBGM || isPaused)
+            {
+                return;
+            }
             if (string.IsNullOrEmpty(sc.level))
             {
                 var i = 1;
                 while (SoundConnectionsContainsThisLevel("CustomConnection" + i) != SOUNDMANAGER_FALSE)
+                {
                     i++;
+                }
                 sc.level = "CustomConnection" + i;
             }
             StopPreviousPlaySoundConnection();
@@ -281,7 +324,10 @@ namespace SsitEngine.Unity.Sound
         /// </summary>
         private void _PlayConnection( string levelName )
         {
-            if (offTheBGM || isPaused) return;
+            if (offTheBGM || isPaused)
+            {
+                return;
+            }
             var _indexOf = SoundConnectionsContainsThisLevel(levelName);
             if (_indexOf != SOUNDMANAGER_FALSE)
             {
@@ -311,13 +357,21 @@ namespace SsitEngine.Unity.Sound
         /// </summary>
         private void HandleLevel( int level )
         {
-            if (gameObject != gameObject || isPaused) return;
+            if (gameObject != gameObject || isPaused)
+            {
+                return;
+            }
 
             if (Time.realtimeSinceStartup != 0f && lastLevelLoad == Time.realtimeSinceStartup)
+            {
                 return;
+            }
             lastLevelLoad = Time.realtimeSinceStartup;
 
-            if (showDebug) Debug.Log("(" + Time.time + ") In Level Loaded: " + SceneManager.GetActiveScene().name);
+            if (showDebug)
+            {
+                Debug.Log("(" + Time.time + ") In Level Loaded: " + SceneManager.GetActiveScene().name);
+            }
             var _indexOf = SoundConnectionsContainsThisLevel(SceneManager.GetActiveScene().name);
             if (_indexOf == SOUNDMANAGER_FALSE || soundConnections[_indexOf].isCustomLevel)
             {
@@ -332,33 +386,50 @@ namespace SsitEngine.Unity.Sound
 
             if (!silentLevel && !offTheBGM)
             {
-                if (showDebug) Debug.Log("BGM activated.");
+                if (showDebug)
+                {
+                    Debug.Log("BGM activated.");
+                }
                 StopPreviousPlaySoundConnection();
                 StartCoroutine("PlaySoundConnection", currentSoundConnection);
             }
             else
             {
-                if (showDebug) Debug.Log("BGM deactivated.");
+                if (showDebug)
+                {
+                    Debug.Log("BGM deactivated.");
+                }
                 currentSoundConnection = null;
                 audios[0].loop = false;
                 audios[1].loop = false;
-                if (showDebug) Debug.Log("Don't play anything in this scene, cross out.");
+                if (showDebug)
+                {
+                    Debug.Log("Don't play anything in this scene, cross out.");
+                }
                 currentPlaying = CheckWhosPlaying();
                 StopAllCoroutines();
                 if (currentPlaying == SOUNDMANAGER_FALSE)
                 {
-                    if (showDebug) Debug.Log("Nothing is playing, don't do anything.");
+                    if (showDebug)
+                    {
+                        Debug.Log("Nothing is playing, don't do anything.");
+                    }
                     return;
                 }
                 if (CheckWhosNotPlaying() == SOUNDMANAGER_FALSE)
                 {
                     if (showDebug)
+                    {
                         Debug.Log("Both sources are playing, probably in a crossfade. Crossfade them both out.");
+                    }
                     StartCoroutine("CrossoutAll", crossDuration);
                 }
                 else if (audios[currentPlaying].isPlaying)
                 {
-                    if (showDebug) Debug.Log("Crossing out the source that is playing.");
+                    if (showDebug)
+                    {
+                        Debug.Log("Crossing out the source that is playing.");
+                    }
                     StartCoroutine("Crossout", new object[] {audios[currentPlaying], crossDuration});
                 }
             }
@@ -372,8 +443,14 @@ namespace SsitEngine.Unity.Sound
         ///     </returns>
         private int CheckWhosNotPlaying()
         {
-            if (!audios[0].isPlaying) return 0;
-            if (!audios[1].isPlaying) return 1;
+            if (!audios[0].isPlaying)
+            {
+                return 0;
+            }
+            if (!audios[1].isPlaying)
+            {
+                return 1;
+            }
             return SOUNDMANAGER_FALSE;
         }
 
@@ -382,8 +459,14 @@ namespace SsitEngine.Unity.Sound
         ///     </returns>
         private int CheckWhosPlaying()
         {
-            if (audios[0].isPlaying) return 0;
-            if (audios[1].isPlaying) return 1;
+            if (audios[0].isPlaying)
+            {
+                return 0;
+            }
+            if (audios[1].isPlaying)
+            {
+                return 1;
+            }
             return SOUNDMANAGER_FALSE;
         }
 
@@ -393,16 +476,25 @@ namespace SsitEngine.Unity.Sound
         private void _PlayImmediately( AudioClip clip2play, bool loop, UnityEvent runOnEndFunction )
         {
             if (InternalCallback != null)
+            {
                 OnSongEnd = InternalCallback;
+            }
             StopMusicImmediately();
             InternalCallback = runOnEndFunction;
 
-            if (offTheBGM || isPaused) return;
+            if (offTheBGM || isPaused)
+            {
+                return;
+            }
             SoundConnection sc;
             if (loop)
+            {
                 sc = new SoundConnection("", PlayMethod.ContinuousPlayThrough, clip2play);
+            }
             else
+            {
                 sc = new SoundConnection("", PlayMethod.OncePlayThrough, clip2play);
+            }
             ignoreCrossDuration = true;
             PlayConnection(sc);
             //this._PlayConnection(currentSoundConnection);
@@ -423,17 +515,26 @@ namespace SsitEngine.Unity.Sound
         /// </summary>
         private void _Play( AudioClip clip2play, bool loop, UnityEvent runOnEndFunction )
         {
-            if (offTheBGM || isPaused) return;
+            if (offTheBGM || isPaused)
+            {
+                return;
+            }
             if (InternalCallback != null)
+            {
                 OnSongEnd = InternalCallback;
+            }
             InternalCallback = runOnEndFunction;
 
             SoundConnection sc;
             if (loop)
+            {
                 sc = new SoundConnection(SceneManager.GetActiveScene().name, PlayMethod.ContinuousPlayThrough,
                     clip2play);
+            }
             else
+            {
                 sc = new SoundConnection(SceneManager.GetActiveScene().name, PlayMethod.OncePlayThrough, clip2play);
+            }
             PlayConnection(sc);
         }
 
@@ -453,7 +554,10 @@ namespace SsitEngine.Unity.Sound
         /// </summary>
         private int PlayClip( AudioClip clip2play, float clipVolume = 1f )
         {
-            if (showDebug) Debug.Log("Playing: " + clip2play.name);
+            if (showDebug)
+            {
+                Debug.Log("Playing: " + clip2play.name);
+            }
             currentPlaying = CheckWhosPlaying();
             var notPlaying = CheckWhosNotPlaying();
             if (currentPlaying != SOUNDMANAGER_FALSE) //If an AudioSource is playing...
@@ -464,13 +568,17 @@ namespace SsitEngine.Unity.Sound
                         //If the current playing source is playing the clip...
                     {
                         if (showDebug)
+                        {
                             Debug.Log("Already playing BGM, check if crossing out(" + outCrossing[currentPlaying] +
                                       ") or in(" + inCrossing[currentPlaying] + ").");
+                        }
                         if (outCrossing[currentPlaying]) //If that source is crossing out, stop it and cross it back in.
                         {
                             StopAllNonSoundConnectionCoroutines();
                             if (showDebug)
+                            {
                                 Debug.Log("In the process of crossing out, so that is being changed to cross in now.");
+                            }
                             outCrossing[currentPlaying] = false;
                             StartCoroutine("Crossin", new object[] {audios[currentPlaying], crossDuration, clipVolume});
                             return currentPlaying;
@@ -478,10 +586,14 @@ namespace SsitEngine.Unity.Sound
                         if (movingOnFromSong)
                         {
                             if (showDebug)
+                            {
                                 Debug.Log("Current song is actually done, so crossfading to another instance of it.");
+                            }
                             if (audios[notPlaying] == null || audios[notPlaying].clip == null ||
                                 !audios[notPlaying].clip.Equals(clip2play))
+                            {
                                 audios[notPlaying].clip = clip2play;
+                            }
                             StartCoroutine("Crossfade",
                                 new object[] {audios[currentPlaying], audios[notPlaying], crossDuration, clipVolume});
                             return notPlaying;
@@ -489,22 +601,36 @@ namespace SsitEngine.Unity.Sound
                         return currentPlaying;
                     }
                     StopAllNonSoundConnectionCoroutines();
-                    if (showDebug) Debug.Log("Playing another track, crossfading to that.");
+                    if (showDebug)
+                    {
+                        Debug.Log("Playing another track, crossfading to that.");
+                    }
                     audios[notPlaying].clip = clip2play;
                     StartCoroutine("Crossfade",
                         new object[] {audios[currentPlaying], audios[notPlaying], crossDuration, clipVolume});
                     return notPlaying;
                 }
                 var lastPlaying = GetActualCurrentPlayingIndex();
-                if (showDebug) Debug.Log("Both are playing (crossfade situation).");
+                if (showDebug)
+                {
+                    Debug.Log("Both are playing (crossfade situation).");
+                }
                 if (clip2play.Equals(audios[0].clip) && clip2play.Equals(audios[1].clip))
                 {
                     if (showDebug)
+                    {
                         Debug.Log("If clip == clip in audio1 AND audio2, then do nothing and let it finish.");
+                    }
                     var swapIn = lastPlaying == 0 ? 0 : 1;
 
-                    if (!audios[0].isPlaying) audios[0].Play();
-                    if (!audios[1].isPlaying) audios[1].Play();
+                    if (!audios[0].isPlaying)
+                    {
+                        audios[0].Play();
+                    }
+                    if (!audios[1].isPlaying)
+                    {
+                        audios[1].Play();
+                    }
 
                     return swapIn;
                 }
@@ -516,8 +642,10 @@ namespace SsitEngine.Unity.Sound
                         crossDuration) // If the clip is crossing out though, cross in the new track started over.
                     {
                         if (showDebug)
+                        {
                             Debug.Log(
                                 "Clip == clip in audio1, but it's crossing out so cross it in from the beginning.");
+                        }
                         audios[1].clip = clip2play;
                         audios[1].timeSamples = 0;
                         switcheroo = true;
@@ -538,16 +666,28 @@ namespace SsitEngine.Unity.Sound
                     }
                     if (swapIn != 0 || switcheroo && swapIn != 1)
                         //If the source crossing out is not the clip OR it is but is crossing out, just continue with crossfade
+                    {
                         StartCoroutine("Crossfade",
                             new object[] {audios[swapIn], audios[swapOut], crossDuration, clipVolume});
+                    }
                     else
                         //If the source crossing out is the clip, swap them so that it's now crossing in
+                    {
                         StartCoroutine("Crossfade",
                             new object[] {audios[swapOut], audios[swapIn], crossDuration, clipVolume});
-                    if (!audios[0].isPlaying) audios[0].Play();
-                    if (!audios[1].isPlaying) audios[1].Play();
+                    }
+                    if (!audios[0].isPlaying)
+                    {
+                        audios[0].Play();
+                    }
+                    if (!audios[1].isPlaying)
+                    {
+                        audios[1].Play();
+                    }
                     if (swapIn != 0)
+                    {
                         return swapOut;
+                    }
                     return swapIn;
                 }
                 if (clip2play.Equals(audios[1].clip)) //If the clip is the same clip playing in source2...
@@ -558,8 +698,10 @@ namespace SsitEngine.Unity.Sound
                         crossDuration) // If the clip is crossing out though, cross in the new track started over.
                     {
                         if (showDebug)
+                        {
                             Debug.Log(
                                 "Clip == clip in audio2, but it's crossing out so cross it in from the beginning.");
+                        }
                         audios[0].clip = clip2play;
                         audios[0].timeSamples = 0;
                         switcheroo = true;
@@ -580,23 +722,37 @@ namespace SsitEngine.Unity.Sound
                     }
                     if (swapIn != 1 || switcheroo && swapIn != 0)
                         //If the source crossing out is not the clip, just continue with crossfade
+                    {
                         StartCoroutine("Crossfade",
                             new object[] {audios[swapIn], audios[swapOut], crossDuration, clipVolume});
+                    }
                     else
                         //If the source crossing out is the clip, swap them so that it's now crossing in
+                    {
                         StartCoroutine("Crossfade",
                             new object[] {audios[swapOut], audios[swapIn], crossDuration, clipVolume});
+                    }
                     ;
-                    if (!audios[0].isPlaying) audios[0].Play();
-                    if (!audios[1].isPlaying) audios[1].Play();
+                    if (!audios[0].isPlaying)
+                    {
+                        audios[0].Play();
+                    }
+                    if (!audios[1].isPlaying)
+                    {
+                        audios[1].Play();
+                    }
                     if (swapIn != 1)
+                    {
                         return swapOut;
+                    }
                     return swapIn;
                 }
                 // If the clip is not in either source1 or source2...
                 StopAllNonSoundConnectionCoroutines();
                 if (showDebug)
+                {
                     Debug.Log("If clip is in neither, find the louder one and crossfade from that one.");
+                }
                 if (audios[0].volume > audios[1].volume)
                     //If source1 is louder than source2, then crossfade from source1.
                 {
@@ -611,8 +767,10 @@ namespace SsitEngine.Unity.Sound
             if (audiosPaused[0] && audiosPaused[1]) // paused and playing two tracks (crossfading)
             {
                 if (showDebug)
+                {
                     Debug.Log(
                         "All sound is paused and it's crossfading between two songs. Replace the lower volume song and prepare for crossfade on unpause.");
+                }
                 var lesserAudio = audios[0].volume > audios[1].volume ? 1 : 0;
                 var greaterAudio = lesserAudio == 0 ? 1 : 0;
                 audios[lesserAudio].clip = clip2play;
@@ -622,7 +780,9 @@ namespace SsitEngine.Unity.Sound
             else if (audiosPaused[0]) // track 1 is paused
             {
                 if (showDebug)
+                {
                     Debug.Log("All sound is paused and track1 is playing. Prepare for crossfade on unpause.");
+                }
                 audios[1].clip = clip2play;
                 audiosPaused[1] = true;
                 StartCoroutine("Crossfade", new object[] {audios[0], audios[1], crossDuration, clipVolume});
@@ -630,14 +790,19 @@ namespace SsitEngine.Unity.Sound
             else if (audiosPaused[1]) // track 2 is paused
             {
                 if (showDebug)
+                {
                     Debug.Log("All sound is paused and track2 is playing. Prepare for crossfade on unpause.");
+                }
                 audios[0].clip = clip2play;
                 audiosPaused[0] = true;
                 StartCoroutine("Crossfade", new object[] {audios[1], audios[0], crossDuration, clipVolume});
             }
             else // silent scene
             {
-                if (showDebug) Debug.Log("Wasn't playing anything, crossing in.");
+                if (showDebug)
+                {
+                    Debug.Log("Wasn't playing anything, crossing in.");
+                }
                 audios[notPlaying].clip = clip2play;
                 StartCoroutine("Crossin", new object[] {audios[notPlaying], crossDuration, clipVolume});
             }
@@ -656,11 +821,15 @@ namespace SsitEngine.Unity.Sound
         private IEnumerator Crossfade( object[] param )
         {
             if (OnCrossInBegin != null)
+            {
                 OnCrossInBegin.Invoke();
+            }
             OnCrossInBegin = null;
 
             if (OnCrossOutBegin != null)
+            {
                 OnCrossOutBegin.Invoke();
+            }
             OnCrossOutBegin = null;
 
             var a1 = param[0] as AudioSource;
@@ -677,7 +846,9 @@ namespace SsitEngine.Unity.Sound
             }
             var realSongLength = 0f;
             if (a2.clip != null)
+            {
                 realSongLength = (a2.clip.samples - a2.timeSamples) * 1f / (a2.clip.frequency * 1f);
+            }
             if (duration - realSongLength / 2f > .1f)
             {
                 duration = Mathf.Floor(realSongLength / 2f * 100f) / 100f;
@@ -689,12 +860,16 @@ namespace SsitEngine.Unity.Sound
             var clipVolume = (float) param[3];
 
             if (OnSongBegin != null)
+            {
                 OnSongBegin.Invoke();
+            }
             OnSongBegin = null;
 
             if (index1 == SOUNDMANAGER_FALSE || index2 == SOUNDMANAGER_FALSE)
+            {
                 Debug.LogWarning(
                     "You passed an AudioSource that is not used by the SoundManager May cause erratic behavior");
+            }
             outCrossing[index1] = true;
             inCrossing[index2] = true;
             outCrossing[index2] = false;
@@ -702,7 +877,10 @@ namespace SsitEngine.Unity.Sound
 
             var startTime = Time.realtimeSinceStartup;
             var endTime = startTime + duration;
-            if (!a2.isPlaying) a2.Play();
+            if (!a2.isPlaying)
+            {
+                a2.Play();
+            }
             float a1StartVolume = a1.volume,
                 a2StartVolume = a2.volume,
                 deltaPercent = 0f,
@@ -713,6 +891,7 @@ namespace SsitEngine.Unity.Sound
             bool passedFirstPause = false, passedFirstUnpause = true;
             var pauseTimeRemaining = 0f;
             while (isPaused || passedFirstPause || Time.realtimeSinceStartup < endTime)
+            {
                 if (isPaused)
                 {
                     if (!passedFirstPause)
@@ -734,9 +913,13 @@ namespace SsitEngine.Unity.Sound
                         passedFirstUnpause = true;
                     }
                     if (startMaxMusicVolume == 0f)
+                    {
                         volumePercent = 1f;
+                    }
                     else
+                    {
                         volumePercent = maxMusicVolume / startMaxMusicVolume;
+                    }
 
                     if (endTime - Time.realtimeSinceStartup > duration)
                     {
@@ -751,6 +934,7 @@ namespace SsitEngine.Unity.Sound
                     a2.volume = Mathf.Clamp01((a2DeltaVolume + a2StartVolume) * volumePercent * clipVolume);
                     yield return null;
                 }
+            }
             a1.volume = 0f;
             a2.volume = maxMusicVolume * clipVolume;
             a1.Stop();
@@ -765,18 +949,26 @@ namespace SsitEngine.Unity.Sound
             {
                 OnSongEnd.Invoke();
                 if (InternalCallback != null)
+                {
                     OnSongEnd = InternalCallback;
+                }
                 else
+                {
                     OnSongEnd = null;
+                }
                 InternalCallback = null;
             }
 
             if (InternalCallback != null)
+            {
                 OnSongEnd = InternalCallback;
+            }
             InternalCallback = null;
 
             if (OnSongBegin != null)
+            {
                 OnSongBegin.Invoke();
+            }
             OnSongBegin = null;
 
             SetNextSongInQueue();
@@ -788,7 +980,9 @@ namespace SsitEngine.Unity.Sound
         private IEnumerator Crossout( object[] param )
         {
             if (OnCrossOutBegin != null)
+            {
                 OnCrossOutBegin.Invoke();
+            }
             OnCrossOutBegin = null;
 
             var a1 = param[0] as AudioSource;
@@ -800,7 +994,9 @@ namespace SsitEngine.Unity.Sound
             }
             var realSongLength = 0f;
             if (a1.clip != null)
+            {
                 realSongLength = (a1.clip.samples - a1.timeSamples) * 1f / (a1.clip.frequency * 1f);
+            }
             if (duration - realSongLength / 2f > .1f)
             {
                 duration = Mathf.Floor(realSongLength / 2f * 100f) / 100f;
@@ -812,8 +1008,10 @@ namespace SsitEngine.Unity.Sound
             var index1 = GetAudioSourceIndex(a1);
 
             if (index1 == SOUNDMANAGER_FALSE)
+            {
                 Debug.LogWarning(
                     "You passed an AudioSource that is not used by the SoundManager May cause erratic behavior");
+            }
             outCrossing[index1] = true;
             inCrossing[index1] = false;
 
@@ -823,6 +1021,7 @@ namespace SsitEngine.Unity.Sound
             bool passedFirstPause = false, passedFirstUnpause = true;
             var pauseTimeRemaining = 0f;
             while (isPaused || passedFirstPause || Time.realtimeSinceStartup < endTime)
+            {
                 if (isPaused)
                 {
                     if (!passedFirstPause)
@@ -844,9 +1043,13 @@ namespace SsitEngine.Unity.Sound
                         passedFirstUnpause = true;
                     }
                     if (startMaxMusicVolume == 0f)
+                    {
                         volumePercent = 1f;
+                    }
                     else
+                    {
                         volumePercent = maxMusicVolume / startMaxMusicVolume;
+                    }
 
                     if (endTime - Time.realtimeSinceStartup > duration)
                     {
@@ -858,6 +1061,7 @@ namespace SsitEngine.Unity.Sound
                     a1.volume = Mathf.Clamp01((maxVolume - deltaVolume) * volumePercent);
                     yield return null;
                 }
+            }
             a1.volume = 0f;
             a1.Stop();
             a1.timeSamples = 0;
@@ -867,11 +1071,15 @@ namespace SsitEngine.Unity.Sound
             outCrossing[index1] = true;
 
             if (OnSongEnd != null)
+            {
                 OnSongEnd.Invoke();
+            }
             OnSongEnd = null;
 
             if (InternalCallback != null)
+            {
                 InternalCallback.Invoke();
+            }
             InternalCallback = null;
         }
 
@@ -880,10 +1088,15 @@ namespace SsitEngine.Unity.Sound
         /// </summary>
         private IEnumerator CrossoutAll( float duration )
         {
-            if (CheckWhosPlaying() == SOUNDMANAGER_FALSE) yield break;
+            if (CheckWhosPlaying() == SOUNDMANAGER_FALSE)
+            {
+                yield break;
+            }
 
             if (OnCrossOutBegin != null)
+            {
                 OnCrossOutBegin.Invoke();
+            }
             OnCrossOutBegin = null;
 
             outCrossing[0] = true;
@@ -893,15 +1106,21 @@ namespace SsitEngine.Unity.Sound
 
             var realSongLength = 0f;
             if (audios[0].clip != null && audios[1].clip != null)
+            {
                 realSongLength =
                     Mathf.Max((audios[0].clip.samples - audios[0].timeSamples) * 1f / (audios[0].clip.frequency * 1f),
                         (audios[1].clip.samples - audios[1].timeSamples) * 1f / (audios[1].clip.frequency * 1f));
+            }
             else if (audios[0].clip != null)
+            {
                 realSongLength = (audios[0].clip.samples - audios[0].timeSamples) * 1f /
                                  (audios[0].clip.frequency * 1f);
+            }
             else if (audios[1].clip != null)
+            {
                 realSongLength = (audios[1].clip.samples - audios[1].timeSamples) * 1f /
                                  (audios[1].clip.frequency * 1f);
+            }
 
             if (ignoreCrossDuration)
             {
@@ -927,6 +1146,7 @@ namespace SsitEngine.Unity.Sound
             bool passedFirstPause = false, passedFirstUnpause = true;
             var pauseTimeRemaining = 0f;
             while (isPaused || passedFirstPause || Time.realtimeSinceStartup < endTime)
+            {
                 if (isPaused)
                 {
                     if (!passedFirstPause)
@@ -948,9 +1168,13 @@ namespace SsitEngine.Unity.Sound
                         passedFirstUnpause = true;
                     }
                     if (startMaxMusicVolume == 0f)
+                    {
                         volumePercent = 1f;
+                    }
                     else
+                    {
                         volumePercent = maxMusicVolume / startMaxMusicVolume;
+                    }
 
                     if (endTime - Time.realtimeSinceStartup > duration)
                     {
@@ -965,6 +1189,7 @@ namespace SsitEngine.Unity.Sound
                     volume2 = Mathf.Clamp01((a2MaxVolume - a2DeltaVolume) * volumePercent);
                     yield return null;
                 }
+            }
             volume1 = volume2 = 0f;
             audios[0].Stop();
             audios[1].Stop();
@@ -977,11 +1202,15 @@ namespace SsitEngine.Unity.Sound
             outCrossing[1] = false;
 
             if (OnSongEnd != null)
+            {
                 OnSongEnd.Invoke();
+            }
             OnSongEnd = null;
 
             if (InternalCallback != null)
+            {
                 InternalCallback.Invoke();
+            }
             InternalCallback = null;
         }
 
@@ -991,7 +1220,9 @@ namespace SsitEngine.Unity.Sound
         private IEnumerator Crossin( object[] param )
         {
             if (OnCrossInBegin != null)
+            {
                 OnCrossInBegin.Invoke();
+            }
             OnCrossInBegin = null;
 
             var a1 = param[0] as AudioSource;
@@ -1004,7 +1235,9 @@ namespace SsitEngine.Unity.Sound
             }
             var realSongLength = 0f;
             if (a1.clip != null)
+            {
                 realSongLength = a1.clip.samples * 1f / (a1.clip.frequency * 1f);
+            }
             if (duration - realSongLength / 2f > .1f)
             {
                 duration = Mathf.Floor(realSongLength / 2f * 100f) / 100f;
@@ -1018,8 +1251,10 @@ namespace SsitEngine.Unity.Sound
             var index1 = GetAudioSourceIndex(a1);
 
             if (index1 == SOUNDMANAGER_FALSE)
+            {
                 Debug.LogWarning(
                     "You passed an AudioSource that is not used by the SoundManager May cause erratic behavior");
+            }
             inCrossing[index1] = true;
             outCrossing[index1] = false;
 
@@ -1035,6 +1270,7 @@ namespace SsitEngine.Unity.Sound
             bool passedFirstPause = false, passedFirstUnpause = true;
             var pauseTimeRemaining = 0f;
             while (isPaused || passedFirstPause || Time.realtimeSinceStartup < endTime)
+            {
                 if (isPaused)
                 {
                     if (!passedFirstPause)
@@ -1056,9 +1292,13 @@ namespace SsitEngine.Unity.Sound
                         passedFirstUnpause = true;
                     }
                     if (startMaxMusicVolume == 0f)
+                    {
                         volumePercent = 1f;
+                    }
                     else
+                    {
                         volumePercent = maxMusicVolume / startMaxMusicVolume;
+                    }
 
                     if (endTime - Time.realtimeSinceStartup > duration)
                     {
@@ -1071,6 +1311,7 @@ namespace SsitEngine.Unity.Sound
                     a1.volume = Mathf.Clamp01((deltaVolume + a1StartVolume) * volumePercent * clipVolume);
                     yield return null;
                 }
+            }
             a1.volume = maxMusicVolume * clipVolume;
             modifiedCrossDuration = crossDuration;
             currentPlaying = CheckWhosPlaying();
@@ -1078,11 +1319,15 @@ namespace SsitEngine.Unity.Sound
             inCrossing[index1] = false;
 
             if (OnSongBegin != null)
+            {
                 OnSongBegin.Invoke();
+            }
             OnSongBegin = null;
 
             if (InternalCallback != null)
+            {
                 OnSongEnd = InternalCallback;
+            }
             InternalCallback = null;
 
             SetNextSongInQueue();
@@ -1090,7 +1335,10 @@ namespace SsitEngine.Unity.Sound
 
         private IEnumerator PlaySoundConnection( SoundConnection sc )
         {
-            if (isPaused) yield break;
+            if (isPaused)
+            {
+                yield break;
+            }
             currentSoundConnection = sc;
             if (sc.soundsToPlay.Count == 0)
             {
@@ -1102,7 +1350,10 @@ namespace SsitEngine.Unity.Sound
             if (skipSongs)
             {
                 songPlaying = (songPlaying + skipAmount) % sc.soundsToPlay.Count;
-                if (songPlaying < 0) songPlaying += sc.soundsToPlay.Count;
+                if (songPlaying < 0)
+                {
+                    songPlaying += sc.soundsToPlay.Count;
+                }
                 skipSongs = false;
                 skipAmount = 0;
             }
@@ -1121,15 +1372,19 @@ namespace SsitEngine.Unity.Sound
                         // While the clip is playing, wait until the time left is less than the cross duration
                         currentSource = IsPlaying(sc.soundsToPlay[songPlaying], false);
                         if (currentSource != null)
+                        {
                             while (ignoreFromLosingFocus ||
                                    (currentSource.isPlaying || isPaused || currentSource.mute) &&
                                    (currentSource.clip.samples - currentSource.timeSamples) * 1f /
                                    (currentSource.clip.frequency * 1f) > modifiedCrossDuration)
                             {
                                 if (skipSongs)
+                                {
                                     break;
+                                }
                                 yield return null;
                             }
+                        }
 
                         // Then go to the next song.
                         movingOnFromSong = true;
@@ -1140,7 +1395,10 @@ namespace SsitEngine.Unity.Sound
                         else
                         {
                             songPlaying = (songPlaying + skipAmount) % sc.soundsToPlay.Count;
-                            if (songPlaying < 0) songPlaying += sc.soundsToPlay.Count;
+                            if (songPlaying < 0)
+                            {
+                                songPlaying += sc.soundsToPlay.Count;
+                            }
                             skipSongs = false;
                             skipAmount = 0;
                         }
@@ -1157,12 +1415,16 @@ namespace SsitEngine.Unity.Sound
                         // While the clip is playing, wait until the song is done before moving on with the delay
                         currentSource = IsPlaying(sc.soundsToPlay[songPlaying], false);
                         if (currentSource != null)
+                        {
                             while (ignoreFromLosingFocus || currentSource.isPlaying || isPaused || currentSource.mute)
                             {
                                 if (skipSongs)
+                                {
                                     break;
+                                }
                                 yield return null;
                             }
+                        }
 
                         // Then go to the next song.
                         movingOnFromSong = true;
@@ -1174,7 +1436,10 @@ namespace SsitEngine.Unity.Sound
                         else
                         {
                             songPlaying = (songPlaying + skipAmount) % sc.soundsToPlay.Count;
-                            if (songPlaying < 0) songPlaying += sc.soundsToPlay.Count;
+                            if (songPlaying < 0)
+                            {
+                                songPlaying += sc.soundsToPlay.Count;
+                            }
                             skipSongs = false;
                             skipAmount = 0;
                         }
@@ -1191,12 +1456,16 @@ namespace SsitEngine.Unity.Sound
                         // While the clip is playing, wait until the song is done before moving on with the delay
                         currentSource = IsPlaying(sc.soundsToPlay[songPlaying], false);
                         if (currentSource != null)
+                        {
                             while (ignoreFromLosingFocus || currentSource.isPlaying || isPaused || currentSource.mute)
                             {
                                 if (skipSongs)
+                                {
                                     break;
+                                }
                                 yield return null;
                             }
+                        }
 
                         // Then go to the next song.
                         movingOnFromSong = true;
@@ -1209,7 +1478,10 @@ namespace SsitEngine.Unity.Sound
                         else
                         {
                             songPlaying = (songPlaying + skipAmount) % sc.soundsToPlay.Count;
-                            if (songPlaying < 0) songPlaying += sc.soundsToPlay.Count;
+                            if (songPlaying < 0)
+                            {
+                                songPlaying += sc.soundsToPlay.Count;
+                            }
                             skipSongs = false;
                             skipAmount = 0;
                         }
@@ -1226,15 +1498,19 @@ namespace SsitEngine.Unity.Sound
                         // While the clip is playing, wait until the time left is less than the cross duration
                         currentSource = IsPlaying(sc.soundsToPlay[songPlaying], false);
                         if (currentSource != null)
+                        {
                             while (ignoreFromLosingFocus ||
                                    (currentSource.isPlaying || isPaused || currentSource.mute) &&
                                    (currentSource.clip.samples - currentSource.timeSamples) * 1f /
                                    (currentSource.clip.frequency * 1f) > modifiedCrossDuration)
                             {
                                 if (skipSongs)
+                                {
                                     break;
+                                }
                                 yield return null;
                             }
+                        }
 
                         // Then go to the next song.
                         movingOnFromSong = true;
@@ -1245,11 +1521,17 @@ namespace SsitEngine.Unity.Sound
                         else
                         {
                             songPlaying = songPlaying + skipAmount;
-                            if (songPlaying < 0) songPlaying = 0;
+                            if (songPlaying < 0)
+                            {
+                                songPlaying = 0;
+                            }
                             skipSongs = false;
                             skipAmount = 0;
                         }
-                        if (sc.soundsToPlay.Count <= songPlaying) StartCoroutine("CrossoutAll", crossDuration);
+                        if (sc.soundsToPlay.Count <= songPlaying)
+                        {
+                            StartCoroutine("CrossoutAll", crossDuration);
+                        }
                     }
                     break;
                 case PlayMethod.OncePlayThroughWithDelay:
@@ -1263,12 +1545,16 @@ namespace SsitEngine.Unity.Sound
                         // While the clip is playing, wait until the song is done before moving on with the delay
                         currentSource = IsPlaying(sc.soundsToPlay[songPlaying], false);
                         if (currentSource != null)
+                        {
                             while (ignoreFromLosingFocus || currentSource.isPlaying || isPaused || currentSource.mute)
                             {
                                 if (skipSongs)
+                                {
                                     break;
+                                }
                                 yield return null;
                             }
+                        }
 
                         // Then go to the next song.
                         movingOnFromSong = true;
@@ -1280,11 +1566,17 @@ namespace SsitEngine.Unity.Sound
                         else
                         {
                             songPlaying = songPlaying + skipAmount;
-                            if (songPlaying < 0) songPlaying = 0;
+                            if (songPlaying < 0)
+                            {
+                                songPlaying = 0;
+                            }
                             skipSongs = false;
                             skipAmount = 0;
                         }
-                        if (sc.soundsToPlay.Count <= songPlaying) StartCoroutine("CrossoutAll", crossDuration);
+                        if (sc.soundsToPlay.Count <= songPlaying)
+                        {
+                            StartCoroutine("CrossoutAll", crossDuration);
+                        }
                     }
                     break;
                 case PlayMethod.OncePlayThroughWithRandomDelayInRange:
@@ -1298,12 +1590,16 @@ namespace SsitEngine.Unity.Sound
                         // While the clip is playing, wait until the song is done before moving on with the delay
                         currentSource = IsPlaying(sc.soundsToPlay[songPlaying], false);
                         if (currentSource != null)
+                        {
                             while (ignoreFromLosingFocus || currentSource.isPlaying || isPaused || currentSource.mute)
                             {
                                 if (skipSongs)
+                                {
                                     break;
+                                }
                                 yield return null;
                             }
+                        }
 
                         // Then go to the next song.
                         movingOnFromSong = true;
@@ -1316,11 +1612,17 @@ namespace SsitEngine.Unity.Sound
                         else
                         {
                             songPlaying = songPlaying + skipAmount;
-                            if (songPlaying < 0) songPlaying = 0;
+                            if (songPlaying < 0)
+                            {
+                                songPlaying = 0;
+                            }
                             skipSongs = false;
                             skipAmount = 0;
                         }
-                        if (sc.soundsToPlay.Count <= songPlaying) StartCoroutine("CrossoutAll", crossDuration);
+                        if (sc.soundsToPlay.Count <= songPlaying)
+                        {
+                            StartCoroutine("CrossoutAll", crossDuration);
+                        }
                     }
                     break;
                 case PlayMethod.ShufflePlayThrough:
@@ -1335,15 +1637,19 @@ namespace SsitEngine.Unity.Sound
                         // While the clip is playing, wait until the time left is less than the cross duration
                         currentSource = IsPlaying(sc.soundsToPlay[songPlaying], false);
                         if (currentSource != null)
+                        {
                             while (ignoreFromLosingFocus ||
                                    (currentSource.isPlaying || isPaused || currentSource.mute) &&
                                    (currentSource.clip.samples - currentSource.timeSamples) * 1f /
                                    (currentSource.clip.frequency * 1f) > modifiedCrossDuration)
                             {
                                 if (skipSongs)
+                                {
                                     break;
+                                }
                                 yield return null;
                             }
+                        }
 
                         // Then go to the next song.
                         movingOnFromSong = true;
@@ -1354,12 +1660,17 @@ namespace SsitEngine.Unity.Sound
                         else
                         {
                             songPlaying = (songPlaying + skipAmount) % sc.soundsToPlay.Count;
-                            if (songPlaying < 0) songPlaying += sc.soundsToPlay.Count;
+                            if (songPlaying < 0)
+                            {
+                                songPlaying += sc.soundsToPlay.Count;
+                            }
                             skipSongs = false;
                             skipAmount = 0;
                         }
                         if (songPlaying == 0)
+                        {
                             SoundManagerTools.ShuffleTwo(ref sc.soundsToPlay, ref sc.baseVolumes);
+                        }
                     }
                     break;
                 case PlayMethod.ShufflePlayThroughWithDelay:
@@ -1374,12 +1685,16 @@ namespace SsitEngine.Unity.Sound
                         // While the clip is playing, wait until the song is done before moving on with the delay
                         currentSource = IsPlaying(sc.soundsToPlay[songPlaying], false);
                         if (currentSource != null)
+                        {
                             while (ignoreFromLosingFocus || currentSource.isPlaying || isPaused || currentSource.mute)
                             {
                                 if (skipSongs)
+                                {
                                     break;
+                                }
                                 yield return null;
                             }
+                        }
 
                         // Then go to the next song.
                         movingOnFromSong = true;
@@ -1391,12 +1706,17 @@ namespace SsitEngine.Unity.Sound
                         else
                         {
                             songPlaying = (songPlaying + skipAmount) % sc.soundsToPlay.Count;
-                            if (songPlaying < 0) songPlaying += sc.soundsToPlay.Count;
+                            if (songPlaying < 0)
+                            {
+                                songPlaying += sc.soundsToPlay.Count;
+                            }
                             skipSongs = false;
                             skipAmount = 0;
                         }
                         if (songPlaying == 0)
+                        {
                             SoundManagerTools.ShuffleTwo(ref sc.soundsToPlay, ref sc.baseVolumes);
+                        }
                     }
                     break;
                 case PlayMethod.ShufflePlayThroughWithRandomDelayInRange:
@@ -1411,12 +1731,16 @@ namespace SsitEngine.Unity.Sound
                         // While the clip is playing, wait until the song is done before moving on with the delay
                         currentSource = IsPlaying(sc.soundsToPlay[songPlaying], false);
                         if (currentSource != null)
+                        {
                             while (ignoreFromLosingFocus || currentSource.isPlaying || isPaused || currentSource.mute)
                             {
                                 if (skipSongs)
+                                {
                                     break;
+                                }
                                 yield return null;
                             }
+                        }
 
                         // Then go to the next song.
                         movingOnFromSong = true;
@@ -1429,12 +1753,17 @@ namespace SsitEngine.Unity.Sound
                         else
                         {
                             songPlaying = (songPlaying + skipAmount) % sc.soundsToPlay.Count;
-                            if (songPlaying < 0) songPlaying += sc.soundsToPlay.Count;
+                            if (songPlaying < 0)
+                            {
+                                songPlaying += sc.soundsToPlay.Count;
+                            }
                             skipSongs = false;
                             skipAmount = 0;
                         }
                         if (songPlaying == 0)
+                        {
                             SoundManagerTools.ShuffleTwo(ref sc.soundsToPlay, ref sc.baseVolumes);
+                        }
                     }
                     break;
                 default:

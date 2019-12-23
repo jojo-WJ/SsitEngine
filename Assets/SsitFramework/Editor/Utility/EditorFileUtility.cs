@@ -1,32 +1,24 @@
 ﻿using System;
-using UnityEngine;
-using System.Collections;
 using System.IO;
-using System.Security.AccessControl;
 using System.Text;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace SsitEngine.Editor
 {
     public class EditorFileUtility
     {
+        public static readonly string CONFIGPATH = "Assets/SsitEngineAssets/Editor/Config/";
+        public static readonly string RESPATH = "Assets/SsitEngineAssets/Editor/Res/";
+        public static readonly string AutoScriptPATH = "Assets/SsitEngineAssets/Editor/ScriptsTemplate/";
         #region Members
 
-        public static string DataPathInEditor
-        {
-            get { return Application.dataPath; }
-        }
+        public static string DataPathInEditor => Application.dataPath;
 
-        public static string DataPathInPlat
-        {
-            get { return Application.persistentDataPath; }
-        }
+        public static string DataPathInPlat => Application.persistentDataPath;
 
-        public static string DataPathInStreaming
-        {
-            get { return Application.streamingAssetsPath; }
-        }
+        public static string DataPathInStreaming => Application.streamingAssetsPath;
 
         #endregion
 
@@ -69,7 +61,7 @@ namespace SsitEngine.Editor
                 return new string[0];
             }
 
-            string[] files = Directory.GetFiles(folderPath, pattern, SearchOption.AllDirectories);
+            var files = Directory.GetFiles(folderPath, pattern, SearchOption.AllDirectories);
             return files;
         }
 
@@ -109,14 +101,14 @@ namespace SsitEngine.Editor
         {
             if (!IsFolderExists(assetFolderPath))
             {
-                int index = assetFolderPath.IndexOf("/");
-                int offset = 0;
-                string parentFolder = "Assets";
+                var index = assetFolderPath.IndexOf("/");
+                var offset = 0;
+                var parentFolder = "Assets";
                 while (index != -1)
                 {
                     if (!Directory.Exists(GetFullPath(assetFolderPath.Substring(0, index))))
                     {
-                        string guid = AssetDatabase.CreateFolder(parentFolder,
+                        var guid = AssetDatabase.CreateFolder(parentFolder,
                             assetFolderPath.Substring(offset, index - offset));
                         // 将GUID(全局唯一标识符)转换为对应的资源路径。
                         AssetDatabase.GUIDToAssetPath(guid);
@@ -140,8 +132,8 @@ namespace SsitEngine.Editor
         {
             if (IsFileExists(srcFileName) && !srcFileName.Equals(destFileName))
             {
-                int index = destFileName.LastIndexOf("/");
-                string filePath = string.Empty;
+                var index = destFileName.LastIndexOf("/");
+                var filePath = string.Empty;
 
                 if (index != -1)
                 {
@@ -165,8 +157,8 @@ namespace SsitEngine.Editor
             {
                 if (!srcFilePath.Equals(destFilePath))
                 {
-                    int index = destFilePath.LastIndexOf("/");
-                    string filePath = string.Empty;
+                    var index = destFilePath.LastIndexOf("/");
+                    var filePath = string.Empty;
 
                     if (index != -1)
                     {
@@ -201,13 +193,13 @@ namespace SsitEngine.Editor
             destFolderPath = GetFullPath(destFolderPath);
 
             // 创建所有的对应目录
-            foreach (string dirPath in Directory.GetDirectories(srcFolderPath, "*", SearchOption.AllDirectories))
+            foreach (var dirPath in Directory.GetDirectories(srcFolderPath, "*", SearchOption.AllDirectories))
             {
                 Directory.CreateDirectory(dirPath.Replace(srcFolderPath, destFolderPath));
             }
 
             // 复制原文件夹下所有内容到目标文件夹，直接覆盖
-            foreach (string newPath in Directory.GetFiles(srcFolderPath, "*.*", SearchOption.AllDirectories))
+            foreach (var newPath in Directory.GetFiles(srcFolderPath, "*.*", SearchOption.AllDirectories))
             {
                 File.Copy(newPath, newPath.Replace(srcFolderPath, destFolderPath), true);
             }
@@ -233,20 +225,15 @@ namespace SsitEngine.Editor
             {
                 Directory.CreateDirectory(destFolderPath);
             }
-            else
-            {
-                //Directory.Delete(destFolderPath,true);
-                //Directory.CreateDirectory(destFolderPath);
-            }
 
             // 创建所有的对应目录
-            foreach (string dirPath in Directory.GetDirectories(srcFolderPath, "*", SearchOption.AllDirectories))
+            foreach (var dirPath in Directory.GetDirectories(srcFolderPath, "*", SearchOption.AllDirectories))
             {
                 Directory.CreateDirectory(dirPath.Replace(srcFolderPath, destFolderPath));
             }
 
             // 复制原文件夹下所有内容到目标文件夹，直接覆盖
-            foreach (string newPath in Directory.GetFiles(srcFolderPath, "*.*", SearchOption.AllDirectories))
+            foreach (var newPath in Directory.GetFiles(srcFolderPath, "*.*", SearchOption.AllDirectories))
             {
                 if (newPath.EndsWith(".meta"))
                 {
@@ -273,17 +260,25 @@ namespace SsitEngine.Editor
         public static void CopyAndReplaceDirectory( string srcPath, string dstPath )
         {
             if (Directory.Exists(dstPath))
+            {
                 Directory.Delete(dstPath);
+            }
             if (File.Exists(dstPath))
+            {
                 File.Delete(dstPath);
+            }
 
             Directory.CreateDirectory(dstPath);
 
             foreach (var file in Directory.GetFiles(srcPath))
+            {
                 File.Copy(file, Path.Combine(dstPath, Path.GetFileName(file)));
+            }
 
             foreach (var dir in Directory.GetDirectories(srcPath))
+            {
                 CopyAndReplaceDirectory(dir, Path.Combine(dstPath, Path.GetFileName(dir)));
+            }
         }
 
 
@@ -292,8 +287,8 @@ namespace SsitEngine.Editor
         {
             if (IsFileExists(srcAssetName) && !srcAssetName.Equals(destAssetName))
             {
-                int index = destAssetName.LastIndexOf("/");
-                string filePath = string.Empty;
+                var index = destAssetName.LastIndexOf("/");
+                var filePath = string.Empty;
 
                 if (index != -1)
                 {
@@ -373,10 +368,7 @@ namespace SsitEngine.Editor
             {
                 return File.ReadAllText(GetFullPath(fileName));
             }
-            else
-            {
-                return "";
-            }
+            return "";
 #endif
 
 #if UNITY_WEBPLAYER
@@ -389,11 +381,11 @@ namespace SsitEngine.Editor
         {
             if (!File.Exists(path))
             {
-                UnityEngine.Debug.Log("当前读取文件不存在！");
+                Debug.Log("当前读取文件不存在！");
                 return null;
             }
 
-            using (FileStream fsRead = new FileStream(path, FileMode.Open))
+            using (var fsRead = new FileStream(path, FileMode.Open))
             {
                 //int fsLen = (int)fsRead.Length;
                 //byte[] heByte = new byte[fsLen];
@@ -402,8 +394,8 @@ namespace SsitEngine.Editor
                 //return myStr;
 
 
-                StreamReader sr = new StreamReader(fsRead);
-                string temp = sr.ReadToEnd();
+                var sr = new StreamReader(fsRead);
+                var temp = sr.ReadToEnd();
                 sr.Close();
                 return temp;
             }
@@ -411,9 +403,9 @@ namespace SsitEngine.Editor
 
         public static void WriteFile( string path, string target, Action<string> callback = null )
         {
-            byte[] myBytes = System.Text.Encoding.UTF8.GetBytes(target);
+            var myBytes = Encoding.UTF8.GetBytes(target);
 
-            using (FileStream fsWirte = new FileStream(path, FileMode.Create))
+            using (var fsWirte = new FileStream(path, FileMode.Create))
             {
                 fsWirte.Write(myBytes, 0, myBytes.Length);
 
@@ -503,7 +495,7 @@ namespace SsitEngine.Editor
         {
             Assert.IsFalse(string.IsNullOrEmpty(assetName));
 
-            string matchStr = @"StreamingAssets\";
+            var matchStr = @"StreamingAssets\";
             return assetName.Substring(assetName.LastIndexOf(matchStr, StringComparison.Ordinal) + matchStr.Length);
         }
 

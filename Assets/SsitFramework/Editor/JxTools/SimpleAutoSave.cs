@@ -6,35 +6,34 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-class SimpleAutoSave : EditorWindow
+internal class SimpleAutoSave : EditorWindow
 {
+    private double nextSave;
 
-    double saveTime = 20;
-    double nextSave = 0;
+    private readonly double saveTime = 20;
 
     [MenuItem("Tools/MyWindow/Simple autoSave")]
-
-    static void Init()
+    private static void Init()
     {
-        var window = EditorWindow.GetWindowWithRect(typeof(SimpleAutoSave), new Rect(0, 0, 200, 40));
+        var window = GetWindowWithRect(typeof(SimpleAutoSave), new Rect(0, 0, 200, 40));
         window.Show();
     }
-    void OnGUI()
+
+    private void OnGUI()
     {
         EditorGUILayout.LabelField("Save Each:", saveTime + " Secs");
-        double timeToSave = nextSave - EditorApplication.timeSinceStartup;
-        EditorGUILayout.LabelField("Next Save:", timeToSave.ToString() + " Sec");
-        this.Repaint();
+        var timeToSave = nextSave - EditorApplication.timeSinceStartup;
+        EditorGUILayout.LabelField("Next Save:", timeToSave + " Sec");
+        Repaint();
 
         if (EditorApplication.timeSinceStartup > nextSave)
         {
-            UnityEngine.SceneManagement.Scene scene = EditorSceneManager.GetActiveScene();
+            var scene = EditorSceneManager.GetActiveScene();
             if (scene.isDirty && scene.IsValid())
             {
-                string pre_scenePath = scene.path;
-                string[] path = scene.path.Split(char.Parse("/"));
+                var pre_scenePath = scene.path;
+                var path = scene.path.Split(char.Parse("/"));
                 path[path.Length - 1] = "AutoSave/AutoSave_" + scene.name;
                 if (EditorSceneManager.SaveScene(scene, string.Join("/", path) + ".unity", true))
                 {
@@ -42,8 +41,6 @@ class SimpleAutoSave : EditorWindow
                 }
             }
             nextSave = EditorApplication.timeSinceStartup + saveTime;
-
-
         }
     }
 }

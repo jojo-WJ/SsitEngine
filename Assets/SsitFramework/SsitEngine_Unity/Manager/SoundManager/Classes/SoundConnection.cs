@@ -63,11 +63,13 @@ namespace SsitEngine.Unity.Sound
             soundsToPlay = new List<AudioClip>();
             baseVolumes = new List<float>();
             foreach (var audio in audioList)
+            {
                 if (!soundsToPlay.Contains(audio))
                 {
                     soundsToPlay.Add(audio);
                     baseVolumes.Add(1f);
                 }
+            }
         }
 
         /// <summary>
@@ -94,11 +96,13 @@ namespace SsitEngine.Unity.Sound
             soundsToPlay = new List<AudioClip>();
             baseVolumes = new List<float>();
             foreach (var audio in audioList)
+            {
                 if (!soundsToPlay.Contains(audio))
                 {
                     soundsToPlay.Add(audio);
                     baseVolumes.Add(1f);
                 }
+            }
         }
 
         /// <summary>
@@ -116,11 +120,13 @@ namespace SsitEngine.Unity.Sound
             soundsToPlay = new List<AudioClip>();
             baseVolumes = new List<float>();
             foreach (var audio in audioList)
+            {
                 if (!soundsToPlay.Contains(audio))
                 {
                     soundsToPlay.Add(audio);
                     baseVolumes.Add(1f);
                 }
+            }
         }
 
         /// <summary>
@@ -138,11 +144,13 @@ namespace SsitEngine.Unity.Sound
             soundsToPlay = new List<AudioClip>();
             baseVolumes = new List<float>();
             foreach (var audio in audioList)
+            {
                 if (!soundsToPlay.Contains(audio))
                 {
                     soundsToPlay.Add(audio);
                     baseVolumes.Add(1f);
                 }
+            }
         }
 
         /// <summary>

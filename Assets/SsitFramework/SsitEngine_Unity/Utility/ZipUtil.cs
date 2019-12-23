@@ -66,12 +66,18 @@ namespace SsitEngine.Unity
             using (var zip = new ZipFile())
             {
                 foreach (var file in files)
+                {
                     if (file.IndexOf("AssetBundles") < 0)
+                    {
                         zip.AddFile(file, "");
+                    }
                     else
+                    {
                         zip.AddFile(file,
                             file.Substring(file.IndexOf("AssetBundles"),
                                 file.LastIndexOf('/') - file.IndexOf("AssetBundles")));
+                    }
+                }
                 zip.Save(zipFileName);
             }
 

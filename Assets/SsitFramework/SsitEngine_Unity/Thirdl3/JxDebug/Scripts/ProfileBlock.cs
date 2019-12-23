@@ -5,18 +5,19 @@ using UnityEngine.Profiling;
 
 public class ProfileBlock : MonoBehaviour
 {
-    private float m_lastUpdateShowTime = 0f;    //上一次更新帧率的时间;
-    private readonly float m_UpdateShowDeltaTime = 1f;//更新帧率的时间间隔;
-    private int m_frameUpdate = 0;//帧数;
-    private UnityAction<float> OnFpsChangeAction;
-
-    private UnityAction<float, float> OnMonoSizeChangeAction;
-    private UnityAction<float, float> OnMemoryChangeAction;
+    private readonly float m_UpdateShowDeltaTime = 1f; //更新帧率的时间间隔;
 
     //支持Monon内存写出
     private bool _isSupportedMono;
+    private int m_frameUpdate; //帧数;
+    private float m_lastUpdateShowTime; //上一次更新帧率的时间;
+    private UnityAction<float> OnFpsChangeAction;
+    private UnityAction<float, float> OnMemoryChangeAction;
+
+    private UnityAction<float, float> OnMonoSizeChangeAction;
+
     // Use this for initialization
-    void Start()
+    private void Start()
     {
         m_lastUpdateShowTime = Time.realtimeSinceStartup;
     }
@@ -38,7 +39,7 @@ public class ProfileBlock : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         //if (JxDebug.JxDebug.Singleton.IsSettingsOpen)
         {
@@ -51,7 +52,6 @@ public class ProfileBlock : MonoBehaviour
                 m_lastUpdateShowTime = Time.realtimeSinceStartup;
             }
         }
-
     }
 
     //void OnGUI()
@@ -80,13 +80,14 @@ public class ProfileBlock : MonoBehaviour
         OnMemoryChangeAction = func;
     }
 
-    void RefreshFrameCount()
+    private void RefreshFrameCount()
     {
         OnFpsChange(m_frameUpdate / m_UpdateShowDeltaTime);
 
         m_frameUpdate = 0;
     }
-    void RefreshMemorySize()
+
+    private void RefreshMemorySize()
     {
         long max;
         long current;
@@ -99,17 +100,16 @@ public class ProfileBlock : MonoBehaviour
         current = Profiler.GetTotalAllocatedMemory();
 #endif
 
-        var maxMb = (max >> 10);
+        var maxMb = max >> 10;
         maxMb /= 1024; // On new line to fix il2cpp
 
-        var currentMb = (current >> 10);
+        var currentMb = current >> 10;
         currentMb /= 1024;
 
         OnMemoryChange(currentMb, maxMb);
-
     }
 
-    void RefreshMonoSize()
+    private void RefreshMonoSize()
     {
         long max;
         long current;
@@ -122,10 +122,10 @@ public class ProfileBlock : MonoBehaviour
         current = Profiler.GetMonoUsedSize();
 #endif
 
-        var maxMb = (max >> 10);
+        var maxMb = max >> 10;
         maxMb /= 1024; // On new line to workaround IL2CPP bug
 
-        var currentMb = (current >> 10);
+        var currentMb = current >> 10;
         currentMb /= 1024;
 
         OnMonoSizeChange(currentMb, maxMb);
@@ -137,7 +137,7 @@ public class ProfileBlock : MonoBehaviour
         //}
     }
 
-    void OnFpsChange( float fps )
+    private void OnFpsChange( float fps )
     {
         if (OnFpsChangeAction != null)
         {
@@ -145,7 +145,7 @@ public class ProfileBlock : MonoBehaviour
         }
     }
 
-    void OnMonoSizeChange( float currentMb, float maxMb )
+    private void OnMonoSizeChange( float currentMb, float maxMb )
     {
         if (OnMonoSizeChangeAction != null)
         {
@@ -153,13 +153,11 @@ public class ProfileBlock : MonoBehaviour
         }
     }
 
-    void OnMemoryChange( float currentMb, float maxMb )
+    private void OnMemoryChange( float currentMb, float maxMb )
     {
         if (OnMemoryChangeAction != null)
         {
             OnMemoryChangeAction(currentMb, maxMb);
         }
     }
-
-
 }

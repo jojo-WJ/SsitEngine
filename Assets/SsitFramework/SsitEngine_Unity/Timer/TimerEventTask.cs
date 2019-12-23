@@ -207,7 +207,9 @@ namespace SsitEngine.Unity.Timer
         public void OnUpdate( float elapseSeconds, float realElapseSeconds )
         {
             if (!mEnabled || IsDirty)
+            {
                 return;
+            }
 
             switch (mType)
             {
@@ -215,10 +217,14 @@ namespace SsitEngine.Unity.Timer
                 {
                     var t = realElapseSeconds - mSrc;
                     if (t < 0)
+                    {
                         t = 0.001f;
+                    }
 
                     if (m_handler != null)
+                    {
                         m_handler(this, t, mData);
+                    }
 
                     break;
                 }
@@ -228,9 +234,13 @@ namespace SsitEngine.Unity.Timer
                     if (t >= mDest)
                     {
                         if (m_handler == null)
+                        {
                             t = 0;
+                        }
                         if (m_handler != null)
+                        {
                             m_handler(this, t, mData);
+                        }
                         IsDirty = true;
                     }
 
@@ -244,7 +254,9 @@ namespace SsitEngine.Unity.Timer
                         if (mSpan == 0)
                         {
                             if (m_handler != null)
+                            {
                                 m_handler(this, t, mData);
+                            }
                         }
                         else
                         {

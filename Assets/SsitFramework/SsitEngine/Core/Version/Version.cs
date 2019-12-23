@@ -30,7 +30,10 @@ namespace SsitEngine
         {
             get
             {
-                if (s_versionHelper == null) return string.Empty;
+                if (s_versionHelper == null)
+                {
+                    return string.Empty;
+                }
 
                 return s_versionHelper.AppVersion;
             }
@@ -43,7 +46,10 @@ namespace SsitEngine
         {
             get
             {
-                if (s_versionHelper == null) return 0;
+                if (s_versionHelper == null)
+                {
+                    return 0;
+                }
 
                 return s_versionHelper.InternalGameVersion;
             }

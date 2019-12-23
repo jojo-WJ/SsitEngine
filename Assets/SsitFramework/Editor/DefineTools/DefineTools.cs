@@ -6,6 +6,7 @@
 *│　创建时间：2019/3/28 17:35:12                     
 *└──────────────────────────────────────────────────────────────┘
 */
+
 using System.Collections.Generic;
 using UnityEditor;
 
@@ -20,7 +21,7 @@ namespace SsitEngine.Editor
         /// <param name="enable"></param>
         public static void SetEnabled( string defineName, bool enable )
         {
-            BuildTargetGroup buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+            var buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
             var defines = GetDefinesList(buildTargetGroup);
             if (enable)
             {
@@ -41,7 +42,7 @@ namespace SsitEngine.Editor
                     defines.Remove(defineName);
                 }
             }
-            string definesString = string.Join(";", defines.ToArray());
+            var definesString = string.Join(";", defines.ToArray());
             PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup, definesString);
         }
 

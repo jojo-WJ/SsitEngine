@@ -6,6 +6,7 @@
 *│　创建时间：2019/8/6 16:19:11                     
 *└──────────────────────────────────────────────────────────────┘
 */
+
 using UnityEditor;
 using UnityEngine;
 
@@ -28,7 +29,7 @@ namespace SsitEngine.Editor.HUD
             disabledStyle;
 
         protected Texture2D splashTexture;
-        protected bool expandSettings = false;
+        protected bool expandSettings;
         protected bool showHelpboxes = true;
 
         protected bool showExpandButton = true;
@@ -40,7 +41,7 @@ namespace SsitEngine.Editor.HUD
 
         #region Main Methods
 
-        void Awake()
+        private void Awake()
         {
             showHelpboxes = EditorPrefs.GetBool(_showHelpboxesPrefs, !showHelpboxes);
         }
@@ -121,7 +122,7 @@ namespace SsitEngine.Editor.HUD
             {
                 // use splash texture
                 GUILayoutUtility.GetRect(1f, 3f, GUILayout.ExpandWidth(false));
-                Rect rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.Height(100f));
+                var rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.Height(100f));
                 GUI.DrawTexture(rect, splashTexture, ScaleMode.ScaleAndCrop, true, 0f);
             }
             else if (editorTitle != null)
@@ -148,11 +149,11 @@ namespace SsitEngine.Editor.HUD
             // expand / collapse settings
             if (showExpandButton)
             {
-                if (GUILayout.Button(new GUIContent((expandSettings) ? "-" : "+", "Expand / Collapse all settings."),
+                if (GUILayout.Button(new GUIContent(expandSettings ? "-" : "+", "Expand / Collapse all settings."),
                     GUILayout.Width(20), GUILayout.Height(20)))
                 {
                     expandSettings = !expandSettings;
-                    this.OnExpandSettings(expandSettings);
+                    OnExpandSettings(expandSettings);
                 }
             }
             else
@@ -163,8 +164,8 @@ namespace SsitEngine.Editor.HUD
             // toggle helpboxes
             if (showHelpboxButton)
             {
-                Color bgColor = GUI.backgroundColor;
-                GUI.backgroundColor = (showHelpboxes) ? Color.gray : Color.white;
+                var bgColor = GUI.backgroundColor;
+                GUI.backgroundColor = showHelpboxes ? Color.gray : Color.white;
                 if (showHelpboxButton &&
                     GUILayout.Button(new GUIContent("?", "(GLOBAL) Toggle helpboxes and detailled informations."),
                         GUILayout.Width(20), GUILayout.Height(20)))

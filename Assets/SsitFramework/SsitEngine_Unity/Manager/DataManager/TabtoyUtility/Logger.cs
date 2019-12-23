@@ -12,7 +12,10 @@ namespace Tabtoy
 
         public static Logger Instance()
         {
-            if (_instance == null) _instance = new Logger();
+            if (_instance == null)
+            {
+                _instance = new Logger();
+            }
             return _instance;
         }
 

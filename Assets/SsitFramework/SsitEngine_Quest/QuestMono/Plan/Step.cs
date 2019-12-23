@@ -7,59 +7,47 @@
 *└──────────────────────────────────────────────────────────────┘
 */
 
+using System;
 using UnityEngine;
 
 namespace SsitEngine.QuestManager
-{    
+{
     /// <summary>
     /// 任务步骤
     /// </summary>
-    [System.Serializable]
+    [Serializable]
     public class Step
     {
-        [SerializeField]
-        private Action succesAction;
-        [SerializeField]
-        private Action failureAction;
-        [SerializeField]
-        public int scoreValue;
+        [SerializeField] private Action failureAction;
+
+        [SerializeField] public int scoreValue;
+
+        [SerializeField] private Action succesAction;
+
+        public Step( Action succesAction, Action failureAction = null, int scoreValue = 0 )
+        {
+            SuccesAction = succesAction;
+            FailureAction = failureAction;
+            this.scoreValue = scoreValue;
+        }
 
         public Action SuccesAction
         {
-            get
-            {
-                return succesAction;
-            }
+            get => succesAction;
 
-            set
-            {
-                succesAction = value;
-            }
+            set => succesAction = value;
         }
 
         public Action FailureAction
         {
-            get
-            {
-                return failureAction;
-            }
+            get => failureAction;
 
-            set
-            {
-                failureAction = value;
-            }
-        }
-
-        public Step( Action succesAction, Action failureAction = null, int scoreValue = 0 )
-        {
-            this.SuccesAction = succesAction;
-            this.FailureAction = failureAction;
-            this.scoreValue = scoreValue;
+            set => failureAction = value;
         }
 
         public override string ToString()
         {
-            return ((SuccesAction != null) ? SuccesAction.DisplayName : "(no-action)");
+            return SuccesAction != null ? SuccesAction.DisplayName : "(no-action)";
         }
     }
 }

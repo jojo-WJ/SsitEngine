@@ -19,69 +19,76 @@ namespace SsitEngine.Editor
 {
     public class LogRedirect
     {
-        private static string[] ignores = new string[2]
+        private const string logTitle = "检测到错误:";
+
+        private static readonly string[] ignores = new string[2]
         {
             "***********代码检测结果************",
             "*********************************"
         };
 
-        private static object logListView = null;
-        private const string logTitle = "检测到错误:";
+        private static object logListView;
         private static EditorWindow consoleWindow;
-        private static System.Reflection.FieldInfo logListViewCurrentRow;
-        private static System.Reflection.FieldInfo activeTextInfo;
+        private static FieldInfo logListViewCurrentRow;
+        private static FieldInfo activeTextInfo;
 
         private static bool GetConsoleWindowListView()
         {
-            if (LogRedirect.logListView == null)
+            if (logListView == null)
             {
                 try
                 {
-                    System.Type type = Assembly.GetAssembly(typeof(EditorWindow)).GetType("UnityEditor.ConsoleWindow");
-                    LogRedirect.consoleWindow =
+                    var type = Assembly.GetAssembly(typeof(EditorWindow)).GetType("UnityEditor.ConsoleWindow");
+                    consoleWindow =
                         type.GetField("ms_ConsoleWindow", BindingFlags.Static | BindingFlags.NonPublic)
                             .GetValue(null) as EditorWindow;
                     if (consoleWindow == null)
                     {
-                        LogRedirect.logListView = null;
+                        logListView = null;
                         Debug.Log("consoleWindow refelct is exception");
                         return false;
                     }
-                    System.Reflection.FieldInfo field = type.GetField("m_ListView",
+                    var field = type.GetField("m_ListView",
                         BindingFlags.Instance | BindingFlags.NonPublic);
-                    LogRedirect.logListView = field.GetValue(consoleWindow);
-                    LogRedirect.logListViewCurrentRow =
+                    logListView = field.GetValue(consoleWindow);
+                    logListViewCurrentRow =
                         field.FieldType.GetField("row", BindingFlags.Instance | BindingFlags.Public);
-                    LogRedirect.activeTextInfo =
+                    activeTextInfo =
                         type.GetField("m_ActiveText", BindingFlags.Instance | BindingFlags.NonPublic);
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError("CodeCheck:" + ex.ToString());
+                    Debug.LogError("CodeCheck:" + ex);
                     return false;
                 }
             }
             return true;
         }
 
-        private static LogRedirect.ErrorInfo GetErrorInfo()
+        private static ErrorInfo GetErrorInfo()
         {
-            int num = (int) LogRedirect.logListViewCurrentRow.GetValue(LogRedirect.logListView);
-            string condition = LogRedirect.activeTextInfo.GetValue(consoleWindow).ToString();
+            var num = (int) logListViewCurrentRow.GetValue(logListView);
+            var condition = activeTextInfo.GetValue(consoleWindow).ToString();
             condition = condition.Trim(' ', '\n', '\t');
-            if (Array.FindIndex<string>(LogRedirect.ignores, n => condition.StartsWith(n)) >= 0)
-                return new LogRedirect.ErrorInfo()
+            if (Array.FindIndex(ignores, n => condition.StartsWith(n)) >= 0)
+            {
+                return new ErrorInfo
                 {
                     Location = string.Empty
                 };
+            }
             if (!condition.StartsWith("检测到错误:"))
+            {
                 return null;
-            string[] strArray = condition.Split('\n');
+            }
+            var strArray = condition.Split('\n');
             if (strArray.Length < 7)
+            {
                 return null;
+            }
             try
             {
-                LogRedirect.ErrorInfo errorInfo = new LogRedirect.ErrorInfo()
+                var errorInfo = new ErrorInfo
                 {
                     Message = strArray[1].Trim(' ', '\n'),
                     Location = strArray[2].Trim(' ', '\n').Replace("位于", "")
@@ -95,7 +102,7 @@ namespace SsitEngine.Editor
             }
             catch (Exception ex)
             {
-                Debug.LogError("CodeCheck:" + ex.ToString());
+                Debug.LogError("CodeCheck:" + ex);
                 return null;
             }
         }
@@ -108,17 +115,21 @@ namespace SsitEngine.Editor
                 Debug.LogWarningFormat("CodeCheck:{0}", (object) "Focused window is not Console!");
                 return false;
             }
-            if (!LogRedirect.GetConsoleWindowListView())
+            if (!GetConsoleWindowListView())
             {
                 Debug.LogWarningFormat("CodeCheck:{0}", (object) "Get console window list view failed!");
                 return false;
             }
-            LogRedirect.ErrorInfo errorInfo = LogRedirect.GetErrorInfo();
+            var errorInfo = GetErrorInfo();
             if (errorInfo == null)
+            {
                 return false;
-            string location = errorInfo.Location;
+            }
+            var location = errorInfo.Location;
             if (location == string.Empty)
+            {
                 return true;
+            }
             InternalEditorUtility.OpenFileAtLineExternal(
                 Path.Combine(Path.GetDirectoryName(Application.dataPath), location.Trim()), errorInfo.Line);
             return true;
@@ -126,12 +137,12 @@ namespace SsitEngine.Editor
 
         public sealed class ErrorInfo
         {
-            public string Message;
-            public string Location;
             public int Line;
-            public string RuleSpace;
-            public string RuleName;
+            public string Location;
+            public string Message;
             public string RuleId;
+            public string RuleName;
+            public string RuleSpace;
         }
     }
 }

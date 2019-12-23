@@ -88,12 +88,19 @@ namespace SsitEngine.Fsm
         /// <param name="eventHandler">有限状态机事件响应函数。</param>
         public void SubscribeEvent( int eventId, FsmEventHandler<T> eventHandler )
         {
-            if (eventHandler == null) throw new SsitEngineException("Event handler is invalid.");
+            if (eventHandler == null)
+            {
+                throw new SsitEngineException("Event handler is invalid.");
+            }
 
             if (!m_eventHandlerMaps.ContainsKey(eventId))
+            {
                 m_eventHandlerMaps[eventId] = eventHandler;
+            }
             else
+            {
                 m_eventHandlerMaps[eventId] += eventHandler;
+            }
         }
 
         /// <summary>
@@ -103,9 +110,15 @@ namespace SsitEngine.Fsm
         /// <param name="eventHandler">有限状态机事件响应函数。</param>
         public void UnsubscribeEvent( int eventId, FsmEventHandler<T> eventHandler )
         {
-            if (eventHandler == null) throw new SsitEngineException("Event handler is invalid.");
+            if (eventHandler == null)
+            {
+                throw new SsitEngineException("Event handler is invalid.");
+            }
 
-            if (m_eventHandlerMaps.ContainsKey(eventId)) m_eventHandlerMaps[eventId] -= eventHandler;
+            if (m_eventHandlerMaps.ContainsKey(eventId))
+            {
+                m_eventHandlerMaps[eventId] -= eventHandler;
+            }
         }
 
         /// <summary>
@@ -116,7 +129,10 @@ namespace SsitEngine.Fsm
         public void ChangeState( IFsm<T> fsm, int stateId )
         {
             var fsmImplement = fsm;
-            if (fsmImplement == null) throw new SsitEngineException("FSM is invalid.");
+            if (fsmImplement == null)
+            {
+                throw new SsitEngineException("FSM is invalid.");
+            }
             fsmImplement.ChangeState(stateId);
         }
 
@@ -131,8 +147,12 @@ namespace SsitEngine.Fsm
         {
             FsmEventHandler<T> eventHandlers = null;
             if (m_eventHandlerMaps.TryGetValue(eventId, out eventHandlers))
+            {
                 if (eventHandlers != null)
+                {
                     eventHandlers(fsm, sender, userData);
+                }
+            }
         }
     }
 }

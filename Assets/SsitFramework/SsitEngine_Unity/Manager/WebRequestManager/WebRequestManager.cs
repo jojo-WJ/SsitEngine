@@ -167,7 +167,10 @@ namespace SsitEngine.Unity.WebRequest
         /// <returns>新增 Web 请求任务的序列编号。</returns>
         public ulong AddWebRequest( string webRequestUri, byte[] postData, int priority, IWebRequestInfo userData )
         {
-            if (string.IsNullOrEmpty(webRequestUri)) throw new SsitEngineException("Web request uri is invalid.");
+            if (string.IsNullOrEmpty(webRequestUri))
+            {
+                throw new SsitEngineException("Web request uri is invalid.");
+            }
 
             WebRequestTask webRequestTask = null;
             switch (userData.FileType)
@@ -201,16 +204,23 @@ namespace SsitEngine.Unity.WebRequest
                     break;
             }
 
-            if (webRequestTask == null) throw new Exception("找不到对应的资源类型任务代理");
+            if (webRequestTask == null)
+            {
+                throw new Exception("找不到对应的资源类型任务代理");
+            }
             m_TaskPool.AddTask(webRequestTask);
 
             // 计时器不等同于可以等待的机制处理，他需要即时性的一些概念
             if (WaitingTaskCount > FreeAgentCount)
             {
                 if (TotalAgentCount > Engine.Instance.PlatConfig.webTaskAgentMaxCount)
+                {
                     SsitDebug.Warning("计时器代理超出平台配置的最大个数。。。");
+                }
                 else
+                {
                     AddWebRequestAgent();
+                }
             }
 
             return webRequestTask.Id;
@@ -252,7 +262,10 @@ namespace SsitEngine.Unity.WebRequest
         public ulong AddWebRequest( string webRequestUri, byte[] postData, int priority, WebRequestTask task,
             IWebRequestInfo userData )
         {
-            if (string.IsNullOrEmpty(webRequestUri)) throw new SsitEngineException("Web request uri is invalid.");
+            if (string.IsNullOrEmpty(webRequestUri))
+            {
+                throw new SsitEngineException("Web request uri is invalid.");
+            }
 
             m_TaskPool.AddTask(task);
 
@@ -260,9 +273,13 @@ namespace SsitEngine.Unity.WebRequest
             if (WaitingTaskCount > FreeAgentCount)
             {
                 if (TotalAgentCount > Engine.Instance.PlatConfig.webTaskAgentMaxCount)
+                {
                     SsitDebug.Warning("计时器代理超出平台配置的最大个数。。。");
+                }
                 else
+                {
                     AddWebRequestAgent();
+                }
             }
 
             return task.Id;
@@ -271,24 +288,30 @@ namespace SsitEngine.Unity.WebRequest
         private void OnWebRequestAgentStart( WebRequestAgent sender )
         {
             if (m_WebRequestStartEventHandler != null)
+            {
                 m_WebRequestStartEventHandler(this,
                     new WebRequestStartEventArgs(sender.Task.Id, sender.Task.WebRequestUri, sender.Task.UserData));
+            }
         }
 
         private void OnWebRequestAgentSuccess( WebRequestAgent sender, byte[] webResponseBytes )
         {
             if (m_WebRequestSuccessEventHandler != null)
+            {
                 m_WebRequestSuccessEventHandler(this,
                     new WebRequestSuccessEventArgs(sender.Task.Id, sender.Task.WebRequestUri, webResponseBytes,
                         sender.Task.UserData));
+            }
         }
 
         private void OnWebRequestAgentFailure( WebRequestAgent sender, string errorMessage )
         {
             if (m_WebRequestFailureEventHandler != null)
+            {
                 m_WebRequestFailureEventHandler(this,
                     new WebRequestFailureEventArgs(sender.Task.Id, sender.Task.WebRequestUri, errorMessage,
                         sender.Task.UserData));
+            }
         }
 
         #region Moudle

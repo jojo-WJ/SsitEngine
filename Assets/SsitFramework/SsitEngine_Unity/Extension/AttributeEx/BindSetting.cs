@@ -18,5 +18,4 @@ namespace Framework.Editor
         //[FormerlySerializedAs("builtInRefrence")]
         public List<string> m_builtInRefrence;
     }
-
 }

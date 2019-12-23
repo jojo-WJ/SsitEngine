@@ -20,7 +20,9 @@ namespace SsitEngine.Unity.Sound
             if (_indexOf == SOUNDMANAGER_FALSE)
             {
                 if (!Application.CanStreamedLevelBeLoaded(sc.level))
+                {
                     sc.isCustomLevel = true;
+                }
                 Instance.soundConnections.Add(sc);
             }
             else
@@ -39,10 +41,14 @@ namespace SsitEngine.Unity.Sound
         {
             var _indexOf = SoundConnectionsContainsThisLevel(lvl);
             if (_indexOf == SOUNDMANAGER_FALSE)
+            {
                 Debug.LogWarning(
                     "A SoundConnection for this level doesn't exist.  The level name may be incorrect or the soundconnection is still being added.");
+            }
             else
+            {
                 Instance.soundConnections.RemoveAt(_indexOf);
+            }
         }
 
         /// <summary>
@@ -54,7 +60,10 @@ namespace SsitEngine.Unity.Sound
         public static void ReplaceSoundConnection( SoundConnection sc )
         {
             var _indexOf = SoundConnectionsContainsThisLevel(sc.level);
-            if (_indexOf != SOUNDMANAGER_FALSE) RemoveSoundConnectionForLevel(sc.level);
+            if (_indexOf != SOUNDMANAGER_FALSE)
+            {
+                RemoveSoundConnectionForLevel(sc.level);
+            }
             AddSoundConnection(sc);
         }
 
@@ -88,7 +97,9 @@ namespace SsitEngine.Unity.Sound
         {
             var index = SoundConnectionsContainsThisLevel(lvl);
             if (index == SOUNDMANAGER_FALSE)
+            {
                 return null;
+            }
             return Instance.soundConnections[index];
         }
 
@@ -184,15 +195,27 @@ namespace SsitEngine.Unity.Sound
             Instance.maxMusicVolume = setVolume * Instance.maxVolume;
 
             if (float.IsNaN(currentPercentageOfVolume1) || float.IsInfinity(currentPercentageOfVolume1))
+            {
                 if (Instance.audios[0].isPlaying)
+                {
                     currentPercentageOfVolume1 = 1f;
+                }
                 else
+                {
                     currentPercentageOfVolume1 = 0f;
+                }
+            }
             if (float.IsNaN(currentPercentageOfVolume2) || float.IsInfinity(currentPercentageOfVolume2))
+            {
                 if (Instance.audios[1].isPlaying)
+                {
                     currentPercentageOfVolume2 = 1f;
+                }
                 else
+                {
                     currentPercentageOfVolume2 = 0f;
+                }
+            }
 
             Instance.volume1 = Instance.maxMusicVolume * currentPercentageOfVolume1;
             Instance.volume2 = Instance.maxMusicVolume * currentPercentageOfVolume2;
@@ -248,9 +271,13 @@ namespace SsitEngine.Unity.Sound
             Instance.maxVolume = setVolume;
 
             if (float.IsNaN(currentPercentageOfVolumeMusic) || float.IsInfinity(currentPercentageOfVolumeMusic))
+            {
                 currentPercentageOfVolumeMusic = 1f;
+            }
             if (float.IsNaN(currentPercentageOfVolumeSFX) || float.IsInfinity(currentPercentageOfVolumeSFX))
+            {
                 currentPercentageOfVolumeSFX = 1f;
+            }
 
             SetVolumeMusic(currentPercentageOfVolumeMusic);
             SetVolumeSFX(currentPercentageOfVolumeSFX);
@@ -395,11 +422,15 @@ namespace SsitEngine.Unity.Sound
             {
                 currentSource = GetCurrentAudioSource();
                 if (currentSource != null)
+                {
                     currentTimeSamples = currentSource.timeSamples;
+                }
             }
 
             for (var i = 0; i < trackNumber; i++)
+            {
                 Next();
+            }
             Instance._PlayConnection(sc);
 
             if (syncPlaybackTime)
@@ -434,11 +465,15 @@ namespace SsitEngine.Unity.Sound
             {
                 currentSource = GetCurrentAudioSource();
                 if (currentSource != null)
+                {
                     currentTimeSamples = currentSource.timeSamples;
+                }
             }
 
             for (var i = 0; i < trackNumber; i++)
+            {
                 Next();
+            }
             Instance._PlayConnection(levelName);
 
             if (syncPlaybackTime)
@@ -544,9 +579,13 @@ namespace SsitEngine.Unity.Sound
         public static void PauseToggle()
         {
             if (Instance.isPaused)
+            {
                 UnPause();
+            }
             else
+            {
                 Pause();
+            }
         }
 
 
@@ -579,7 +618,9 @@ namespace SsitEngine.Unity.Sound
         public static List<AudioClip> GetCurrentSongList()
         {
             if (Instance.currentSoundConnection == null)
+            {
                 return null;
+            }
             return Instance.currentSoundConnection.soundsToPlay;
         }
 
@@ -592,7 +633,9 @@ namespace SsitEngine.Unity.Sound
         public static AudioClip GetCurrentSong()
         {
             if (!Instance.IsPlaying() || Instance.currentSource.clip == null)
+            {
                 return null;
+            }
 
             return Instance.currentSource.clip;
         }
@@ -626,7 +669,10 @@ namespace SsitEngine.Unity.Sound
         /// </param>
         public static bool ClipNameIsValid( string clipName )
         {
-            if (string.IsNullOrEmpty(clipName)) return false;
+            if (string.IsNullOrEmpty(clipName))
+            {
+                return false;
+            }
             return Instance.allClips.ContainsKey(clipName) && Instance.allClips[clipName] != null;
         }
 
@@ -641,7 +687,10 @@ namespace SsitEngine.Unity.Sound
         /// </param>
         public static bool GroupNameIsValid( string groupName )
         {
-            if (string.IsNullOrEmpty(groupName)) return false;
+            if (string.IsNullOrEmpty(groupName))
+            {
+                return false;
+            }
             return Instance.groups.ContainsKey(groupName) && Instance.groups[groupName] != null;
         }
 
@@ -675,8 +724,12 @@ namespace SsitEngine.Unity.Sound
         public void OnLevelLoaded( UnityEngine.SceneManagement.Scene level, LoadSceneMode mode )
         {
             if (Instance == this)
+            {
                 if (!ignoreLevelLoad)
+                {
                     HandleLevel(level.buildIndex);
+                }
+            }
         }
 
         // Handle app focus
@@ -697,9 +750,13 @@ namespace SsitEngine.Unity.Sound
         private void CommonHandleApplicationFocus( bool applicationFocus )
         {
             if (applicationFocus)
+            {
                 ignoreFromLosingFocus = true;
+            }
             else
+            {
                 ignoreFromLosingFocus = false;
+            }
         }
 
         #endregion
@@ -713,7 +770,9 @@ namespace SsitEngine.Unity.Sound
         {
             var sc = new SoundConnection(lvl, PlayMethod.ContinuousPlayThrough, audioList);
             if (!Application.CanStreamedLevelBeLoaded(lvl))
+            {
                 sc.SetToCustom();
+            }
             return sc;
         }
 
@@ -726,7 +785,9 @@ namespace SsitEngine.Unity.Sound
             var sc = new SoundConnection(lvl, method, audioList);
             //针对网页流式加载(会先设置配置源声音为无声)
             if (!Application.CanStreamedLevelBeLoaded(lvl))
+            {
                 sc.SetToCustom();
+            }
             return sc;
         }
 
@@ -735,7 +796,9 @@ namespace SsitEngine.Unity.Sound
         {
             var sc = new SoundConnection(lvl, method, delayPlay, audioList);
             if (!Application.CanStreamedLevelBeLoaded(lvl))
+            {
                 sc.SetToCustom();
+            }
             return sc;
         }
 
@@ -744,7 +807,9 @@ namespace SsitEngine.Unity.Sound
         {
             var sc = new SoundConnection(lvl, method, minDelayPlay, maxDelayPlay, audioList);
             if (!Application.CanStreamedLevelBeLoaded(lvl))
+            {
                 sc.SetToCustom();
+            }
             return sc;
         }
 

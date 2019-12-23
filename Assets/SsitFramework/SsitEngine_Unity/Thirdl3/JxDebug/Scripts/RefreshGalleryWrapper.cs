@@ -1,11 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class RefreshGalleryWrapper : MonoBehaviour {
-
+public class RefreshGalleryWrapper : MonoBehaviour
+{
 #if UNITY_ANDROID
-
-	
 	void SetGalleryPath()
 	{
 		AndroidJavaClass javaClass = new AndroidJavaClass("com.astricstore.androidutil.AndroidGallery");
