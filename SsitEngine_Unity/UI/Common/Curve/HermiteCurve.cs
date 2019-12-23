@@ -73,7 +73,9 @@ namespace SsitEngine.Unity.UI.Common.Curve
                 var num1 = 0.0f;
                 var num2 = MaxKey * 0.05f;
                 for (var key = 0.0f; key < (double) MaxKey; key += num2)
+                {
                     num1 += Vector3.Distance(GetPointAt(key), GetPointAt(key + num2));
+                }
                 return num1;
             }
         }
@@ -84,7 +86,9 @@ namespace SsitEngine.Unity.UI.Common.Curve
             get
             {
                 if (KeyframeCount == 0)
+                {
                     return 0.0f;
+                }
                 return xCurve[KeyframeCount - 1].time;
             }
         }
@@ -144,7 +148,9 @@ namespace SsitEngine.Unity.UI.Common.Curve
         public void SmoothTangents( float weight )
         {
             for (var index = 0; index < KeyframeCount; ++index)
+            {
                 SmoothTangents(index, weight);
+            }
         }
 
         /// <summary>Create a curve base on anchors.</summary>

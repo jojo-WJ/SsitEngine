@@ -111,11 +111,17 @@ namespace SsitEngine.Unity
         /// <returns>The <see cref="UnityEngine.Transform" /> if found, otherwise, null.</returns>
         public static Transform FindDeepChild( this Transform transform, string name, bool endsWith = false )
         {
-            if (endsWith ? transform.name == name : transform.name.EndsWith(name)) return transform;
+            if (endsWith ? transform.name == name : transform.name.EndsWith(name))
+            {
+                return transform;
+            }
             foreach (Transform child in transform)
             {
                 var result = child.FindDeepChild(name);
-                if (result != null) return result;
+                if (result != null)
+                {
+                    return result;
+                }
             }
             return null;
         }
@@ -131,9 +137,13 @@ namespace SsitEngine.Unity
             {
                 var child = transform.GetChild(i);
                 if (destroyImmediate)
+                {
                     Object.DestroyImmediate(child.gameObject);
+                }
                 else
+                {
                     Object.Destroy(child.gameObject);
+                }
             }
         }
 
@@ -158,7 +168,9 @@ namespace SsitEngine.Unity
         {
             var com = go.GetComponent<T>();
             if (com != null)
+            {
                 return com;
+            }
             return go.gameObject.AddComponent<T>();
         }
     }

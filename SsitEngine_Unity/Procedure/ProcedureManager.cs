@@ -42,7 +42,10 @@ namespace SsitEngine.Unity.Procedure
         {
             get
             {
-                if (m_currProcedure == null) throw new SsitEngineException("You must initialize procedure first.");
+                if (m_currProcedure == null)
+                {
+                    throw new SsitEngineException("You must initialize procedure first.");
+                }
 
                 return m_currProcedure;
             }
@@ -63,7 +66,9 @@ namespace SsitEngine.Unity.Procedure
             {
                 var stateId = procedures[i].StateId;
                 if (m_procedureMaps.ContainsKey(stateId))
+                {
                     throw new SsitEngineException(TextUtils.Format("流程管理器已经包含流程ID{0}", stateId));
+                }
                 procedures[i].OnInit(this);
                 m_procedureMaps.Add(stateId, procedures[i]);
             }
@@ -97,7 +102,10 @@ namespace SsitEngine.Unity.Procedure
         /// <param name="userData">用户自定义数据。</param>
         public void FireEvent( object sender, int eventId, object userData = null )
         {
-            if (m_currProcedure == null) throw new SsitEngineException("Current state is invalid.");
+            if (m_currProcedure == null)
+            {
+                throw new SsitEngineException("Current state is invalid.");
+            }
             m_currProcedure.OnEvent(this, sender, eventId, userData);
         }
 
@@ -110,8 +118,10 @@ namespace SsitEngine.Unity.Procedure
         {
             var procedure = GetState(procedureId);
             if (procedure == null)
+            {
                 throw new SsitEngineException(TextUtils.Format(
                     "FSM '{0}' can not change procedure to '{1}' which is not exist.", ModuleName, procedureId));
+            }
             procedure.SceneName = sceneName ?? procedure.SceneName;
             NextProcedure = procedure;
 
@@ -128,8 +138,10 @@ namespace SsitEngine.Unity.Procedure
         {
             var procedure = GetState(procedureId);
             if (procedure == null)
+            {
                 throw new SsitEngineException(TextUtils.Format(
                     "FSM '{0}' can not change procedure to '{1}' which is not exist.", ModuleName, procedureId));
+            }
             procedure.SceneName = sceneName ?? procedure.SceneName;
             NextProcedure = procedure;
         }
@@ -144,7 +156,10 @@ namespace SsitEngine.Unity.Procedure
         private ProcedureBase GetState( int stateId )
         {
             ProcedureBase state = null;
-            if (m_procedureMaps.TryGetValue(stateId, out state)) return state;
+            if (m_procedureMaps.TryGetValue(stateId, out state))
+            {
+                return state;
+            }
             return null;
         }
 
@@ -166,6 +181,7 @@ namespace SsitEngine.Unity.Procedure
         public override void OnUpdate( float elapseSeconds )
         {
             if (null != m_currProcedure)
+            {
                 if (m_currProcedure.IsLoaded)
                 {
                     if (!m_currProcedure.IsEntered)
@@ -175,6 +191,7 @@ namespace SsitEngine.Unity.Procedure
                     }
                     m_currProcedure.OnUpdate(this, elapseSeconds);
                 }
+            }
 
             if (null != NextProcedure)
             {
@@ -199,7 +216,9 @@ namespace SsitEngine.Unity.Procedure
         public override void Shutdown()
         {
             if (isShutdown)
+            {
                 return;
+            }
             isShutdown = true;
             if (m_currProcedure != null)
             {
@@ -207,7 +226,10 @@ namespace SsitEngine.Unity.Procedure
                 m_currProcedure = null;
             }
 
-            foreach (var state in m_procedureMaps) state.Value.OnDestroy(this);
+            foreach (var state in m_procedureMaps)
+            {
+                state.Value.OnDestroy(this);
+            }
             m_procedureMaps.Clear();
         }
 

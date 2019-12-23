@@ -19,43 +19,63 @@ namespace SsitEngine.Editor
 {
     public class TableToolWindow : EditorWindow
     {
-        static string CONFIGPATH = "Assets/Editor/TableConvert";
-        static string CONGFIGASSETNAME = "TableFile.asset";
-
-        public Vector2 mScrollPos;
-
-        private float offset = 10;
-        private bool mIsHelper = false;
+        private static readonly string CONGFIGASSETNAME = "TableFile.asset";
+        private int animIdx;
 
 
         //private float mButtonWidth = 200;
         //private float mButtonHeight = 60;
 
 
-        private string BgStyle = "PopupCurveSwatchBackground";
+        private readonly string BgStyle = "PopupCurveSwatchBackground";
 
 
         private TableFileScrips mConfigInfo;
+        private string mFilter;
+
+        private string[] mFolderNames = { };
+        private bool mIsHelper;
+        private bool mIsScroll;
 
         private TableToModelBase mModelBase;
-        private bool mIsScroll;
+
+        public Vector2 mScrollPos;
+
+        private readonly float offset = 10;
 
         private string search;
 
-        private string[] mFolderNames = new string[] { };
-        private string mFilter;
-        private int animIdx;
+
+        public void OnFocus()
+        {
+            wantsMouseMove = true;
+            FolderTree.SelectData = null;
+            Repaint();
+        }
+
+        private void OnDestroy()
+        {
+            EditorApplication.isPlaying = false;
+        }
+
+        private void OnProjectWindowChange()
+        {
+            //TODO:重新加载目录文本
+            //this.ReloadPreviousBehavior();
+            FolderTree.SelectData = null;
+            Repaint();
+        }
 
         #region 主体
 
         [MenuItem("Tools/导出表格数据 #&o", false, 1)]
-        static void InitWindow()
+        private static void InitWindow()
         {
             GetWindow(typeof(TableToolWindow));
         }
 
 
-        void InitData()
+        private void InitData()
         {
             if (!string.IsNullOrEmpty(mConfigInfo.WorkSpacePath))
             {
@@ -67,10 +87,10 @@ namespace SsitEngine.Editor
 
                 mConfigInfo.FileNames = new string[tempArray.Length];
 
-                for (int i = 0; i < tempArray.Length; i++)
+                for (var i = 0; i < tempArray.Length; i++)
                 {
-                    string temp = tempArray[i].Replace("\\", "/");
-                    string fileName = temp.Substring(temp.LastIndexOf("/") + 1);
+                    var temp = tempArray[i].Replace("\\", "/");
+                    var fileName = temp.Substring(temp.LastIndexOf("/") + 1);
                     mConfigInfo.FileNames[i] = fileName.Substring(0, fileName.IndexOf("."));
                 }
 
@@ -79,7 +99,7 @@ namespace SsitEngine.Editor
                 TableTool.CheckFolder();
 
                 FolderTree.OnInit(mConfigInfo.WorkSpacePath, OnFileClick, OnFolderClick);
-                mFolderNames = FolderTree.mFileMaps.ConvertAll(delegate ( FolderTree.Data data ) { return data.name; })
+                mFolderNames = FolderTree.mFileMaps.ConvertAll(delegate( FolderTree.Data data ) { return data.name; })
                     .ToArray();
 
                 mModelBase = new TableToModelBase();
@@ -94,11 +114,11 @@ namespace SsitEngine.Editor
 
         private void OnEnable()
         {
-            string tempPath = Path.Combine(CONFIGPATH, CONGFIGASSETNAME);
+            var tempPath = Path.Combine(EditorFileUtility.CONFIGPATH, CONGFIGASSETNAME);
 
             if (!File.Exists(tempPath))
             {
-                mConfigInfo = ScriptableObject.CreateInstance<TableFileScrips>();
+                mConfigInfo = CreateInstance<TableFileScrips>();
 
                 if (!Directory.Exists(Path.GetDirectoryName(tempPath)))
                 {
@@ -120,7 +140,7 @@ namespace SsitEngine.Editor
 
         private void InitConfig()
         {
-            string temp = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/"));
+            var temp = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/"));
 
             if (!string.IsNullOrEmpty(mConfigInfo.WorkSpaceRelationPath))
             {
@@ -145,10 +165,12 @@ namespace SsitEngine.Editor
             }
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             if (mConfigInfo == null)
+            {
                 return;
+            }
             GUILayout.BeginHorizontal("HelpBox");
             GUILayout.Label("快速查找相关表格", "label");
             GUILayout.FlexibleSpace();
@@ -162,8 +184,8 @@ namespace SsitEngine.Editor
                 GUI.FocusControl("");
             }
 
-            string[] curAnims = mFolderNames;
-            int curIndex = 0;
+            var curAnims = mFolderNames;
+            var curIndex = 0;
             if (!string.IsNullOrEmpty(mFilter))
             {
                 var temp = mFolderNames.ToList().FindAll(x => { return Regex.IsMatch(x, mFilter); });
@@ -236,8 +258,6 @@ namespace SsitEngine.Editor
 
                     //绘制根
                     DrawRoot();
-
-
                 }
                 EditorGUILayout.EndVertical();
             }
@@ -258,22 +278,18 @@ namespace SsitEngine.Editor
 
         #region Draw Window
 
-        void DrawWorkSoacePath()
+        private void DrawWorkSoacePath()
         {
             GUILayout.Space(10);
-            EditorGUILayout.BeginHorizontal(BgStyle
-                , new GUILayoutOption[]
-                {
-                    GUILayout.Height(EditorGUIUtility.singleLineHeight),
-                });
+            EditorGUILayout.BeginHorizontal(BgStyle, GUILayout.Height(EditorGUIUtility.singleLineHeight));
             //EditorGUI.indentLevel = 1;
             GUI.color = Color.cyan;
-            Rect rect = EditorGUILayout.GetControlRect();
+            var rect = EditorGUILayout.GetControlRect();
 
-            float width1 = EditorGUIUtility.fieldWidth + offset;
+            var width1 = EditorGUIUtility.fieldWidth + offset;
             ////GUILayout.Space(Screen.width / 2 - EditorGUIUtility.fieldWidth * 5);
             EditorGUI.LabelField(new Rect(rect.x, rect.y, width1, EditorGUIUtility.singleLineHeight), "工作路径:");
-            float width2 = Screen.width - EditorGUIUtility.fieldWidth * 2;
+            var width2 = Screen.width - EditorGUIUtility.fieldWidth * 2;
             //GUI.color = Color.white;
             GUI.SetNextControlName("工作路径");
             EditorGUI.SelectableLabel(
@@ -284,38 +300,33 @@ namespace SsitEngine.Editor
             {
                 //把名字存储在剪粘板 
                 EditorGUIUtility.systemCopyBuffer = mConfigInfo.WorkSpacePath; // "\"" + style.name + "\"";
-
             }
 
             if (GUI.Button(new Rect(width2, rect.y, Screen.width - width2, EditorGUIUtility.singleLineHeight),
                 "Select"))
             {
-                string temp = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/"));
-                mConfigInfo.WorkSpacePath = EditorUtility.SaveFolderPanel("工作路径", temp, mConfigInfo.WorkSpaceRelationPath);
+                var temp = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/"));
+                mConfigInfo.WorkSpacePath =
+                    EditorUtility.SaveFolderPanel("工作路径", temp, mConfigInfo.WorkSpaceRelationPath);
                 InitData();
-
             }
 
             EditorGUILayout.EndHorizontal();
             GUI.color = Color.white;
         }
 
-        void DrawScripExprotPath()
+        private void DrawScripExprotPath()
         {
             GUILayout.Space(10);
-            EditorGUILayout.BeginHorizontal(BgStyle
-                , new GUILayoutOption[]
-                {
-                    GUILayout.Height(EditorGUIUtility.singleLineHeight),
-                });
+            EditorGUILayout.BeginHorizontal(BgStyle, GUILayout.Height(EditorGUIUtility.singleLineHeight));
             //EditorGUI.indentLevel = 1;
             GUI.color = Color.cyan;
-            Rect rect = EditorGUILayout.GetControlRect();
+            var rect = EditorGUILayout.GetControlRect();
 
-            float width1 = EditorGUIUtility.fieldWidth + 25;
+            var width1 = EditorGUIUtility.fieldWidth + 25;
             ////GUILayout.Space(Screen.width / 2 - EditorGUIUtility.fieldWidth * 5);
             EditorGUI.LabelField(new Rect(rect.x, rect.y, width1, EditorGUIUtility.singleLineHeight), "脚本导出路径:");
-            float width2 = Screen.width - EditorGUIUtility.fieldWidth * 2;
+            var width2 = Screen.width - EditorGUIUtility.fieldWidth * 2;
             //GUI.color = Color.white;
             GUI.SetNextControlName("脚本导出路径");
             EditorGUI.SelectableLabel(
@@ -331,38 +342,33 @@ namespace SsitEngine.Editor
             if (GUI.Button(new Rect(width2, rect.y, Screen.width - width2, EditorGUIUtility.singleLineHeight),
                 "Select"))
             {
-                string temp = Application.dataPath + TableTool.DataScriptsFolderPath;
+                var temp = Application.dataPath + TableTool.DataScriptsFolderPath;
                 //string temp = Path.Combine(Application.dataPath,TableTool.DataScriptsFolderPath);
 
-                string rf = temp.Substring(0, temp.LastIndexOf("/"));
-                string f = temp.Substring(temp.LastIndexOf("/") + 1);
+                var rf = temp.Substring(0, temp.LastIndexOf("/"));
+                var f = temp.Substring(temp.LastIndexOf("/") + 1);
 
                 mConfigInfo.ScriptExportPath = EditorUtility.SaveFolderPanel("脚本导出路径:", rf, f);
 
                 InitData();
-
             }
 
             EditorGUILayout.EndHorizontal();
             GUI.color = Color.white;
         }
 
-        void DrawBinaryExportPath()
+        private void DrawBinaryExportPath()
         {
             GUILayout.Space(10);
-            EditorGUILayout.BeginHorizontal(BgStyle
-                , new GUILayoutOption[]
-                {
-                    GUILayout.Height(EditorGUIUtility.singleLineHeight),
-                });
+            EditorGUILayout.BeginHorizontal(BgStyle, GUILayout.Height(EditorGUIUtility.singleLineHeight));
             //EditorGUI.indentLevel = 1;
             GUI.color = Color.cyan;
-            Rect rect = EditorGUILayout.GetControlRect();
+            var rect = EditorGUILayout.GetControlRect();
 
-            float width1 = EditorGUIUtility.fieldWidth + 35;
+            var width1 = EditorGUIUtility.fieldWidth + 35;
             ////GUILayout.Space(Screen.width / 2 - EditorGUIUtility.fieldWidth * 5);
             GUI.Label(new Rect(rect.x, rect.y, width1, EditorGUIUtility.singleLineHeight), "二进制导出路径:");
-            float width2 = Screen.width - EditorGUIUtility.fieldWidth * 2;
+            var width2 = Screen.width - EditorGUIUtility.fieldWidth * 2;
             //GUI.color = Color.white;
             GUI.SetNextControlName("二进制导出路径");
             EditorGUI.SelectableLabel(
@@ -377,82 +383,74 @@ namespace SsitEngine.Editor
             if (GUI.Button(new Rect(width2, rect.y, Screen.width - width2, EditorGUIUtility.singleLineHeight),
                 "Select"))
             {
+                var temp = Application.dataPath + TableTool.BinaryFloderPath;
 
-                string temp = Application.dataPath + TableTool.BinaryFloderPath;
-
-                string rf = temp.Substring(0, temp.LastIndexOf("/"));
-                string f = temp.Substring(temp.LastIndexOf("/") + 1);
+                var rf = temp.Substring(0, temp.LastIndexOf("/"));
+                var f = temp.Substring(temp.LastIndexOf("/") + 1);
                 mConfigInfo.BinaryExportPath = EditorUtility.SaveFolderPanel("二进制导出路径:", rf
                     , f);
 
                 InitData();
-
             }
 
             EditorGUILayout.EndHorizontal();
             GUI.color = Color.white;
         }
 
-        void DrawJsonExportPath()
+        private void DrawJsonExportPath()
         {
             GUILayout.Space(10);
-            EditorGUILayout.BeginHorizontal(BgStyle
-                , new GUILayoutOption[]
-                {
-                    GUILayout.Height(EditorGUIUtility.singleLineHeight),
-                });
+            EditorGUILayout.BeginHorizontal(BgStyle, GUILayout.Height(EditorGUIUtility.singleLineHeight));
             //EditorGUI.indentLevel = 1;
             GUI.color = Color.cyan;
-            Rect rect = EditorGUILayout.GetControlRect();
+            var rect = EditorGUILayout.GetControlRect();
 
-            float width1 = EditorGUIUtility.fieldWidth + 35;
+            var width1 = EditorGUIUtility.fieldWidth + 35;
             ////GUILayout.Space(Screen.width / 2 - EditorGUIUtility.fieldWidth * 5);
             GUI.Label(new Rect(rect.x, rect.y, width1, EditorGUIUtility.singleLineHeight), "Json导出路径:");
-            float width2 = Screen.width - EditorGUIUtility.fieldWidth * 2;
+            var width2 = Screen.width - EditorGUIUtility.fieldWidth * 2;
             //GUI.color = Color.white;
             GUI.SetNextControlName("Json导出路径");
-            EditorGUI.SelectableLabel(new Rect(rect.x + width1, rect.y, width2 - width1, EditorGUIUtility.singleLineHeight), mConfigInfo.JsonExportPath);
+            EditorGUI.SelectableLabel(
+                new Rect(rect.x + width1, rect.y, width2 - width1, EditorGUIUtility.singleLineHeight),
+                mConfigInfo.JsonExportPath);
             if (GUI.GetNameOfFocusedControl() == "Json导出路径")
             {
                 //把名字存储在剪粘板 
                 EditorGUIUtility.systemCopyBuffer = mConfigInfo.LuaExportPath; // "\"" + style.name + "\"";
             }
 
-            if (GUI.Button(new Rect(width2, rect.y, Screen.width - width2, EditorGUIUtility.singleLineHeight), "Select"))
+            if (GUI.Button(new Rect(width2, rect.y, Screen.width - width2, EditorGUIUtility.singleLineHeight),
+                "Select"))
             {
                 var tempStr = mConfigInfo.mIsExportResources
                     ? TableTool.JsonFolderResPath
                     : TableTool.JsonFolderDefaultPath;
-                string temp = Application.dataPath + tempStr;
+                var temp = Application.dataPath + tempStr;
 
-                string rf = temp.Substring(0, temp.LastIndexOf("/"));
-                string f = temp.Substring(temp.LastIndexOf("/") + 1);
+                var rf = temp.Substring(0, temp.LastIndexOf("/"));
+                var f = temp.Substring(temp.LastIndexOf("/") + 1);
                 mConfigInfo.JsonExportPath = EditorUtility.SaveFolderPanel("Json导出路径:", rf, f);
 
                 InitData();
-
             }
 
             EditorGUILayout.EndHorizontal();
             GUI.color = Color.white;
         }
 
-        void DrawLuaExportPath()
+        private void DrawLuaExportPath()
         {
             GUILayout.Space(10);
-            EditorGUILayout.BeginHorizontal(BgStyle
-                , new GUILayoutOption[]
-                {
-                    GUILayout.Height(EditorGUIUtility.singleLineHeight),
-                });
+            EditorGUILayout.BeginHorizontal(BgStyle, GUILayout.Height(EditorGUIUtility.singleLineHeight));
             //EditorGUI.indentLevel = 1;
             GUI.color = Color.cyan;
-            Rect rect = EditorGUILayout.GetControlRect();
+            var rect = EditorGUILayout.GetControlRect();
 
-            float width1 = EditorGUIUtility.fieldWidth + 35;
+            var width1 = EditorGUIUtility.fieldWidth + 35;
             ////GUILayout.Space(Screen.width / 2 - EditorGUIUtility.fieldWidth * 5);
             GUI.Label(new Rect(rect.x, rect.y, width1, EditorGUIUtility.singleLineHeight), "Lua导出路径:");
-            float width2 = Screen.width - EditorGUIUtility.fieldWidth * 2;
+            var width2 = Screen.width - EditorGUIUtility.fieldWidth * 2;
             //GUI.color = Color.white;
             GUI.SetNextControlName("Lua导出路径");
             EditorGUI.SelectableLabel(
@@ -467,23 +465,21 @@ namespace SsitEngine.Editor
             if (GUI.Button(new Rect(width2, rect.y, Screen.width - width2, EditorGUIUtility.singleLineHeight),
                 "Select"))
             {
+                var temp = Application.dataPath + TableTool.LuasFolderPath;
 
-                string temp = Application.dataPath + TableTool.LuasFolderPath;
-
-                string rf = temp.Substring(0, temp.LastIndexOf("/"));
-                string f = temp.Substring(temp.LastIndexOf("/") + 1);
+                var rf = temp.Substring(0, temp.LastIndexOf("/"));
+                var f = temp.Substring(temp.LastIndexOf("/") + 1);
                 mConfigInfo.LuaExportPath = EditorUtility.SaveFolderPanel("Lua导出路径:", rf
                     , f);
 
                 InitData();
-
             }
 
             EditorGUILayout.EndHorizontal();
             GUI.color = Color.white;
         }
 
-        void DrawToggle()
+        private void DrawToggle()
         {
             //GUILayout.Space(10);
             //EditorGUILayout.BeginHorizontal(BgStyle
@@ -497,22 +493,14 @@ namespace SsitEngine.Editor
             //EditorGUILayout.EndHorizontal();
 
             GUILayout.Space(10);
-            EditorGUILayout.BeginHorizontal(BgStyle
-                , new GUILayoutOption[]
-                {
-                    GUILayout.Height(EditorGUIUtility.singleLineHeight),
-                });
+            EditorGUILayout.BeginHorizontal(BgStyle, GUILayout.Height(EditorGUIUtility.singleLineHeight));
 
             mConfigInfo.mIsExportLuaForBit = EditorGUILayout.Toggle("是否导出LuaforBit脚本", mConfigInfo.mIsExportLuaForBit);
             HelpLable("针对用Lua解析二进制,实现热更(需要引入二进制读取工具类)");
             EditorGUILayout.EndHorizontal();
 
             GUILayout.Space(10);
-            EditorGUILayout.BeginHorizontal(BgStyle
-                , new GUILayoutOption[]
-                {
-                    GUILayout.Height(EditorGUIUtility.singleLineHeight),
-                });
+            EditorGUILayout.BeginHorizontal(BgStyle, GUILayout.Height(EditorGUIUtility.singleLineHeight));
 
             mConfigInfo.mIsExportJson = EditorGUILayout.Toggle("是否导出Json", mConfigInfo.mIsExportJson);
             HelpLable("默认导出Json");
@@ -529,7 +517,7 @@ namespace SsitEngine.Editor
             EditorGUILayout.EndHorizontal();
         }
 
-        void DrawRoot()
+        private void DrawRoot()
         {
             GUILayout.Space(10);
             EditorGUILayout.BeginHorizontal();
@@ -540,22 +528,19 @@ namespace SsitEngine.Editor
             }
 
             EditorGUILayout.EndHorizontal();
-
         }
 
         #endregion
 
         #region  Interval Tools
 
-
-        void Save()
+        private void Save()
         {
-
         }
 
         private string GetCurCommand( FolderTree.Data data )
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendFormat("set binaryOut={0}", mConfigInfo.BinaryExportPath);
             sb.AppendLine();
@@ -570,10 +555,10 @@ namespace SsitEngine.Editor
             sb.AppendLine(@"bin\tabtoy.exe ^");
             sb.AppendLine(@"--mode=exportorv2 ^");
 
-            string temp = "/" + data.name + ".cs";
+            var temp = "/" + data.name + ".cs";
             sb.AppendFormat("--csharp_out=%scriptOut%{0} ^", temp);
             sb.AppendLine();
-            string combinename = string.Empty;
+            var combinename = string.Empty;
             if (mConfigInfo.mIsExportLuaForBit)
             {
                 temp = "/" + data.name + ".bin";
@@ -590,21 +575,21 @@ namespace SsitEngine.Editor
             {
                 if (string.IsNullOrEmpty(data.folderName) || data.folderName.Equals("Table"))
                 {
-
                     temp = "/" + data.name + ".json";
 
                     //hack 加入子表匹配
-                    string matchStr = data.name.Replace("Table", "");
+                    var matchStr = data.name.Replace("Table", "");
 
 
                     var info = Directory.GetFiles(Path.GetDirectoryName(data.assetPath) ??
-                                                  throw new InvalidOperationException(), "*.xlsx", SearchOption.TopDirectoryOnly);
+                                                  throw new InvalidOperationException(), "*.xlsx",
+                        SearchOption.TopDirectoryOnly);
 
-                    Regex regex = new Regex($"^{matchStr}_\\w");
+                    var regex = new Regex($"^{matchStr}_\\w");
 
                     foreach (var s in info)
                     {
-                        string ss = Path.GetFileNameWithoutExtension(s);
+                        var ss = Path.GetFileNameWithoutExtension(s);
                         if (regex.IsMatch(ss))
                         {
                             Debug.Log($"regex::{ss}");
@@ -621,8 +606,6 @@ namespace SsitEngine.Editor
 
                 sb.AppendLine();
             }
-
-
 
 
             sb.AppendLine(@"--mode=exportorv2 ^");
@@ -642,7 +625,6 @@ namespace SsitEngine.Editor
             {
                 //combinename = combinename.Remove(combinename.Length - 1, 1);
                 sb.AppendFormat($"{data.relationPath}{combinename}");
-
             }
 
             sb.AppendLine();
@@ -654,7 +636,7 @@ namespace SsitEngine.Editor
         /// 说明框
         /// </summary>
         /// <param name="message"></param>
-        void HelpLable( string message )
+        private void HelpLable( string message )
         {
             if (!mIsHelper)
             {
@@ -666,14 +648,13 @@ namespace SsitEngine.Editor
             GUI.color = Color.white;
         }
 
-        void ShowButton( UnityEngine.Rect position )
+        private void ShowButton( Rect position )
         {
             mIsHelper = GUI.Toggle(position, mIsHelper, GUIContent.none, "IN LockButton");
             //Texture t = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Editor/TableConvert/FolderIcon.png");
             //GUIContent content = new GUIContent(AssetPreview.GetMiniThumbnail(t));
             //GUIContent content = new GUIContent(t);
             //mIsHelper = GUI.Toggle(position, mIsHelper, content);
-
         }
 
         public void AddItemsToMenu( GenericMenu menu )
@@ -683,30 +664,31 @@ namespace SsitEngine.Editor
 
         #region 右键设置
 
-        void OnMenuGUI()
+        private void OnMenuGUI()
         {
-
-            Event aEvent = Event.current;
+            var aEvent = Event.current;
             switch (aEvent.type)
             {
                 case EventType.ContextClick:
 
-                    {
-                        Event.current.Use();
-                        break;
-                    }
+                {
+                    Event.current.Use();
+                    break;
+                }
                 default:
                     return;
             }
 
-            Vector2 pos = Event.current.mousePosition;
+            var pos = Event.current.mousePosition;
             if (mIsScroll)
+            {
                 pos -= mScrollPos;
+            }
 
             pos.x += focusedWindow.position.xMin;
             pos.y += focusedWindow.position.yMin;
 
-            if ((focusedWindow == null) || focusedWindow.position.Contains(pos))
+            if (focusedWindow == null || focusedWindow.position.Contains(pos))
             {
                 //Rect rc = new Rect(Event.current.mousePosition.x, Event.current.mousePosition.y, 200, 50);
                 GenerateContextMenu().ShowAsContext();
@@ -716,7 +698,7 @@ namespace SsitEngine.Editor
 
         private GenericMenu GenerateContextMenu()
         {
-            GenericMenu menu = new GenericMenu();
+            var menu = new GenericMenu();
             menu.AddItem(new GUIContent("导出ModelBase"), false, onModelBaseMenuFunc);
             menu.AddItem(new GUIContent("导出LuaBase"), false, onLuaBaseMenuFunc);
             return menu;
@@ -729,9 +711,7 @@ namespace SsitEngine.Editor
 
         private void onLuaBaseMenuFunc()
         {
-            return;
         }
-
 
         #endregion
 
@@ -741,18 +721,17 @@ namespace SsitEngine.Editor
 
         private void OnFileClick( FolderTree.Data data )
         {
-            string relationPath = data.relationPath;
+            var relationPath = data.relationPath;
 
 
-            string command = GetCurCommand(data);
+            var command = GetCurCommand(data);
 
-            string combineWorkFolder = mConfigInfo.WorkSpacePath;
+            var combineWorkFolder = mConfigInfo.WorkSpacePath;
 
-            string batPath = mConfigInfo.WorkSpacePath + "/Export" + data.name;
+            var batPath = mConfigInfo.WorkSpacePath + "/Export" + data.name;
 
             if (!string.IsNullOrEmpty(data.folderName) && !data.folderName.Equals("Table"))
             {
-
                 batPath = mConfigInfo.WorkSpacePath + "/Export" + data.folderName + data.name;
             }
 
@@ -760,11 +739,13 @@ namespace SsitEngine.Editor
 
             if (!File.Exists(batPath + ".bat"))
             {
-                EditorFileUtility.WriteFile(batPath + ".bat", command, ( x ) =>
+                EditorFileUtility.WriteFile(batPath + ".bat", command, x =>
                 {
                     Debug.Log(batPath + "----------------------" + x);
                     if (x.Equals("100.00%"))
+                    {
                         TableTool.TableConvert(data, batPath, mConfigInfo);
+                    }
                 });
             }
             else
@@ -776,13 +757,14 @@ namespace SsitEngine.Editor
 
 
             //TableTool.TableConvert(combineWorkFolder, command);
-
         }
 
         private void OnFolderClick( FolderTree.Data data )
         {
             if (!data.isFolder)
+            {
                 return;
+            }
 
             foreach (var child in data.childs)
             {
@@ -798,7 +780,6 @@ namespace SsitEngine.Editor
             ////TODO:写入命令
             //string command = GetCurCommand( data );
             //string combineWorkFolder = mConfigInfo.WorkSpacePath;
-
 
 
             //string batPath = mConfigInfo.WorkSpacePath + "/Export" + data.name;
@@ -822,29 +803,8 @@ namespace SsitEngine.Editor
             //Debug.Log( File.Exists( batPath + ".bat" ) );
 
             //TableTool.TableConvert(combineWorkFolder, command);
-
         }
 
         #endregion
-
-
-        public void OnFocus()
-        {
-            this.wantsMouseMove = true;
-            FolderTree.SelectData = null;
-            Repaint();
-        }
-        private void OnDestroy()
-        {
-            EditorApplication.isPlaying = false;
-        }
-
-        private void OnProjectWindowChange()
-        {
-            //TODO:重新加载目录文本
-            //this.ReloadPreviousBehavior();
-            FolderTree.SelectData = null;
-            Repaint();
-        }
     }
 }

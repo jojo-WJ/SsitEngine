@@ -22,13 +22,17 @@ namespace SsitEngine.Mathematics
             if (length < 3)
             {
                 for (var index = 0; index < length; ++index)
+                {
                     numArray[index] = source[index];
+                }
             }
             else
             {
                 numArray[0] = (5.0 * source[0] + 2.0 * source[1] - source[2]) / 6.0;
                 for (var index = 1; index < length - 1; ++index)
+                {
                     numArray[index] = (source[index - 1] + source[index] + source[index + 1]) / 3.0;
+                }
                 numArray[length - 1] = (5.0 * source[length - 1] + 2.0 * source[length - 2] - source[length - 3]) / 6.0;
             }
             return numArray;
@@ -44,15 +48,19 @@ namespace SsitEngine.Mathematics
             if (length < 5)
             {
                 for (var index = 0; index < length; ++index)
+                {
                     numArray[index] = source[index];
+                }
             }
             else
             {
                 numArray[0] = (3.0 * source[0] + 2.0 * source[1] + source[2] - source[4]) / 5.0;
                 numArray[1] = (4.0 * source[0] + 3.0 * source[1] + 2.0 * source[2] + source[3]) / 10.0;
                 for (var index = 2; index < length - 2; ++index)
+                {
                     numArray[index] = (source[index - 2] + source[index - 1] + source[index] + source[index + 1] +
                                        source[index + 2]) / 5.0;
+                }
                 numArray[length - 2] = (4.0 * source[length - 1] + 3.0 * source[length - 2] + 2.0 * source[length - 3] +
                                         source[length - 4]) / 10.0;
                 numArray[length - 1] = (3.0 * source[length - 1] + 2.0 * source[length - 2] + source[length - 3] -
@@ -71,7 +79,9 @@ namespace SsitEngine.Mathematics
             if (length < 7)
             {
                 for (var index = 0; index < length; ++index)
+                {
                     numArray[index] = source[index];
+                }
             }
             else
             {
@@ -82,8 +92,10 @@ namespace SsitEngine.Mathematics
                 numArray[2] = (7.0 * source[0] + 6.0 * source[1] + 5.0 * source[2] + 4.0 * source[3] + 3.0 * source[4] +
                                2.0 * source[5] + source[6]) / 28.0;
                 for (var index = 3; index < length - 3; ++index)
+                {
                     numArray[index] = (source[index - 3] + source[index - 2] + source[index - 1] + source[index] +
                                        source[index + 1] + source[index + 2] + source[index + 3]) / 7.0;
+                }
                 numArray[length - 3] = (7.0 * source[length - 1] + 6.0 * source[length - 2] + 5.0 * source[length - 3] +
                                         4.0 * source[length - 4] + 3.0 * source[length - 5] + 2.0 * source[length - 6] +
                                         source[length - 7]) / 28.0;

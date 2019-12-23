@@ -37,7 +37,9 @@ namespace SsitEngine.Unity.Timer
             if (type == TimerEventType.TeveNone || type == TimerEventType.TeveOnce && second == 0)
             {
                 if (hander != null)
+                {
                     hander(null, 0, data);
+                }
                 return null;
             }
 

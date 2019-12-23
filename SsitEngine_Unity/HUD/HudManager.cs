@@ -133,7 +133,9 @@ namespace SsitEngine.Unity.HUD
             get
             {
                 if (m_playerCamera == null && Camera.main != null)
+                {
                     m_playerCamera = Camera.main;
+                }
                 return m_playerCamera;
             }
         }
@@ -171,7 +173,9 @@ namespace SsitEngine.Unity.HUD
             var rotationReference = GetRotationReference();
 
             if (rotationReference == null)
+            {
                 return;
+            }
 
             // update radar
             //if (useRadar)
@@ -179,7 +183,9 @@ namespace SsitEngine.Unity.HUD
 
             // update compass bar
             if (useCompassBar)
+            {
                 CompassBarCanvas?.UpdateCompassBar(rotationReference);
+            }
 
             // update minimap
             //if (useMinimap && minimapProfile != null && m_playerController != null)
@@ -189,13 +195,17 @@ namespace SsitEngine.Unity.HUD
         private void UpdateNavigationElements()
         {
             if (NavigationElements.Count <= 0 || PlayerCamera == null)
+            {
                 return;
+            }
 
             // update navigation elements
             foreach (var element in NavigationElements)
             {
                 if (element == null)
+                {
                     continue;
+                }
 
                 // check if element is active
                 if (!element.IsActive)
@@ -217,9 +227,13 @@ namespace SsitEngine.Unity.HUD
 
                 float _distance = 0;
                 if (m_playerController != null)
+                {
                     _distance = element.GetDistance(m_playerController.transform);
+                }
                 else
+                {
                     _distance = element.GetDistance(m_playerCamera.transform);
+                }
 
 
                 // update radar
@@ -233,14 +247,20 @@ namespace SsitEngine.Unity.HUD
 
                 // update compass bar
                 if (useCompassBar && element.CompassBar != null)
+                {
                     UpdateCompassBarElement(element, _screenPos, _distance);
+                }
 
                 // update indicator
                 if (useIndicators && element.Indicator != null)
+                {
                     UpdateIndicatorElement(element, _screenPos, _distance);
+                }
 
                 if (useHud && element.Hud != null)
+                {
                     UpdateHUDElement(element, _screenPos, _distance);
+                }
 
                 // update minimap
                 //if (useMinimap && element.Minimap != null)
@@ -255,11 +275,15 @@ namespace SsitEngine.Unity.HUD
         public void AddNavigationElement( HudElement element )
         {
             if (element == null)
+            {
                 return;
+            }
 
             // add element, if it doesn't exist yet
             if (!NavigationElements.Contains(element))
+            {
                 NavigationElements.Add(element);
+            }
         }
 
         /// <summary>
@@ -269,7 +293,9 @@ namespace SsitEngine.Unity.HUD
         public void RemoveNavigationElement( HudElement element )
         {
             if (element == null || NavigationElements == null)
+            {
                 return;
+            }
 
             // remove element from list
             NavigationElements.Remove(element);
@@ -568,9 +594,13 @@ namespace SsitEngine.Unity.HUD
 
                             // when out of bounds, get point on appropriate side
                             if (screenPos.x > screenBounds.x) // out => right
+                            {
                                 screenPos = new Vector3(screenBounds.x, screenBounds.x * cotangent, 0f);
+                            }
                             else if (screenPos.x < -screenBounds.x) // out => left
+                            {
                                 screenPos = new Vector3(-screenBounds.x, -screenBounds.x * cotangent, 0f);
+                            }
                             screenPos += screenCenter;
 
                             // update indicator rotation

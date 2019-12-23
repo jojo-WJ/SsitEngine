@@ -1,10 +1,5 @@
-﻿
-
-using UnityEngine;
-
-namespace SsitEngine.QuestManager
+﻿namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// Specifies how to inform listeners when setting a quest counter value.
     /// </summary>
@@ -25,5 +20,4 @@ namespace SsitEngine.QuestManager
         /// </summary>
         DontInformDataSync
     }
-
 }

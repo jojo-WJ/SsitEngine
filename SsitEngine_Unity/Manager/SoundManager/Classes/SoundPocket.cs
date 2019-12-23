@@ -6,6 +6,8 @@ namespace SsitEngine.Unity.Sound
     [AddComponentMenu("AntiLunchBox/SoundPocket")]
     public class SoundPocket : MonoBehaviour
     {
+        private readonly Dictionary<string, string> clipsInGroups = new Dictionary<string, string>();
+
         /// <summary>
         ///     Editor variable -- IGNORE AND DO NOT MODIFY
         /// </summary>
@@ -25,8 +27,6 @@ namespace SsitEngine.Unity.Sound
         ///     Editor variable -- IGNORE AND DO NOT MODIFY
         /// </summary>
         public float autoVolumeVariation;
-
-        private readonly Dictionary<string, string> clipsInGroups = new Dictionary<string, string>();
 
         /// <summary>
         ///     Editor variable -- IGNORE AND DO NOT MODIFY
@@ -113,14 +113,18 @@ namespace SsitEngine.Unity.Sound
                 case SoundPocketType.Subtractive:
                     if (SoundManager.Instance.currentPockets.Count == 1 &&
                         SoundManager.Instance.currentPockets[0] == pocketName)
+                    {
                         return;
+                    }
                     SoundManager.DeleteSFX();
                     SoundManager.Instance.currentPockets.Clear();
                     break;
                 case SoundPocketType.Additive:
                 default:
                     if (SoundManager.Instance.currentPockets.Contains(pocketName))
+                    {
                         return;
+                    }
                     break;
             }
 
@@ -128,9 +132,13 @@ namespace SsitEngine.Unity.Sound
             {
                 var pocketClip = pocketClips[i];
                 if (clipsInGroups.ContainsKey(pocketClip.name))
+                {
                     SoundManager.SaveSFX(pocketClip, clipsInGroups[pocketClip.name]);
+                }
                 else
+                {
                     SoundManager.SaveSFX(pocketClip);
+                }
 
                 SoundManager.ApplySFXAttributes(pocketClip, sfxPrePoolAmounts[i], sfxBaseVolumes[i],
                     sfxVolumeVariations[i], sfxPitchVariations[i]);
@@ -143,7 +151,9 @@ namespace SsitEngine.Unity.Sound
         {
             clipsInGroups.Clear();
             for (var i = 0; i < clipToGroupKeys.Count; i++)
+            {
                 clipsInGroups.Add(clipToGroupKeys[i], clipToGroupValues[i]);
+            }
         }
 
         /// <summary>
@@ -152,9 +162,13 @@ namespace SsitEngine.Unity.Sound
         public void DestroyMe()
         {
             if (gameObject.GetComponents<Component>().Length - gameObject.GetComponents<Transform>().Length == 1)
+            {
                 Destroy(gameObject);
+            }
             else
+            {
                 Destroy(this);
+            }
         }
     }
 

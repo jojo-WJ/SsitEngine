@@ -1,17 +1,18 @@
-﻿
-
+﻿using System;
 using UnityEngine;
 using UnityEngine.Events;
-using System;
 
 namespace SsitEngine.QuestManager
 {
+    [Serializable]
+    public class QuestEvent : UnityEvent<Quest>
+    {
+    }
 
     [Serializable]
-    public class QuestEvent : UnityEvent<Quest> { }
-
-    [Serializable]
-    public class QuestNodeEvent : UnityEvent<QuestNode> { }
+    public class QuestNodeEvent : UnityEvent<QuestNode>
+    {
+    }
 
     /// <summary>
     /// Exposes UnityEvents for QuestListContainer.
@@ -20,21 +21,22 @@ namespace SsitEngine.QuestManager
     [RequireComponent(typeof(QuestListContainer))]
     public class QuestListEvents : MonoBehaviour
     {
+        private QuestListContainer m_questListContainer;
 
         public QuestEvent onAddQuest = new QuestEvent();
 
-        public QuestEvent onRemoveQuest = new QuestEvent();
+        public QuestNodeEvent onQuestNodeStateChange = new QuestNodeEvent();
 
         public QuestEvent onQuestOfferable = new QuestEvent();
 
         public QuestEvent onQuestStateChange = new QuestEvent();
 
-        public QuestNodeEvent onQuestNodeStateChange = new QuestNodeEvent();
+        public QuestEvent onRemoveQuest = new QuestEvent();
 
-        private QuestListContainer m_questListContainer;
-        private QuestListContainer questListContainer {
-            get { return m_questListContainer; }
-            set { m_questListContainer = value; }
+        private QuestListContainer questListContainer
+        {
+            get => m_questListContainer;
+            set => m_questListContainer = value;
         }
 
         private void Awake()
@@ -44,7 +46,10 @@ namespace SsitEngine.QuestManager
 
         private void OnEnable()
         {
-            if (questListContainer == null) return;
+            if (questListContainer == null)
+            {
+                return;
+            }
             questListContainer.forwardEventsToListeners = true;
             questListContainer.questAdded += OnQuestAdded;
             questListContainer.questRemoved += OnQuestRemoved;
@@ -55,7 +60,10 @@ namespace SsitEngine.QuestManager
 
         private void OnDisable()
         {
-            if (questListContainer == null) return;
+            if (questListContainer == null)
+            {
+                return;
+            }
             questListContainer.questAdded -= OnQuestAdded;
             questListContainer.questRemoved -= OnQuestRemoved;
             questListContainer.questBecameOfferable -= OnQuestBecameOfferable;
@@ -63,30 +71,29 @@ namespace SsitEngine.QuestManager
             questListContainer.questNodeStateChanged -= OnQuestNodeStateChanged;
         }
 
-        private void OnQuestAdded(Quest quest)
+        private void OnQuestAdded( Quest quest )
         {
             onAddQuest.Invoke(quest);
         }
 
-        private void OnQuestRemoved(Quest quest)
+        private void OnQuestRemoved( Quest quest )
         {
             onRemoveQuest.Invoke(quest);
         }
 
-        private void OnQuestBecameOfferable(Quest quest)
+        private void OnQuestBecameOfferable( Quest quest )
         {
             onQuestOfferable.Invoke(quest);
         }
 
-        private void OnQuestStateChanged(Quest quest)
+        private void OnQuestStateChanged( Quest quest )
         {
             onQuestStateChange.Invoke(quest);
         }
 
-        private void OnQuestNodeStateChanged(QuestNode questNode)
+        private void OnQuestNodeStateChanged( QuestNode questNode )
         {
             onQuestNodeStateChange.Invoke(questNode);
         }
-
     }
 }

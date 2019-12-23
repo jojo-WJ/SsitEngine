@@ -117,7 +117,9 @@ namespace SsitEngine.Unity.UI.Common.Utility
         public static Color DissolveBlend( Color a, Color b )
         {
             if (Random.Range(0, 1) != 0)
+            {
                 return b;
+            }
             return a;
         }
 
@@ -130,7 +132,9 @@ namespace SsitEngine.Unity.UI.Common.Utility
             var magnitude1 = a.maxColorComponent;
             var magnitude2 = b.maxColorComponent;
             if (Mathf.Min(magnitude1, magnitude2) != magnitude1)
+            {
                 return b;
+            }
             return a;
         }
 

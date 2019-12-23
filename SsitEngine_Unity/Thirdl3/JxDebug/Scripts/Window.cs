@@ -9,72 +9,52 @@ namespace JxDebug
     {
         protected const float padding = 5;
         protected const float titleHeight = 16;
+        private int _currentIndex;
+        private Color backgroundColor;
 
-        [SerializeField]
-        protected ScrollView scrollView;
-        [SerializeField]
-        [Tooltip("A value of -1 indicates no limit")]
+        [SerializeField] [Tooltip("A value of -1 indicates no limit")]
         protected int capacity;
-        [SerializeField]
-        [Tooltip("A value of -1 indicates the whole screen")]
-        protected float minWidth;
-        [SerializeField]
-        [Tooltip("If checked, the window will adapt to its contents")]
-        protected bool expandToFitContents;
-        [SerializeField]
-        protected int entriesToShow;
+
+        private GUIContent closeButtonContent;
 
         protected List<T> entries = new List<T>();
-        float entryHeight;
-        Rect rect;
-        GUIContent closeButtonContent;
-        GUIContent titleContent;
-        Color backgroundColor;
-        Color entriesColor;
-        int lastFontSize = -1;
-        float largestEntry;
-        int _currentIndex;
+        private Color entriesColor;
+
+        [SerializeField] protected int entriesToShow;
+
+        private float entryHeight;
+
+        [SerializeField] [Tooltip("If checked, the window will adapt to its contents")]
+        protected bool expandToFitContents;
+
+        private float largestEntry;
+        private int lastFontSize = -1;
+
+        [SerializeField] [Tooltip("A value of -1 indicates the whole screen")]
+        protected float minWidth;
+
+        private Rect rect;
+
+        [SerializeField] protected ScrollView scrollView;
+
+        private GUIContent titleContent;
         protected abstract GUIContent Title { get; }
 
         public abstract TCurrent Current { get; }
 
         public bool IsOpen { get; private set; }
 
-        protected virtual int Size
-        {
-            get
-            {
-                return entries.Count;
-            }
-        }
+        protected virtual int Size => entries.Count;
 
-        public float Height
-        {
-            get
-            {
-                return entryHeight * Mathf.Min(entriesToShow, Mathf.Max(0, Size)) + titleHeight;
-            }
-        }
+        public float Height => entryHeight * Mathf.Min(entriesToShow, Mathf.Max(0, Size)) + titleHeight;
 
-        public float ViewHeight
-        {
-            get
-            {
-                return Height - titleHeight;
-            }
-        }
+        public float ViewHeight => Height - titleHeight;
 
-        public float ContentsHeight
-        {
-            get
-            {
-                return entryHeight * Size;
-            }
-        }
+        public float ContentsHeight => entryHeight * Size;
 
         protected int CurrentIndex
         {
-            get { return _currentIndex; }
+            get => _currentIndex;
             private set
             {
                 _currentIndex = value;
@@ -89,19 +69,24 @@ namespace JxDebug
             OnInitialized();
         }
 
-        protected virtual void OnInitialized() { }
-
-        void ClampScrollPosition()
+        protected virtual void OnInitialized()
         {
-            float indexPosition = entryHeight * CurrentIndex;
+        }
+
+        private void ClampScrollPosition()
+        {
+            var indexPosition = entryHeight * CurrentIndex;
             //Ensures the selected index is always shown in the window
-            scrollView.position.y = Mathf.Clamp(scrollView.position.y, indexPosition - ViewHeight + (ContentsHeight > ViewHeight ? entryHeight : 0), indexPosition);
+            scrollView.position.y = Mathf.Clamp(scrollView.position.y,
+                indexPosition - ViewHeight + (ContentsHeight > ViewHeight ? entryHeight : 0), indexPosition);
         }
 
         public void AddRange( T[] entries )
         {
-            for (int i = 0; i < entries.Length; i++)
+            for (var i = 0; i < entries.Length; i++)
+            {
                 AddInternal(entries[i]);
+            }
             NavigateToLast();
         }
 
@@ -111,11 +96,13 @@ namespace JxDebug
             NavigateToLast();
         }
 
-        void AddInternal( T entry )
+        private void AddInternal( T entry )
         {
             entries.Add(entry);
             if (capacity != -1 && entries.Count > capacity)
+            {
                 entries.RemoveAt(0);
+            }
         }
 
         public virtual void Navigate( int direction )
@@ -147,9 +134,11 @@ namespace JxDebug
         public void Draw( Vector2 position )
         {
             if (!IsOpen)
+            {
                 return;
+            }
 
-            float width = CalculateWidth(position);
+            var width = CalculateWidth(position);
             if (JxDebug.Setting.fontSize != lastFontSize)
             {
                 entryHeight = GUIUtils.TextStyle.CalcHeight(new GUIContent(), width);
@@ -159,52 +148,60 @@ namespace JxDebug
             GUI.Window(0, rect, DrawWindow, GUIContent.none, GUIStyle.none);
         }
 
-        float CalculateWidth( Vector2 position )
+        private float CalculateWidth( Vector2 position )
         {
-            float maxWidth = Screen.width / JxDebug.Setting.scale - position.x;
-            float width = minWidth;
+            var maxWidth = Screen.width / JxDebug.Setting.scale - position.x;
+            var width = minWidth;
             if (minWidth == -1)
+            {
                 width = maxWidth;
+            }
             else if (expandToFitContents)
             {
                 width = Mathf.Max(minWidth, largestEntry) + padding;
                 if (scrollView.isScrollbarVisible)
+                {
                     width += scrollView.scrollBarWidth;
+                }
             }
             width = Mathf.Min(maxWidth, width);
             return width;
         }
 
-        void DrawWindow( int id )
+        private void DrawWindow( int id )
         {
             if (Event.current.type == EventType.Layout)
+            {
                 return;
+            }
             rect.x = rect.y = 0;
             GUIUtils.DrawBox(rect, backgroundColor);
             DrawTitle();
             rect.y += titleHeight;
             rect.height -= titleHeight;
             ConstructColors();
-            Rect contentsRect = new Rect(rect.x, rect.y, rect.width, ContentsHeight);
+            var contentsRect = new Rect(rect.x, rect.y, rect.width, ContentsHeight);
             scrollView.Draw(rect, contentsRect, DrawOnlyVisibleEntries);
         }
 
-        void DrawTitle()
+        private void DrawTitle()
         {
-            float width = rect.width;
-            float height = rect.height;
+            var width = rect.width;
+            var height = rect.height;
             rect.height = titleHeight;
             GUI.Label(rect, titleContent, GUIUtils.CenteredTextStyle);
             rect.width = titleHeight;
             rect.x = width - rect.width;
             if (GUIUtils.DrawButton(rect, closeButtonContent, Color.clear))
+            {
                 Close();
+            }
             rect.x = 0;
             rect.width = width;
             rect.height = height;
         }
 
-        void ConstructColors()
+        private void ConstructColors()
         {
             float h, s, v, backGroundV, entriesV;
             h = s = v = backGroundV = entriesV = 0;
@@ -215,22 +212,26 @@ namespace JxDebug
             entriesColor = ColorUtils.HSVToRGB(h, s, entriesV);
         }
 
-        void DrawOnlyVisibleEntries( Rect rect, Vector2 scrollPosition )
+        private void DrawOnlyVisibleEntries( Rect rect, Vector2 scrollPosition )
         {
             OnBeginDraw();
             largestEntry = 0;
 
-            int size = this.Size;
-            for (int i = 0; i < size; i++)
+            var size = Size;
+            for (var i = 0; i < size; i++)
             {
-                float positionY = entryHeight * i;
-                bool isVisible = positionY + entryHeight > scrollPosition.y && positionY < scrollPosition.y + rect.height;
+                var positionY = entryHeight * i;
+                var isVisible = positionY + entryHeight > scrollPosition.y &&
+                                positionY < scrollPosition.y + rect.height;
                 if (!isVisible)
+                {
                     continue;
+                }
 
                 largestEntry = Mathf.Max(GetEntryWidth(entries[i]), largestEntry);
-                Rect entryRect = new Rect(0, positionY, Mathf.Max(largestEntry, rect.width) + padding, entryHeight);
-                if (GUIUtils.DrawButton(entryRect, GUIContent.none, CurrentIndex == i ? JxDebug.Setting.secondaryColor : entriesColor))
+                var entryRect = new Rect(0, positionY, Mathf.Max(largestEntry, rect.width) + padding, entryHeight);
+                if (GUIUtils.DrawButton(entryRect, GUIContent.none,
+                    CurrentIndex == i ? JxDebug.Setting.secondaryColor : entriesColor))
                 {
                     NavigateTo(i);
                     OnEntryClicked(entries[i]);
@@ -241,7 +242,10 @@ namespace JxDebug
             largestEntry += padding;
         }
 
-        protected virtual void OnBeginDraw() { }
+        protected virtual void OnBeginDraw()
+        {
+        }
+
         protected abstract void OnEntryClicked( T entry );
         protected abstract void DrawEntry( Rect rect, T entry );
         protected abstract float GetEntryWidth( T entry );
@@ -260,11 +264,17 @@ namespace JxDebug
         public void ToggleOpen()
         {
             if (IsOpen)
+            {
                 Close();
+            }
             else
+            {
                 Open();
+            }
         }
 
-        protected virtual void OnOpen() { }
+        protected virtual void OnOpen()
+        {
+        }
     }
 }

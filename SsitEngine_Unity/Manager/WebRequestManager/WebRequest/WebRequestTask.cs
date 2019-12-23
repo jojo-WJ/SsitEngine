@@ -20,9 +20,9 @@ namespace SsitEngine.Unity.WebRequest
     public class WebRequestTask : ITask
     {
         private static ulong s_Serial = 100;
+        private readonly byte[] m_PostData;
 
         protected Coroutine m_coroutine;
-        private readonly byte[] m_PostData;
 
         protected UnityWebRequest m_uwr;
 
@@ -135,7 +135,10 @@ namespace SsitEngine.Unity.WebRequest
             {
                 try
                 {
-                    if (!m_uwr.isDone) m_uwr.Abort();
+                    if (!m_uwr.isDone)
+                    {
+                        m_uwr.Abort();
+                    }
                 }
                 catch (Exception e)
                 {
@@ -144,7 +147,10 @@ namespace SsitEngine.Unity.WebRequest
 
                 m_uwr.Dispose();
             }
-            if (m_coroutine != null) Engine.Instance.Platform.StopPlatCoroutine(m_coroutine);
+            if (m_coroutine != null)
+            {
+                Engine.Instance.Platform.StopPlatCoroutine(m_coroutine);
+            }
             UserData = null;
         }
 

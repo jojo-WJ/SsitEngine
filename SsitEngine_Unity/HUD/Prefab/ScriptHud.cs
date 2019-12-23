@@ -41,7 +41,9 @@ namespace SsitEngine.Unity.HUD
         {
             base.ChangeIconColor(color);
             if (Icon != null)
+            {
                 Icon.color = color;
+            }
         }
 
         /// <summary>
@@ -52,7 +54,10 @@ namespace SsitEngine.Unity.HUD
         /// >
         public void ChangeNameText( string msg, bool enable = true )
         {
-            if (!string.IsNullOrEmpty(msg) && NameText) NameText.text = msg;
+            if (!string.IsNullOrEmpty(msg) && NameText)
+            {
+                NameText.text = msg;
+            }
             gameObject.SetActive(enable);
         }
 
@@ -64,7 +69,10 @@ namespace SsitEngine.Unity.HUD
         /// >
         public void ChangeStateText( string msg )
         {
-            if (StateText) StateText.text = msg;
+            if (StateText)
+            {
+                StateText.text = msg;
+            }
         }
 
         #endregion

@@ -42,7 +42,10 @@ namespace SsitEngine.Unity.WebRequest.Task
                     !string.IsNullOrEmpty(m_uwr.GetResponseHeader("errmsg")))
                 {
                     var msg = m_uwr.error;
-                    if (string.IsNullOrEmpty(msg)) msg = m_uwr.GetResponseHeader("errmsg");
+                    if (string.IsNullOrEmpty(msg))
+                    {
+                        msg = m_uwr.GetResponseHeader("errmsg");
+                    }
 
                     UserData.FailedAction?.Invoke(msg);
                     yield break;
@@ -102,6 +105,7 @@ namespace SsitEngine.Unity.WebRequest.Task
                     yield break;
                 }
                 if (UserData.RequestProcessAction != null)
+                {
                     while (!m_uwr.isDone)
                     {
                         if (UserData == null)
@@ -112,6 +116,7 @@ namespace SsitEngine.Unity.WebRequest.Task
                         UserData.RequestProcessAction.Invoke(m_uwr.uploadProgress);
                         yield return 1;
                     }
+                }
 
                 if (m_uwr.isDone)
                 {
@@ -121,7 +126,10 @@ namespace SsitEngine.Unity.WebRequest.Task
                         yield break;
                     }
                     UserData.RequestProcessAction?.Invoke(1f);
-                    if (UserData.CompleteAction != null) UserData.CompleteAction.Invoke(null);
+                    if (UserData.CompleteAction != null)
+                    {
+                        UserData.CompleteAction.Invoke(null);
+                    }
                 }
             }
         }

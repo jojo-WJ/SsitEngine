@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
-#endif 
+
+#endif
 public class ObserveAttribute : PropertyAttribute
 {
     public string[] callbackNames;
 
-    public ObserveAttribute(params string[] callbackNames)
+    public ObserveAttribute( params string[] callbackNames )
     {
         this.callbackNames = callbackNames;
     }
@@ -17,7 +18,9 @@ public class ObserveAttribute : PropertyAttribute
 [CustomPropertyDrawer(typeof(ObserveAttribute))]
 public class ObserveDrawer : PropertyDrawer
 {
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    private ObserveAttribute observeAttribute => (ObserveAttribute) attribute;
+
+    public override void OnGUI( Rect position, SerializedProperty property, GUIContent label )
     {
         EditorGUI.BeginChangeCheck();
         EditorGUI.PropertyField(position, property, label);
@@ -25,29 +28,19 @@ public class ObserveDrawer : PropertyDrawer
         {
             if (IsMonoBehaviour(property))
             {
-
-                MonoBehaviour mono = (MonoBehaviour)property.serializedObject.targetObject;
+                var mono = (MonoBehaviour) property.serializedObject.targetObject;
 
                 foreach (var callbackName in observeAttribute.callbackNames)
                 {
                     mono.Invoke(callbackName, 0);
                 }
-
             }
         }
     }
 
-    bool IsMonoBehaviour(SerializedProperty property)
+    private bool IsMonoBehaviour( SerializedProperty property )
     {
         return property.serializedObject.targetObject.GetType().IsSubclassOf(typeof(MonoBehaviour));
-    }
-
-    ObserveAttribute observeAttribute
-    {
-        get
-        {
-            return (ObserveAttribute)attribute;
-        }
     }
 }
 #endif

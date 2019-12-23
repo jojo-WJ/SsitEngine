@@ -20,7 +20,10 @@ namespace SsitEngine.PureMVC.Patterns
         public Proxy( string proxyName, object data = null )
         {
             ProxyName = proxyName ?? NAME;
-            if (data != null) Data = data;
+            if (data != null)
+            {
+                Data = data;
+            }
         }
 
         /// <summary>

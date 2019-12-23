@@ -60,11 +60,17 @@ namespace SsitEngine.Unity.Config
                     //streaming                不带/
                     var path = Application.streamingAssetsPath + "/Config/config.yml";
                     //直接读取
-                    if (!File.Exists(path)) SsitDebug.Error("The config file is not exist. The file path: " + path);
+                    if (!File.Exists(path))
+                    {
+                        SsitDebug.Error("The config file is not exist. The file path: " + path);
+                    }
 
                     var configText = File.ReadAllText(path);
                     config = YamlUtils.Deserialize<Config>(configText);
-                    if (config == null) SsitDebug.Error("The config text is error. The file path: " + path);
+                    if (config == null)
+                    {
+                        SsitDebug.Error("The config text is error. The file path: " + path);
+                    }
                 }
                     break;
                 case RuntimePlatform.WindowsPlayer:
@@ -75,11 +81,17 @@ namespace SsitEngine.Unity.Config
                     //streaming                不带/
                     var path = Application.persistentDataPath + "/Config/config.yml";
                     //直接读取
-                    if (!File.Exists(path)) SsitDebug.Error("The config file is not exist. The file path: " + path);
+                    if (!File.Exists(path))
+                    {
+                        SsitDebug.Error("The config file is not exist. The file path: " + path);
+                    }
 
                     var configText = File.ReadAllText(path);
                     config = YamlUtils.Deserialize<Config>(configText);
-                    if (config == null) SsitDebug.Error("The config text is error. The file path: " + path);
+                    if (config == null)
+                    {
+                        SsitDebug.Error("The config text is error. The file path: " + path);
+                    }
                 }
                     break;
                 default:

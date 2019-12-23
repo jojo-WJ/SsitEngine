@@ -12,6 +12,8 @@ namespace SsitEngine.QuestManager
     {
         public ushort msgId;
 
+        public string parameter;
+
         /// <summary>
         /// Reference to the message sender (e.g., GameObject or possibly custom-defined string ID).
         /// </summary>
@@ -23,46 +25,10 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public object target;
 
-        public string parameter;
-
         public object[] values;
-
-        /// <summary>
-        /// If true, the message arguments specify a target.
-        /// </summary>
-        public bool HasTarget
-        {
-            get { return !(target == null || string.IsNullOrEmpty(TargetString)); }
-        }
-
-        /// <summary>
-        /// True if the target value is a string or StringField.
-        /// </summary>
-        public bool IsTargetString
-        {
-            get
-            {
-                var type = (target != null) ? target.GetType() : null;
-                return target != null && (type == typeof(string));
-            }
-        }
-
-
-        /// <summary>
-        /// If the target is a string or StringField, its value.
-        /// </summary>
-        public string TargetString
-        {
-            get
-            {
-                if (target == null) return string.Empty;
-                return (string)target;
-            }
-        }
 
         public QuestMessageArgs()
         {
-            
         }
 
         public QuestMessageArgs( ushort msgId, object sender, object target, string parameter, object[] values = null )
@@ -77,11 +43,47 @@ namespace SsitEngine.QuestManager
         public QuestMessageArgs( ushort msgId, object sender, string parameter, object[] values = null )
         {
             this.sender = sender;
-            this.target = null;
+            target = null;
             this.msgId = msgId;
             this.parameter = parameter;
             this.values = values;
         }
+
+        /// <summary>
+        /// If true, the message arguments specify a target.
+        /// </summary>
+        public bool HasTarget => !(target == null || string.IsNullOrEmpty(TargetString));
+
+        /// <summary>
+        /// True if the target value is a string or StringField.
+        /// </summary>
+        public bool IsTargetString
+        {
+            get
+            {
+                var type = target != null ? target.GetType() : null;
+                return target != null && type == typeof(string);
+            }
+        }
+
+
+        /// <summary>
+        /// If the target is a string or StringField, its value.
+        /// </summary>
+        public string TargetString
+        {
+            get
+            {
+                if (target == null)
+                {
+                    return string.Empty;
+                }
+                return (string) target;
+            }
+        }
+
+        /// <inheritdoc />
+        public override ushort Id => msgId;
 
         /// <summary>
         /// 设置任务消息参数
@@ -91,7 +93,8 @@ namespace SsitEngine.QuestManager
         /// <param name="target">目标者</param>
         /// <param name="parameter">参数</param>
         /// <param name="values">可变参数值</param>
-        public void SetQuestMessageParm( ushort msgId, object sender, object target, string parameter, object[] values = null )
+        public void SetQuestMessageParm( ushort msgId, object sender, object target, string parameter,
+            object[] values = null )
         {
             this.msgId = msgId;
             this.sender = sender;
@@ -100,16 +103,26 @@ namespace SsitEngine.QuestManager
             this.values = values;
         }
 
+        /// <inheritdoc />
+        public override void Clear()
+        {
+            msgId = 0;
+            sender = null;
+            target = null;
+            parameter = null;
+            values = null;
+        }
+
         #region Internal Members
 
         public bool Matches( ushort message, ushort parameter )
         {
-            return message == this.msgId;
+            return message == msgId;
         }
 
-        public bool Matches( string message)
+        public bool Matches( string message )
         {
-            return message == this.msgId.ToString();
+            return message == msgId.ToString();
         }
 
         /// <summary>
@@ -118,7 +131,6 @@ namespace SsitEngine.QuestManager
         public bool IsRequiredSender( string requiredSender )
         {
             return string.IsNullOrEmpty(requiredSender) || string.Equals(requiredSender, GetSenderString());
-
         }
 
         /// <summary>
@@ -147,21 +159,30 @@ namespace SsitEngine.QuestManager
 
         private string GetObjectString( object obj )
         {
-            if (obj == null) return string.Empty;
+            if (obj == null)
+            {
+                return string.Empty;
+            }
             var type = obj.GetType();
-            if (type == typeof(string)) return (string)obj;
-            if (type == typeof(GameObject)) return (obj as GameObject).name;
-            if (type == typeof(Component)) return (obj as Component).name;
+            if (type == typeof(string))
+            {
+                return (string) obj;
+            }
+            if (type == typeof(GameObject))
+            {
+                return (obj as GameObject).name;
+            }
+            if (type == typeof(Component))
+            {
+                return (obj as Component).name;
+            }
             return obj.ToString();
         }
 
         /// <summary>
         /// 可变参数数组下标为零的值
         /// </summary>
-        public object FirstValue
-        {
-            get { return (values != null && values.Length > 0) ? values[0] : null; }
-        }
+        public object FirstValue => values != null && values.Length > 0 ? values[0] : null;
 
         /// <summary>
         /// 可变参数数组下标为零的整形值
@@ -172,7 +193,7 @@ namespace SsitEngine.QuestManager
             {
                 try
                 {
-                    return (int)FirstValue;
+                    return (int) FirstValue;
                 }
                 catch (Exception)
                 {
@@ -190,7 +211,7 @@ namespace SsitEngine.QuestManager
             {
                 try
                 {
-                    return (string)FirstValue;
+                    return (string) FirstValue;
                 }
                 catch (Exception)
                 {
@@ -200,21 +221,5 @@ namespace SsitEngine.QuestManager
         }
 
         #endregion
-
-        /// <inheritdoc />
-        public override ushort Id
-        {
-            get { return msgId; }
-        }
-
-        /// <inheritdoc />
-        public override void Clear()
-        {
-            msgId = 0;
-            sender = null;
-            target = null;
-            parameter = null;
-            values = null;
-        }
     }
 }

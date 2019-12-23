@@ -13,7 +13,9 @@ namespace SsitEngine.Unity.UI.Common.Utility
         public static bool CheckPointerOverGameObject( GameObject target )
         {
             if (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject())
+            {
                 return false;
+            }
             var eventData = new PointerEventData(EventSystem.current)
             {
                 position = Input.mousePosition
@@ -21,8 +23,12 @@ namespace SsitEngine.Unity.UI.Common.Utility
             var raycastResults = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventData, raycastResults);
             foreach (var raycastResult in raycastResults)
+            {
                 if (raycastResult.gameObject == target)
+                {
                     return true;
+                }
+            }
             return false;
         }
     }

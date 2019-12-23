@@ -1,9 +1,8 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// Abstract base class for quest subassets (ScriptableObjects) such as QuestCondition, 
     /// QuestAction, and QuestContent. Adds references to a Quest and QuestNode, and 
@@ -11,7 +10,6 @@ namespace SsitEngine.QuestManager
     /// </summary>
     public abstract class QuestSubasset : ScriptableObject, IProxySerializationCallbackReceiver
     {
-
         /// <summary>
         /// (Runtime) The quest that this condition belongs to.
         /// </summary>
@@ -25,7 +23,24 @@ namespace SsitEngine.QuestManager
         /// <summary>
         /// (Runtime) The quest's tag dictionary.
         /// </summary>
-        protected TagDictionary tagDictionary { get { return (quest != null) ? quest.TagDictionary : null; } }
+        protected TagDictionary tagDictionary => quest != null ? quest.TagDictionary : null;
+
+        /// <summary>
+        /// Allows a subasset to save information in a serializable format prior to being
+        /// serialized to a proxy object for saving. The base method doesn't do anything,
+        /// but subclasses may need to.
+        /// </summary>
+        public virtual void OnBeforeProxySerialization()
+        {
+        }
+
+        /// <summary>
+        /// Applies saved information from a proxy object. The base method doesn't do anything,
+        /// but subclasses may need to.
+        /// </summary>
+        public virtual void OnAfterProxyDeserialization()
+        {
+        }
 
         /// <summary>
         /// Returns the name to show in the editor for this subasset.
@@ -39,7 +54,7 @@ namespace SsitEngine.QuestManager
         /// Sets quest references, as some subassets might need to refer to their containing
         /// quest and/or quest node.
         /// </summary>
-        public virtual void SetRuntimeReferences(Quest quest, QuestNode questNode)
+        public virtual void SetRuntimeReferences( Quest quest, QuestNode questNode )
         {
             this.quest = quest;
             this.questNode = questNode;
@@ -58,7 +73,7 @@ namespace SsitEngine.QuestManager
         /// Adds any tags in the string to the tags dictionary.
         /// </summary>
         /// <param name="s"></param>
-        protected virtual void AddTagsToDictionary(string s)
+        protected virtual void AddTagsToDictionary( string s )
         {
             QuestMachineTags.AddTagsToDictionary(tagDictionary, s);
         }
@@ -82,29 +97,12 @@ namespace SsitEngine.QuestManager
         }
 
         /// <summary>
-        /// Allows a subasset to save information in a serializable format prior to being
-        /// serialized to a proxy object for saving. The base method doesn't do anything,
-        /// but subclasses may need to.
-        /// </summary>
-        public virtual void OnBeforeProxySerialization()
-        {
-        }
-
-        /// <summary>
-        /// Applies saved information from a proxy object. The base method doesn't do anything,
-        /// but subclasses may need to.
-        /// </summary>
-        public virtual void OnAfterProxyDeserialization()
-        {
-        }
-
-        /// <summary>
         /// Allows subclasses to deep copy their own subassets by instantiating copies.
         /// </summary>
         /// <param name="copy">The copy to instantiate subasset copies into. Assumes the
         /// copy has already been instantiated and contains an accurate copy of everything
         /// except subassets.</param>
-        public virtual void CloneSubassetsInto(QuestSubasset copy)
+        public virtual void CloneSubassetsInto( QuestSubasset copy )
         {
         }
 
@@ -119,36 +117,47 @@ namespace SsitEngine.QuestManager
         /// <summary>
         /// Returns a deep copy of a QuestSubasset list.
         /// </summary>
-        public static List<T> CloneList<T>(List<T> original) where T : QuestSubasset
+        public static List<T> CloneList<T>( List<T> original ) where T : QuestSubasset
         {
-            if (original == null) return null;
-            var copy = ScriptableObjectUtility.CloneList<T>(original);
-            for (int i = 0; i < original.Count; i++)
+            if (original == null)
+            {
+                return null;
+            }
+            var copy = ScriptableObjectUtility.CloneList(original);
+            for (var i = 0; i < original.Count; i++)
             {
                 if (original[i] != null)
                 {
                     original[i].CloneSubassetsInto(copy[i]);
                 }
                 else
-                { 
-                    if (Debug.isDebugBuild) Debug.LogWarning("QuestMachine: QuestSubasset.CloneList<" + typeof(T).Name + ">: Element " + i + " is null.");
+                {
+                    if (Debug.isDebugBuild)
+                    {
+                        Debug.LogWarning("QuestMachine: QuestSubasset.CloneList<" + typeof(T).Name + ">: Element " + i +
+                                         " is null.");
+                    }
                 }
             }
             return copy;
         }
 
-        public static void DestroyList<T>(List<T> list) where T : QuestSubasset
+        public static void DestroyList<T>( List<T> list ) where T : QuestSubasset
         {
-            if (list == null) return;
-            for (int i = 0; i < list.Count; i++)
+            if (list == null)
+            {
+                return;
+            }
+            for (var i = 0; i < list.Count; i++)
             {
                 var subasset = list[i];
-                if (subasset == null) continue;
+                if (subasset == null)
+                {
+                    continue;
+                }
                 subasset.DestroySubassets();
                 Destroy(subasset);
             }
         }
-
     }
-
 }

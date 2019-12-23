@@ -8,6 +8,10 @@ namespace SsitEngine.Unity.Sound
     {
         public const int SOUNDMANAGER_FALSE = -1;
 
+        private readonly bool[] inCrossing = {false, false};
+
+        private readonly bool[] outCrossing = {false, false};
+
         private bool _mutedMusic;
 
         [SerializeField] public AudioSource[] audios;
@@ -39,8 +43,6 @@ namespace SsitEngine.Unity.Sound
         ///     Set this if you wish to ignore the level loading functionality.
         /// </summary>
         public bool ignoreLevelLoad;
-
-        private readonly bool[] inCrossing = {false, false};
 
         private UnityEvent InternalCallback;
 
@@ -89,8 +91,6 @@ namespace SsitEngine.Unity.Sound
         ///     Called when a song ends, AFTER crossfade out ends as well.
         /// </summary>
         public UnityEvent OnSongEnd;
-
-        private readonly bool[] outCrossing = {false, false};
 
         /// <summary>
         ///     Editor variable -- IGNORE AND DO NOT MODIFY

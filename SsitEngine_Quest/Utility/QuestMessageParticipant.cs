@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace SsitEngine.QuestManager
+﻿namespace SsitEngine.QuestManager
 {
     /// <summary>
     /// 消息参与者
@@ -27,5 +25,4 @@ namespace SsitEngine.QuestManager
         /// </summary>
         Other
     }
-
 }

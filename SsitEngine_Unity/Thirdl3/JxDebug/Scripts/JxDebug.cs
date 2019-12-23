@@ -1,79 +1,68 @@
-﻿using SsitEngine;
-using SsitEngine.DebugLog;
-using System;
+﻿using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using SsitEngine;
+using SsitEngine.DebugLog;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Debug = UnityEngine.Debug;
 
 namespace JxDebug
 {
     public class JxDebug : MonoBehaviour, SsitDebug.ILogHelper, ISerializationCallbackReceiver
     {
-        public delegate void OnOpenStateChanged(bool isOpen);
-        [SerializeField]
-        protected GUISkin mGuiSkin;
-        [SerializeField]
-        protected GUISkin mGuiBackSkin;
+        public delegate void OnOpenStateChanged( bool isOpen );
 
-        [SerializeField] protected Toolbar toolbar;
-        [SerializeField] protected Logger logger;
+        private static JxDebug s_singleton;
+
+        private static Settings s_settingsCopy;
+
+        private static Settings s_settings;
         [SerializeField] protected OpenButton _openButton;
+        private Image buttonBlocker;
+        private Canvas canvas;
+
+        [NonSerialized] private bool initialized;
+        private int lastFrame;
+        private float lastScreenHeight = Screen.height;
+        [SerializeField] protected Logger logger;
+
+        [SerializeField] protected GUISkin mGuiBackSkin;
+
+        [SerializeField] protected GUISkin mGuiSkin;
+
+        private bool mouseDragEventProcessed;
+        private bool open;
+        private Coroutine openCoroutine;
+        private Vector2 position;
+        private Settings serializedSettings;
         [SerializeField] protected SettingsPanel settingsPanel;
 
-        [NonSerialized] bool initialized;
-        bool open;
-        Coroutine openCoroutine;
-        Vector2 position;
-        int lastFrame;
-        bool mouseDragEventProcessed;
-        float lastScreenHeight = Screen.height;
-        Canvas canvas;
-        Image windowBlocker;
-        Image buttonBlocker;
-        Settings serializedSettings;
+        [SerializeField] protected Toolbar toolbar;
+        private Image windowBlocker;
 
+        public bool IsOpen => openCoroutine != null || open;
 
-        public event OnOpenStateChanged onOpenStateChanged;
-
-        public bool IsOpen
-        {
-            get { return openCoroutine != null || open; }
-        }
-
-        public float Height
-        {
-            get
-            {
-                return (Mathf.Clamp(Setting.preferredHeight, 0, 1 - OpenButton.height * Setting.scale / Screen.height) *
-                        Screen.height) / Setting.scale;
-            }
-        }
+        public float Height =>
+            Mathf.Clamp(Setting.preferredHeight, 0, 1 - OpenButton.height * Setting.scale / Screen.height) *
+            Screen.height / Setting.scale;
 
         public bool IsSettingsOpen { get; private set; }
 
-        public OpenButton OpenButton
-        {
-            get { return _openButton; }
-        }
-
-        static JxDebug s_singleton;
+        public OpenButton OpenButton => _openButton;
 
         public static JxDebug Singleton
         {
             get
             {
                 if (s_singleton == null)
+                {
                     Instantiate();
+                }
                 return s_singleton;
             }
         }
-
-        static Settings s_settingsCopy;
-
-        static Settings s_settings;
 
         public static Settings Setting
         {
@@ -89,14 +78,31 @@ namespace JxDebug
             }
         }
 
-        [RuntimeInitializeOnLoadMethod(loadType: RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void InitializeOnLoad()
+        public void OnBeforeSerialize()
         {
-            if (Setting.autoInstantiate)
-                Instantiate();
+            if (Application.isPlaying)
+            {
+                serializedSettings = s_settingsCopy;
+            }
         }
 
-        static void Instantiate()
+        public void OnAfterDeserialize()
+        {
+        }
+
+
+        public event OnOpenStateChanged onOpenStateChanged;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void InitializeOnLoad()
+        {
+            if (Setting.autoInstantiate)
+            {
+                Instantiate();
+            }
+        }
+
+        private static void Instantiate()
         {
             s_singleton = FindObjectOfType<JxDebug>();
             if (s_singleton == null)
@@ -106,17 +112,7 @@ namespace JxDebug
             }
         }
 
-        public void OnBeforeSerialize()
-        {
-            if (Application.isPlaying)
-                serializedSettings = s_settingsCopy;
-        }
-
-        public void OnAfterDeserialize()
-        {
-        }
-
-        void Awake()
+        private void Awake()
         {
             if (Singleton != this)
             {
@@ -126,7 +122,9 @@ namespace JxDebug
             }
 
             if (Setting.dontDestroyOnLoad)
+            {
                 DontDestroyOnLoad(gameObject);
+            }
             useGUILayout = false;
             openCoroutine = null;
             if (Setting.showGUIButton)
@@ -138,34 +136,37 @@ namespace JxDebug
             }
 
             SsitDebug.SetLogHelper(this);
-
         }
 
-        void OnEnable()
+        private void OnEnable()
         {
             if (Setting.showGUIButton)
+            {
                 Application.logMessageReceived += OnLogMessageReceived;
+            }
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             if (Setting.showGUIButton)
+            {
                 Application.logMessageReceived -= OnLogMessageReceived;
+            }
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             Setting.CopyFrom(s_settingsCopy);
         }
 
-        void CreateCanvas()
+        private void CreateCanvas()
         {
             canvas = gameObject.AddComponent<Canvas>();
             gameObject.AddComponent<GraphicRaycaster>();
             StartCoroutine(CreateBlockers());
         }
 
-        IEnumerator CreateBlockers()
+        private IEnumerator CreateBlockers()
         {
             yield return null;
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -192,36 +193,46 @@ namespace JxDebug
         public void Open()
         {
             if (!CanSetOpenState(true))
+            {
                 return;
+            }
             SetOpenState(true);
         }
 
         public void Close()
         {
             if (!CanSetOpenState(false))
+            {
                 return;
+            }
             SetOpenState(false);
         }
 
         public void ToggleOpen()
         {
             if (open)
+            {
                 Close();
+            }
             else
+            {
                 Open();
+            }
         }
 
-        bool CanSetOpenState(bool open)
+        private bool CanSetOpenState( bool open )
         {
             return this.open != open && openCoroutine == null;
         }
 
-        void SetOpenState(bool open)
+        private void SetOpenState( bool open )
         {
             this.open = open;
             openCoroutine = StartCoroutine(OpenCoroutine());
             if (onOpenStateChanged != null)
+            {
                 onOpenStateChanged(open);
+            }
         }
 
         public void OpenSettings()
@@ -241,18 +252,22 @@ namespace JxDebug
 
         #region 界面弹出动画
 
-        IEnumerator OpenCoroutine()
+        private IEnumerator OpenCoroutine()
         {
             if (openCoroutine != null)
+            {
                 yield break;
+            }
 
             float time = 0;
             do
             {
                 time = Mathf.Clamp(time + Time.unscaledDeltaTime, 0, Setting.animationDuration);
-                float evaluateTime = time / Setting.animationDuration;
+                var evaluateTime = time / Setting.animationDuration;
                 if (!open)
+                {
                     evaluateTime = 1 - evaluateTime;
+                }
                 EvaluatePosition(evaluateTime);
                 RepositionBlockers(evaluateTime);
                 yield return null;
@@ -261,30 +276,33 @@ namespace JxDebug
             openCoroutine = null;
         }
 
-        void EvaluatePosition(float percentage)
+        private void EvaluatePosition( float percentage )
         {
             position = new Vector2(Screen.width * (Setting.animationX.Evaluate(percentage) - 1),
-                (Height * Setting.scale) * (Setting.animationY.Evaluate(percentage) - 1));
+                Height * Setting.scale * (Setting.animationY.Evaluate(percentage) - 1));
         }
 
-        void RepositionBlockers(float percentage)
+        private void RepositionBlockers( float percentage )
         {
             if (windowBlocker == null)
+            {
                 return;
-            float windowBlockerHeight = Height * Setting.scale * percentage;
+            }
+            var windowBlockerHeight = Height * Setting.scale * percentage;
             windowBlocker.rectTransform.sizeDelta = new Vector2(0, windowBlockerHeight);
             buttonBlocker.rectTransform.anchoredPosition = new Vector2(0, -windowBlockerHeight);
         }
-
 
         #endregion
 
         #region 界面绘制
 
-        bool ShouldSkipEvent()
+        private bool ShouldSkipEvent()
         {
             if (Event.current.type != EventType.MouseDrag)
+            {
                 return false;
+            }
 
             if (lastFrame != Time.frameCount)
             {
@@ -293,12 +311,14 @@ namespace JxDebug
             }
 
             if (mouseDragEventProcessed)
+            {
                 return true;
+            }
             mouseDragEventProcessed = true;
             return false;
         }
 
-        void Initialize()
+        private void Initialize()
         {
             Slider.Initialize();
             Toggle.Initialize();
@@ -310,82 +330,112 @@ namespace JxDebug
             InitScreenShotListener();
             initialized = true;
             if (serializedSettings != null)
+            {
                 s_settingsCopy.CopyFrom(serializedSettings);
+            }
         }
 
-        void Reposition()
+        private void Reposition()
         {
             if (Screen.height != lastScreenHeight)
             {
                 if (openCoroutine == null && !IsOpen)
+                {
                     EvaluatePosition(0);
+                }
                 lastScreenHeight = Screen.height;
             }
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             if (!Setting.showGUIButton)
+            {
                 return;
+            }
             if (mGuiSkin != GUI.skin)
             {
                 GUI.skin = mGuiSkin;
             }
             if (ShouldSkipEvent())
+            {
                 return;
+            }
             if (Event.current.type == EventType.Repaint)
+            {
                 Reposition();
+            }
 
             if (!initialized)
+            {
                 Initialize();
+            }
 
             DetectInput();
             ApplyScaleAndDraw();
         }
 
-        void DetectInput()
+        private void DetectInput()
         {
-            Event e = Event.current;
+            var e = Event.current;
 
             //Prevent tabbing
             if (e.type == EventType.Layout || e.type == EventType.Repaint)
+            {
                 return;
-            else if (e.character == '\t')
+            }
+            if (e.character == '\t')
+            {
                 e.Use();
+            }
             else if (e.type == EventType.KeyDown)
             {
                 if (e.keyCode == Setting.openKey)
+                {
                     ToggleOpen();
+                }
                 else
                 {
                     if (!IsOpen)
+                    {
                         return;
+                    }
                     if (e.keyCode == KeyCode.DownArrow)
+                    {
                         Navigate(1);
+                    }
                     else if (e.keyCode == KeyCode.UpArrow)
+                    {
                         Navigate(-1);
+                    }
                 }
             }
         }
 
-        void ApplyScaleAndDraw()
+        private void ApplyScaleAndDraw()
         {
-            Matrix4x4 oldMatrix = GUI.matrix;
+            var oldMatrix = GUI.matrix;
             GUI.matrix = Matrix4x4.TRS(position, Quaternion.identity, Vector3.one * Setting.scale);
             Draw();
             GUI.matrix = oldMatrix;
         }
 
-        void Draw()
+        private void Draw()
         {
             if (Setting.showOpenButton)
+            {
                 OpenButton.Draw(Height);
+            }
             if (buttonBlocker != null)
+            {
                 buttonBlocker.rectTransform.sizeDelta = Setting.showOpenButton
                     ? new Vector2(OpenButton.width * Setting.scale, OpenButton.height * Setting.scale)
                     : Vector2.zero;
+            }
             if (!IsOpen)
+            {
                 return;
+            }
 
             //When layouting, only AutoComplete & History need to be drawn
             if (Event.current.type == EventType.Layout)
@@ -395,14 +445,18 @@ namespace JxDebug
 
             //Input has to be drawn first thing to keep focus across frames
             toolbar.Draw();
-            float mainWindowHeight = Height - toolbar.height;
+            var mainWindowHeight = Height - toolbar.height;
             if (IsSettingsOpen)
+            {
                 settingsPanel.Draw(toolbar.height, mainWindowHeight);
+            }
             else
+            {
                 logger.Draw(toolbar.height, mainWindowHeight);
+            }
         }
 
-        void Navigate(int direction)
+        private void Navigate( int direction )
         {
             Event.current.Use();
         }
@@ -432,8 +486,8 @@ namespace JxDebug
             //如果存在就重命名为oldlog.log
             if (File.Exists(filePath))
             {
-                FileInfo info = new FileInfo(filePath);
-                string newName = Path.Combine(folderPath, "Log/OldLog.log");
+                var info = new FileInfo(filePath);
+                var newName = Path.Combine(folderPath, "Log/OldLog.log");
                 //如果oldlog.log存在就删除
                 if (File.Exists(newName))
                 {
@@ -446,10 +500,9 @@ namespace JxDebug
             File.Create(filePath).Dispose();
 
             SsitDebug.Info("Log save File: " + filePath);
-
         }
 
-        void OnLogMessageReceived(string condition, string stackTrace, LogType type)
+        private void OnLogMessageReceived( string condition, string stackTrace, LogType type )
         {
             EntryData entry;
             if (type == LogType.Error || type == LogType.Exception)
@@ -458,7 +511,7 @@ namespace JxDebug
             }
             else
             {
-                entry = new EntryData(condition, String.Empty, null, type.ToString());
+                entry = new EntryData(condition, string.Empty, null, type.ToString());
             }
 
             switch (type)
@@ -492,9 +545,9 @@ namespace JxDebug
 
             //以附加方式打开文件写入流
             //#if  UNITY_5_5_OR_NEWER
-            using (FileStream fs = new FileStream(filePath, FileMode.Append, FileAccess.Write))
+            using (var fs = new FileStream(filePath, FileMode.Append, FileAccess.Write))
             {
-                using (StreamWriter sw = new StreamWriter(fs))
+                using (var sw = new StreamWriter(fs))
                 {
                     //写入数据
                     sw.WriteLine(entry.ToString());
@@ -502,20 +555,21 @@ namespace JxDebug
             }
             //#endif
         }
+
         [Conditional("DEBUGLOG")]
-        public void Log(EntryData data)
+        public void Log( EntryData data )
         {
             logger.AddEntry(data);
         }
 
-        public void LogWarning(EntryData data)
+        public void LogWarning( EntryData data )
         {
             data.options.color = Setting.warningColor;
             data.icon = Setting.warningIcon;
             logger.AddEntry(data);
         }
 
-        public void LogError(EntryData data)
+        public void LogError( EntryData data )
         {
             data.options.color = Setting.errorColor;
             data.icon = Setting.errorIcon;
@@ -538,19 +592,19 @@ namespace JxDebug
 
         private string m_log = "...";
 
-        void InitScreenShotListener()
+        private void InitScreenShotListener()
         {
             //CaptureAndSaveEventListener.onError += OnError;
             //CaptureAndSaveEventListener.onSuccess += OnSuccess;
         }
 
-        void OnError(string error)
+        private void OnError( string error )
         {
             m_log += "\n" + error;
             SsitDebug.Info("Screenshot Error : " + error);
         }
 
-        void OnSuccess(string msg)
+        private void OnSuccess( string msg )
         {
             m_log += "\n" + msg;
             SsitDebug.Info("Screenshot Success : " + msg);
@@ -578,7 +632,7 @@ namespace JxDebug
         /// </summary>
         /// <param name="level"></param>
         /// <param name="message"></param>
-        public void Log(DebugLogLevel level, object message)
+        public void Log( DebugLogLevel level, object message )
         {
             switch (level)
             {
@@ -589,13 +643,13 @@ namespace JxDebug
                     LogDebug(level, TextUtils.Format("<color=cyan>{0}</color>", message));
                     break;
                 case DebugLogLevel.Warning:
-                    UnityEngine.Debug.LogWarning(message);
+                    Debug.LogWarning(message);
                     break;
                 case DebugLogLevel.Error:
-                    UnityEngine.Debug.LogError(message);
+                    Debug.LogError(message);
                     break;
                 case DebugLogLevel.Fatal:
-                    UnityEngine.Debug.LogError(message);
+                    Debug.LogError(message);
                     break;
             }
         }
@@ -607,14 +661,15 @@ namespace JxDebug
         /// <param name="message"></param>
         /// <summary>仅在编辑条件DEBUGLOG具备的条件下，调试日志才会编译</summary>
         [Conditional("DEBUGLOG")]
-        public void LogDebug(DebugLogLevel level, object message)
+        public void LogDebug( DebugLogLevel level, object message )
         {
-            UnityEngine.Debug.Log(message);
+            Debug.Log(message);
         }
 
         #endregion
 
         #region DebugSize
+
         public float Fps { get; private set; }
 
         public float MonoMemorySize { get; private set; }
@@ -625,26 +680,26 @@ namespace JxDebug
 
         public float MemoryMaxSize { get; private set; }
 
-        public GUISkin MGuiBackSkin
-        {
-            get { return mGuiBackSkin; }
-        }
+        public GUISkin MGuiBackSkin => mGuiBackSkin;
 
-        public GUISkin MGuiSkin
-        {
-            get { return mGuiSkin; }
-        }
+        public GUISkin MGuiSkin => mGuiSkin;
 
-        void InitDebugInfo()
+        private void InitDebugInfo()
         {
-            ProfileBlock profileListenner = GetComponent<ProfileBlock>();
-            profileListenner.AddFpsChangeListener((value) => { Fps = value; });
-            profileListenner.AddMonoSizeChangeListener((size, maxSize) => { MonoMemorySize = size; MonoMemoryMaxSize = maxSize; });
-            profileListenner.AddMemoryChangeListener((size, maxSize) => { MemorySize = size; MemoryMaxSize = maxSize; });
-
+            var profileListenner = GetComponent<ProfileBlock>();
+            profileListenner.AddFpsChangeListener(value => { Fps = value; });
+            profileListenner.AddMonoSizeChangeListener(( size, maxSize ) =>
+            {
+                MonoMemorySize = size;
+                MonoMemoryMaxSize = maxSize;
+            });
+            profileListenner.AddMemoryChangeListener(( size, maxSize ) =>
+            {
+                MemorySize = size;
+                MemoryMaxSize = maxSize;
+            });
         }
 
         #endregion
-
     }
 }

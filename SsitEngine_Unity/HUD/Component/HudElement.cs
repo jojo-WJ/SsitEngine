@@ -26,7 +26,9 @@ namespace SsitEngine.Unity.HUD
         public void UpdateHUDElement( HudElement element )
         {
             if (element == null)
+            {
                 return;
+            }
 
             if (!element.IsActive)
             {
@@ -51,9 +53,13 @@ namespace SsitEngine.Unity.HUD
 
             float distance = 0;
             if (hudManager.PlayerController != null)
+            {
                 distance = element.GetDistance(hudManager.PlayerController.transform);
+            }
             else
+            {
                 distance = element.GetDistance(hudManager.PlayerCamera.transform);
+            }
 
             if (element.showHud)
             {
@@ -244,33 +250,49 @@ namespace SsitEngine.Unity.HUD
                 case NavigationElementType.CompassBar:
                 {
                     if (value)
+                    {
                         CreateCompassBarMarker();
+                    }
                     else if (CompassBar != null && isDestory)
+                    {
                         Destroy(CompassBar.gameObject);
+                    }
                 }
                     break;
                 case NavigationElementType.Minimap:
                 {
                     if (value)
+                    {
                         CreateMinimapMarker();
+                    }
                     else if (Minimap != null && isDestory)
+                    {
                         Destroy(Minimap.gameObject);
+                    }
                 }
                     break;
                 case NavigationElementType.Indicator:
                 {
                     if (value)
+                    {
                         CreateIndicatorMarker();
+                    }
                     else if (Indicator != null && isDestory)
+                    {
                         Destroy(Indicator.gameObject);
+                    }
                 }
                     break;
                 case NavigationElementType.HUD:
                 {
                     if (value)
+                    {
                         CreateHUDMarker();
+                    }
                     else if (Hud != null && isDestory)
+                    {
                         Destroy(Hud.gameObject);
+                    }
                 }
                     break;
             }
@@ -278,13 +300,17 @@ namespace SsitEngine.Unity.HUD
             if (value)
             {
                 if (HudManager.Instance != null)
+                {
                     HudManager.Instance.AddNavigationElement(this);
+                }
             }
             else
             {
                 // remove element from the navigation system
                 if (HudManager.Instance != null)
+                {
                     HudManager.Instance.RemoveNavigationElement(this);
+                }
             }
 
             IsActive = value;
@@ -295,19 +321,31 @@ namespace SsitEngine.Unity.HUD
         {
             // remove element from the navigation system
             if (Engine.Instance.HasModule(typeof(HudManager).FullName))
+            {
                 if (HudManager.Instance != null)
+                {
                     HudManager.Instance.RemoveNavigationElement(this);
+                }
+            }
             // destroy all marker references
             //if (Radar != null)
             //    Destroy(Radar.gameObject);
             if (CompassBar != null)
+            {
                 Destroy(CompassBar.gameObject);
+            }
             if (Indicator != null)
+            {
                 Destroy(Indicator.gameObject);
+            }
             if (Minimap != null)
+            {
                 Destroy(Minimap.gameObject);
+            }
             if (Hud != null)
+            {
                 Destroy(Hud.gameObject);
+            }
         }
 
 
@@ -379,7 +417,9 @@ namespace SsitEngine.Unity.HUD
 
             // add element to the navigation system
             if (HudManager.Instance != null)
+            {
                 HudManager.Instance.AddNavigationElement(this);
+            }
 
             // set as initialized
             _isInitialized = true;
@@ -415,7 +455,10 @@ namespace SsitEngine.Unity.HUD
 
         public void CreateCompassBarMarker()
         {
-            if (Prefabs.CompassBarPrefab == null || CompassBar != null) return;
+            if (Prefabs.CompassBarPrefab == null || CompassBar != null)
+            {
+                return;
+            }
 
             // create compass bar gameobject
             var compassBarGO = Instantiate(Prefabs.CompassBarPrefab.gameObject, Vector3.zero, Quaternion.identity);
@@ -430,7 +473,9 @@ namespace SsitEngine.Unity.HUD
         public void CreateIndicatorMarker()
         {
             if (Prefabs.IndicatorPrefab == null || Indicator != null)
+            {
                 return;
+            }
 
             // create indicator gameobject
             var indicatorGO = Instantiate(Prefabs.IndicatorPrefab.gameObject, Vector3.zero, Quaternion.identity);
@@ -447,7 +492,9 @@ namespace SsitEngine.Unity.HUD
         private void CreateMinimapMarker()
         {
             if (Prefabs.MinimapPrefab == null || Minimap != null)
+            {
                 return;
+            }
 
             // create minimap gameobject
             var minimapGO = Instantiate(Prefabs.MinimapPrefab.gameObject, Vector3.zero, Quaternion.identity);
@@ -464,7 +511,9 @@ namespace SsitEngine.Unity.HUD
         private void CreateHUDMarker()
         {
             if (Prefabs.HUDPrefab == null || Hud != null)
+            {
                 return;
+            }
 
             // create minimap gameobject
             var hudGo = Instantiate(Prefabs.HUDPrefab.gameObject, Vector3.zero, Quaternion.identity);

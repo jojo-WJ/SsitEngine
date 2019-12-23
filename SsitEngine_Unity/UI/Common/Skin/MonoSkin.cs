@@ -28,7 +28,9 @@ namespace SsitEngine.Unity.UI.Common.Skin
             meshRenderer.sharedMesh = mesh;
             meshRenderer.localBounds = mesh.bounds;
             if (!(bool) meshCollider)
+            {
                 return;
+            }
             meshCollider.sharedMesh = null;
             meshCollider.sharedMesh = mesh;
         }
@@ -37,7 +39,9 @@ namespace SsitEngine.Unity.UI.Common.Skin
         public void AttachCollider()
         {
             if (!(GetComponent<MeshCollider>() == null))
+            {
                 return;
+            }
             gameObject.AddComponent<MeshCollider>();
         }
 
@@ -45,7 +49,9 @@ namespace SsitEngine.Unity.UI.Common.Skin
         public void RemoveCollider()
         {
             if (!(bool) meshCollider)
+            {
                 return;
+            }
             Destroy(meshCollider);
             meshCollider = null;
         }
@@ -69,7 +75,10 @@ namespace SsitEngine.Unity.UI.Common.Skin
         {
             meshRenderer = GetComponent<SkinnedMeshRenderer>();
             meshCollider = GetComponent<MeshCollider>();
-            if (this.mesh != null) return;
+            if (this.mesh != null)
+            {
+                return;
+            }
             var mesh = new Mesh();
             mesh.name = "Skin";
             this.mesh = mesh;

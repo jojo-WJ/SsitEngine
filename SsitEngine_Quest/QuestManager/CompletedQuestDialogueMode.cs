@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace SsitEngine.QuestManager
+﻿namespace SsitEngine.QuestManager
 {
     public enum QuestCompleteMode
     {
@@ -8,11 +6,13 @@ namespace SsitEngine.QuestManager
         /// 单独完成
         /// </summary>
         SingleComplet,
+
         /// <summary>
         /// 协作完成
         /// </summary>
-        CooprationComplete,
+        CooprationComplete
     }
+
     /// <summary>
     /// 会话的全局模式.
     /// </summary>

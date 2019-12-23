@@ -1,18 +1,9 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using System.IO;
-using SsitEngine.Unity.Sound;
-using UnityEditor;
-using UnityEditor.SceneManagement;
-
-public class SoundTools
+﻿public class SoundTools
 {
-
     //[MenuItem("Assets/Create/SoundConection")]
 
     public static void Execute()
     {
-
         //实例化SysData               
 /*
 
@@ -47,7 +38,5 @@ public class SoundTools
         //删除面板上的那个临时对象               
 
         //AssetDatabase.DeleteAsset(p);
-
     }
-
 }

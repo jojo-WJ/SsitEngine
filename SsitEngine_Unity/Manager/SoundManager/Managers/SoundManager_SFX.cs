@@ -26,16 +26,24 @@ namespace SsitEngine.Unity.Sound
             float duckVolume = 0f, float duckPitch = 1f )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (clip == null)
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             return Instance.PlaySFXAt(clip, volume, pitch, location, false, "", looping, delay, runOnEndFunction,
                 duckingSetting, duckVolume, duckPitch);
@@ -47,16 +55,24 @@ namespace SsitEngine.Unity.Sound
             float duckPitch = 1f )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (clip == null)
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             return Instance.PlaySFXUIAt(clip, volume, pitch, false, "", looping, delay, runOnEndFunction,
                 duckingSetting,
@@ -73,16 +89,24 @@ namespace SsitEngine.Unity.Sound
             float duckVolume = 0f, float duckPitch = 1f )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (!ClipNameIsValid(clipName))
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             return Instance.PlaySFXAt(Load(clipName), volume, pitch, location, false, "", looping, delay,
                 runOnEndFunction, duckingSetting, duckVolume, duckPitch);
@@ -94,16 +118,22 @@ namespace SsitEngine.Unity.Sound
             float duckPitch = 1f )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             //if (!SoundManager.ClipNameIsValid(clipName))
             //    return null;
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             return Instance.PlaySFXUIAt(Load(clipName), volume, pitch, false, "", looping, delay,
                 runOnEndFunction, duckingSetting, duckVolume, duckPitch);
@@ -117,23 +147,35 @@ namespace SsitEngine.Unity.Sound
             float pitch = float.MaxValue, Vector3 location = default )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (clip == null)
+            {
                 return null;
+            }
 
             if (string.IsNullOrEmpty(cappedID))
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             // Play the clip if not at capacity
             if (!Instance.IsAtCapacity(cappedID, clip.name))
+            {
                 return Instance.PlaySFXAt(clip, volume, pitch, location, true, cappedID);
+            }
             return null;
         }
 
@@ -141,23 +183,35 @@ namespace SsitEngine.Unity.Sound
             float pitch = float.MaxValue )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (clip == null)
+            {
                 return null;
+            }
 
             if (string.IsNullOrEmpty(cappedID))
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             // Play the clip if not at capacity
             if (!Instance.IsAtCapacity(cappedID, clip.name))
+            {
                 return Instance.PlaySFXUIAt(clip, volume, pitch, true, cappedID);
+            }
             return null;
         }
 
@@ -170,23 +224,35 @@ namespace SsitEngine.Unity.Sound
             float pitch = float.MaxValue, Vector3 location = default )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (!ClipNameIsValid(clipName))
+            {
                 return null;
+            }
 
             if (string.IsNullOrEmpty(cappedID))
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             // Play the clip if not at capacity
             if (!Instance.IsAtCapacity(cappedID, clipName))
+            {
                 return Instance.PlaySFXAt(Load(clipName), volume, pitch, location, true, cappedID);
+            }
             return null;
         }
 
@@ -194,23 +260,35 @@ namespace SsitEngine.Unity.Sound
             float pitch = float.MaxValue )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (!ClipNameIsValid(clipName))
+            {
                 return null;
+            }
 
             if (string.IsNullOrEmpty(cappedID))
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             // Play the clip if not at capacity
             if (!Instance.IsAtCapacity(cappedID, clipName))
+            {
                 return Instance.PlaySFXUIAt(Load(clipName), volume, pitch, true, cappedID);
+            }
             return null;
         }
 
@@ -222,19 +300,29 @@ namespace SsitEngine.Unity.Sound
             float volume = float.MaxValue, float pitch = float.MaxValue )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (clip == null || aS == null)
+            {
                 return null;
+            }
 
             if (string.IsNullOrEmpty(cappedID))
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             // Play the clip if not at capacity
             if (!Instance.IsAtCapacity(cappedID, clip.name))
@@ -255,19 +343,29 @@ namespace SsitEngine.Unity.Sound
             float volume = float.MaxValue, float pitch = float.MaxValue )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (!ClipNameIsValid(clipName) || aS == null)
+            {
                 return null;
+            }
 
             if (string.IsNullOrEmpty(cappedID))
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             // Play the clip if not at capacity
             if (!Instance.IsAtCapacity(cappedID, clipName))
@@ -317,16 +415,24 @@ namespace SsitEngine.Unity.Sound
             float duckPitch = 1f )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (clip == null || aS == null)
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             // Keep reference of unownedsfx objects
             Instance.CheckInsertionIntoUnownedSFXObjects(aS);
@@ -345,16 +451,24 @@ namespace SsitEngine.Unity.Sound
             float duckPitch = 1f )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (!ClipNameIsValid(clipName) || aS == null)
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             // Keep reference of unownedsfx objects
             Instance.CheckInsertionIntoUnownedSFXObjects(aS);
@@ -369,13 +483,19 @@ namespace SsitEngine.Unity.Sound
         public static void StopSFXObject( AudioSource aS )
         {
             if (aS == null)
+            {
                 return;
+            }
 
             if (aS.isPlaying)
+            {
                 aS.Stop();
+            }
 
             if (Instance.delayedAudioSources.ContainsKey(aS))
+            {
                 Instance.delayedAudioSources.Remove(aS);
+            }
         }
 
         /// <summary>
@@ -418,19 +538,29 @@ namespace SsitEngine.Unity.Sound
             float duckPitch = 1f )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (clip == null || gO == null)
+            {
                 return null;
+            }
 
             if (gO.GetComponent<AudioSource>() == null)
+            {
                 gO.AddComponent<AudioSource>();
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             return PlaySFX(gO.GetComponent<AudioSource>(), clip, looping, delay, volume, pitch, runOnEndFunction,
                 duckingSetting, duckVolume, duckPitch);
@@ -476,19 +606,29 @@ namespace SsitEngine.Unity.Sound
             float duckPitch = 1f )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (!ClipNameIsValid(clipName) || gO == null)
+            {
                 return null;
+            }
 
             if (gO.GetComponent<AudioSource>() == null)
+            {
                 gO.AddComponent<AudioSource>();
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             return PlaySFX(gO.GetComponent<AudioSource>(), Load(clipName), looping, delay, volume, pitch,
                 runOnEndFunction, duckingSetting, duckVolume, duckPitch);
@@ -503,7 +643,9 @@ namespace SsitEngine.Unity.Sound
         public static void StopSFXObject( GameObject gO )
         {
             if (gO == null)
+            {
                 return;
+            }
 
             StopSFXObject(gO.GetComponent<AudioSource>());
         }
@@ -529,16 +671,24 @@ namespace SsitEngine.Unity.Sound
             float duckVolume = 0f, float duckPitch = 1f )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (clip == null || aS == null)
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             Instance.CheckInsertionIntoUnownedSFXObjects(aS);
 
@@ -559,16 +709,24 @@ namespace SsitEngine.Unity.Sound
             float duckVolume = 0f, float duckPitch = 1f )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (!ClipNameIsValid(clipName) || aS == null)
+            {
                 return null;
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             Instance.CheckInsertionIntoUnownedSFXObjects(aS);
 
@@ -589,19 +747,29 @@ namespace SsitEngine.Unity.Sound
             float duckVolume = 0f, float duckPitch = 1f )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (clip == null || gO == null)
+            {
                 return null;
+            }
 
             if (gO.GetComponent<AudioSource>() == null)
+            {
                 gO.AddComponent<AudioSource>();
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             Instance.CheckInsertionIntoUnownedSFXObjects(gO.GetComponent<AudioSource>());
 
@@ -622,19 +790,29 @@ namespace SsitEngine.Unity.Sound
             float duckVolume = 0f, float duckPitch = 1f )
         {
             if (Instance.offTheSFX || Instance.isPaused)
+            {
                 return null;
+            }
 
             if (!ClipNameIsValid(clipName) || gO == null)
+            {
                 return null;
+            }
 
             if (gO.GetComponent<AudioSource>() == null)
+            {
                 gO.AddComponent<AudioSource>();
+            }
 
             if (volume == float.MaxValue)
+            {
                 volume = Instance.volumeSFX;
+            }
 
             if (pitch == float.MaxValue)
+            {
                 pitch = Instance.pitchSFX;
+            }
 
             Instance.CheckInsertionIntoUnownedSFXObjects(gO.GetComponent<AudioSource>());
 
@@ -695,7 +873,9 @@ namespace SsitEngine.Unity.Sound
             Instance.maxSFXVolume = setVolume * Instance.maxVolume;
 
             if (float.IsNaN(currentPercentageOfVolume) || float.IsInfinity(currentPercentageOfVolume))
+            {
                 currentPercentageOfVolume = 1f;
+            }
 
             Instance.volumeSFX = Instance.maxSFXVolume * currentPercentageOfVolume;
         }
@@ -725,7 +905,9 @@ namespace SsitEngine.Unity.Sound
             var newVolume = ignoreMaxSFXVolume ? setVolume : setVolume * Instance.maxSFXVolume;
 
             foreach (var audioSource in audioSources)
+            {
                 audioSource.volume = newVolume;
+            }
         }
 
         /// <summary>
@@ -746,7 +928,9 @@ namespace SsitEngine.Unity.Sound
             var newVolume = ignoreMaxSFXVolume ? setVolume : setVolume * Instance.maxSFXVolume;
 
             foreach (var sfxObject in sfxObjects)
+            {
                 sfxObject.GetComponent<AudioSource>().volume = newVolume;
+            }
         }
 
         /// <summary>
@@ -790,7 +974,9 @@ namespace SsitEngine.Unity.Sound
         public static void SetPitchSFX( float setPitch, params AudioSource[] audioSources )
         {
             foreach (var audioSource in audioSources)
+            {
                 audioSource.pitch = setPitch;
+            }
         }
 
         /// <summary>
@@ -805,7 +991,9 @@ namespace SsitEngine.Unity.Sound
         public static void SetPitchSFX( float setPitch, params GameObject[] sfxObjects )
         {
             foreach (var sfxObject in sfxObjects)
+            {
                 sfxObject.GetComponent<AudioSource>().pitch = setPitch;
+            }
         }
 
         /// <summary>
@@ -834,11 +1022,15 @@ namespace SsitEngine.Unity.Sound
         public static void SaveSFX( AudioClip clip, string grpName )
         {
             if (clip == null)
+            {
                 return;
+            }
 
             var grp = Instance.GetGroupByGroupName(grpName);
             if (grp == null)
+            {
                 Debug.LogWarning("The SFXGroup, " + grpName + ", does not exist. Creating it as a new group");
+            }
 
             SaveSFX(clip);
             Instance.AddClipToGroup(clip.name, grpName);
@@ -858,7 +1050,9 @@ namespace SsitEngine.Unity.Sound
         public static void SaveSFX( AudioClip clip, SFXGroup grp )
         {
             if (clip == null)
+            {
                 return;
+            }
 
             if (grp != null)
             {
@@ -891,7 +1085,9 @@ namespace SsitEngine.Unity.Sound
             foreach (var clip in clips)
             {
                 if (clip == null)
+                {
                     continue;
+                }
 
                 if (!Instance.allClips.ContainsKey(clip.name))
                 {
@@ -926,7 +1122,9 @@ namespace SsitEngine.Unity.Sound
             Instance.clipToGroupKeys.Clear();
             Instance.clipToGroupValues.Clear();
             foreach (var grp in Instance.sfxGroups)
+            {
                 grp.clips.Clear();
+            }
 #if UNITY_EDITOR
             Instance.storedSFXs.Clear();
             Instance.sfxPrePoolAmounts.Clear();
@@ -947,7 +1145,9 @@ namespace SsitEngine.Unity.Sound
             foreach (var clip in clips)
             {
                 if (clip == null)
+                {
                     continue;
+                }
 
                 if (!Instance.allClips.ContainsKey(clip.name))
                 {
@@ -960,7 +1160,10 @@ namespace SsitEngine.Unity.Sound
                     Instance.RemoveClipFromGroup(clipName);
 #if UNITY_EDITOR
                     var index = Instance.storedSFXs.IndexOf(clip);
-                    if (index == -1) continue;
+                    if (index == -1)
+                    {
+                        continue;
+                    }
                     Instance.storedSFXs.RemoveAt(index);
                     Instance.sfxPrePoolAmounts.RemoveAt(index);
                     Instance.sfxBaseVolumes.RemoveAt(index);
@@ -982,7 +1185,9 @@ namespace SsitEngine.Unity.Sound
             foreach (var clipName in clipNames)
             {
                 if (string.IsNullOrEmpty(clipName))
+                {
                     continue;
+                }
 
                 if (!Instance.allClips.ContainsKey(clipName))
                 {
@@ -994,9 +1199,15 @@ namespace SsitEngine.Unity.Sound
                     Instance.pitchVariations.Remove(clipName);
                     Instance.RemoveClipFromGroup(clipName);
 #if UNITY_EDITOR
-                    if (clip == null) continue;
+                    if (clip == null)
+                    {
+                        continue;
+                    }
                     var index = Instance.storedSFXs.IndexOf(clip);
-                    if (index == -1) continue;
+                    if (index == -1)
+                    {
+                        continue;
+                    }
                     Instance.storedSFXs.RemoveAt(index);
                     Instance.sfxPrePoolAmounts.RemoveAt(index);
                     Instance.sfxBaseVolumes.RemoveAt(index);
@@ -1030,7 +1241,9 @@ namespace SsitEngine.Unity.Sound
             float pitchVariation )
         {
             if (clip == null || !Instance.allClips.ContainsKey(clip.name) || Instance.allClips[clip.name] != clip)
+            {
                 return;
+            }
 
             var clipName = clip.name;
 
@@ -1063,7 +1276,9 @@ namespace SsitEngine.Unity.Sound
 #endif
 
             if (oldPrepool < prepool)
+            {
                 Instance.PrePoolClip(clip, prepool - oldPrepool);
+            }
         }
 
         /// <summary>
@@ -1089,7 +1304,9 @@ namespace SsitEngine.Unity.Sound
             float pitchVariation )
         {
             if (string.IsNullOrEmpty(clipName) || !ClipNameIsValid(clipName))
+            {
                 return;
+            }
 
             ApplySFXAttributes(Instance.allClips[clipName], prepool, baseVolume, volumeVariation, pitchVariation);
         }
@@ -1253,20 +1470,32 @@ namespace SsitEngine.Unity.Sound
 
             // Attempt to use custom path if provided
             if (!string.IsNullOrEmpty(customPath))
+            {
                 if (customPath[customPath.Length - 1] == '/')
+                {
                     result = (AudioClip) Resources.Load(customPath.Substring(0, customPath.Length) + "/" + clipname);
+                }
                 else
+                {
                     result = (AudioClip) Resources.Load(customPath + "/" + clipname);
+                }
+            }
 
             if (result)
+            {
                 return result;
+            }
 
             // If custom path fails, attempt to find it in our stored SFXs
             if (Instance.allClips.ContainsKey(clipname))
+            {
                 result = Instance.allClips[clipname];
+            }
 
             if (result)
+            {
                 return result;
+            }
 
             // If it is not in our stored SFX, attempt to find it in our default resources path
             result = (AudioClip) Resources.Load(Instance.resourcesPath + "/" + clipname);
@@ -1299,7 +1528,9 @@ namespace SsitEngine.Unity.Sound
         {
             var aud = sfxObj.GetComponent<AudioSource>();
             if (aud == null)
+            {
                 return;
+            }
 
 
             aud.mute = false;
@@ -1319,9 +1550,13 @@ namespace SsitEngine.Unity.Sound
             aud.maxDistance = 500f;
 
             if (isUI)
+            {
                 SoundManagerTools.make2D(ref aud);
+            }
             else
+            {
                 SoundManagerTools.make3D(ref aud);
+            }
             sfxObj.GetComponent<AudioSource>().panStereo = 0f;
         }
 

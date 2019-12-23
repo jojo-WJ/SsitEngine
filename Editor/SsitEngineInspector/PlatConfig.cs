@@ -16,16 +16,16 @@ namespace SsitEngine.Editor.SsitEngineInspector
     [CustomEditor(typeof(PlatformConfig))]
     public class PlatConfig : UnityEditor.Editor
     {
-        GUIContent[] tabsContents = new GUIContent[]
+        private SerializedProperty selectedTab;
+
+        private readonly GUIContent[] tabsContents =
         {
             new GUIContent("系统设置"),
             new GUIContent("操作设置"),
-            new GUIContent("待定"),
+            new GUIContent("待定")
         };
 
-        SerializedProperty selectedTab;
-
-        void OnEnable()
+        private void OnEnable()
         {
             selectedTab = serializedObject.FindProperty("selectedTab");
         }
@@ -37,7 +37,7 @@ namespace SsitEngine.Editor.SsitEngineInspector
             serializedObject.ApplyModifiedProperties();
         }
 
-        void DrawTabs()
+        private void DrawTabs()
         {
             selectedTab.intValue = GUILayout.Toolbar(selectedTab.intValue, tabsContents);
             switch (selectedTab.intValue)

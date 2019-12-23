@@ -14,7 +14,10 @@ namespace SsitEngine.Unity.UI
 
         public virtual void Init( GameObject parent = null )
         {
-            if (parent != null) transform.SetParent(parent.transform);
+            if (parent != null)
+            {
+                transform.SetParent(parent.transform);
+            }
         }
 
         public virtual void SetInfo( IInfoData info )

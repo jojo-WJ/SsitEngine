@@ -158,7 +158,10 @@ namespace SsitEngine.Core.ObjectPool
             m_spawnCount--;
             data.LastUseTime = DateTime.Now;
             data.OnUnspawn();
-            if (m_spawnCount < 0) throw new SsitEngineException("Spawn count is less than 0.");
+            if (m_spawnCount < 0)
+            {
+                throw new SsitEngineException("Spawn count is less than 0.");
+            }
         }
 
         /// <summary>
@@ -167,8 +170,14 @@ namespace SsitEngine.Core.ObjectPool
         /// <param name="isShutdown">是否是关闭对象池时触发。</param>
         public void Release( bool isShutdown )
         {
-            if (data != null) Data.Release(isShutdown);
-            if (isShutdown) Shutdown();
+            if (data != null)
+            {
+                Data.Release(isShutdown);
+            }
+            if (isShutdown)
+            {
+                Shutdown();
+            }
         }
 
         /// <summary>
@@ -178,7 +187,10 @@ namespace SsitEngine.Core.ObjectPool
         /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
         public virtual void OnUpdate( float elapseSeconds, float realElapseSeconds )
         {
-            if (data != null) Data.OnUpdate(elapseSeconds, realElapseSeconds);
+            if (data != null)
+            {
+                Data.OnUpdate(elapseSeconds, realElapseSeconds);
+            }
         }
 
         /// <summary>
@@ -186,7 +198,10 @@ namespace SsitEngine.Core.ObjectPool
         /// </summary>
         public override void Shutdown()
         {
-            if (data != null) Data.Shutdown();
+            if (data != null)
+            {
+                Data.Shutdown();
+            }
         }
     }
 }

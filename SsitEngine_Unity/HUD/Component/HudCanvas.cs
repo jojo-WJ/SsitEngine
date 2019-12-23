@@ -103,7 +103,9 @@ namespace SsitEngine.Unity.HUD
         public void ShowCompassBar( bool value )
         {
             if (CompassBar.Panel != null)
+            {
                 CompassBar.Panel.gameObject.SetActive(value);
+            }
         }
 
 
@@ -141,7 +143,9 @@ namespace SsitEngine.Unity.HUD
         public void ShowIndicators( bool value )
         {
             if (Indicator.Panel != null)
+            {
                 Indicator.Panel.gameObject.SetActive(value);
+            }
         }
 
         #endregion
@@ -175,7 +179,9 @@ namespace SsitEngine.Unity.HUD
                 foreach (var layer in profile.CustomLayers.Reverse<CustomLayer>())
                 {
                     if (layer.sprite == null)
+                    {
                         continue;
+                    }
 
                     // create layer image gameobject
                     var layerGO = new GameObject(layer.name + "_Layer_" + layerCount++);
@@ -201,7 +207,9 @@ namespace SsitEngine.Unity.HUD
         public void ShowMinimap( bool value )
         {
             if (Minimap.Panel != null)
+            {
                 Minimap.Panel.gameObject.SetActive(value);
+            }
         }
 
 
@@ -212,17 +220,23 @@ namespace SsitEngine.Unity.HUD
             var identityRotation = Minimap.Panel.transform.rotation;
             var mapRotation = identityRotation;
             if (minimapMode == MinimapModes.RotateMinimap)
+            {
                 mapRotation = Quaternion.Euler(Minimap.Panel.transform.eulerAngles.x,
                     Minimap.Panel.transform.eulerAngles.y, rotationReference.eulerAngles.y);
+            }
 
             // set player indicator rotation
             if (Minimap.PlayerIndicator != null)
             {
                 if (minimapMode == MinimapModes.RotateMinimap)
+                {
                     Minimap.PlayerIndicator.transform.rotation = identityRotation;
+                }
                 else
+                {
                     Minimap.PlayerIndicator.transform.rotation = Quaternion.Euler(Minimap.Panel.transform.eulerAngles.x,
                         Minimap.Panel.transform.eulerAngles.y, -rotationReference.eulerAngles.y);
+                }
             }
 
             // calculate map position
@@ -232,7 +246,9 @@ namespace SsitEngine.Unity.HUD
 
             // adjust map position when using minimap rotation mode
             if (minimapMode == MinimapModes.RotateMinimap)
+            {
                 mapPos = playerTransform.MinimapRotationOffset(mapPos);
+            }
 
             // set map position, rotation and scale
             Minimap.MapContainer.localPosition = new Vector2(mapPos.x, mapPos.y);

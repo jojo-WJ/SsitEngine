@@ -64,11 +64,15 @@ namespace SsitEngine.PureMVC.Core
             get
             {
                 if (instance == null)
+                {
                     lock (StaticSyncRoot)
                     {
                         if (instance == null)
+                        {
                             instance = new View();
+                        }
                     }
+                }
                 return instance;
             }
         }
@@ -93,10 +97,15 @@ namespace SsitEngine.PureMVC.Core
                 else
                 {
                     if (HasObserver(notificationName, observer))
+                    {
                         return;
+                    }
 
                     var tempObserver = observerMap[notificationName];
-                    while (tempObserver.Next != null) tempObserver = tempObserver.Next;
+                    while (tempObserver.Next != null)
+                    {
+                        tempObserver = tempObserver.Next;
+                    }
                     tempObserver.Next = new LinkNode<IObserver>(observer);
                 }
             }
@@ -116,7 +125,9 @@ namespace SsitEngine.PureMVC.Core
                     {
                         // Notify Observers from the working link
                         if (curNode.Data == null)
+                        {
                             SsitDebug.Error($"notification.Id {notification.Id} is exception");
+                        }
                         curNode.Data?.NotifyObserver(notification);
 
                         curNode = curNode.Next;
@@ -147,9 +158,13 @@ namespace SsitEngine.PureMVC.Core
                         if (headNode.Data.CompareNotifyContext(notifyContext))
                         {
                             if (front != null)
+                            {
                                 front.Next = headNode.Next;
+                            }
                             else
+                            {
                                 topNode = headNode.Next;
+                            }
                             headNode = headNode.Next;
                             continue;
                         }
@@ -159,7 +174,10 @@ namespace SsitEngine.PureMVC.Core
 
                     observerMap[msgId] = topNode;
                     // 仅剩头部节点释放整个Key
-                    if (observerMap[msgId] == null) observerMap.Remove(msgId);
+                    if (observerMap[msgId] == null)
+                    {
+                        observerMap.Remove(msgId);
+                    }
                 }
             }
         }
@@ -170,7 +188,9 @@ namespace SsitEngine.PureMVC.Core
             lock (syncRoot)
             {
                 if (mediatorMap.ContainsKey(mediator.MediatorName))
+                {
                     return;
+                }
                 mediatorMap[mediator.MediatorName] = mediator;
                 var interests = mediator.ListNotificationInterests();
                 if (interests.Count > 0)
@@ -179,7 +199,10 @@ namespace SsitEngine.PureMVC.Core
                     IObserver observer = new Observer(mediator, mediator.HandleNotification);
 
                     // Register Mediator as Observer for its list of Notification interests
-                    for (var i = 0; i < interests.Count; i++) RegisterObserver(interests[i], observer);
+                    for (var i = 0; i < interests.Count; i++)
+                    {
+                        RegisterObserver(interests[i], observer);
+                    }
                 }
             }
             mediator.OnRegister();
@@ -195,7 +218,9 @@ namespace SsitEngine.PureMVC.Core
             lock (syncRoot)
             {
                 if (!mediatorMap.ContainsKey(mediatorName))
+                {
                     return null;
+                }
                 return mediatorMap[mediatorName];
             }
         }
@@ -211,14 +236,18 @@ namespace SsitEngine.PureMVC.Core
             lock (syncRoot)
             {
                 if (!mediatorMap.ContainsKey(mediatorName))
+                {
                     return null;
+                }
                 mediator = mediatorMap[mediatorName];
                 // for every notification this mediator is interested in...
                 var interests = mediator.ListNotificationInterests();
                 for (var i = 0; i < interests.Count; i++)
                     // remove the observer linking the mediator 
                     // to the notification interest
+                {
                     RemoveObserver(interests[i], mediator);
+                }
                 mediatorMap.Remove(mediatorName);
             }
             mediator.OnRemove();
@@ -263,7 +292,10 @@ namespace SsitEngine.PureMVC.Core
 
                     while (headNode != null)
                     {
-                        if (headNode.Data.CompareNotifyContext(notifyContext)) return true;
+                        if (headNode.Data.CompareNotifyContext(notifyContext))
+                        {
+                            return true;
+                        }
                         headNode = headNode.Next;
                     }
                 }

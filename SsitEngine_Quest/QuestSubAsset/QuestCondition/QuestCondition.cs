@@ -1,11 +1,8 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using SsitEngine.DebugLog;
+﻿using SsitEngine.DebugLog;
 using SsitEngine.Unity;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// 任务条件的抽象基类
     /// 1、设置任务节点引用
@@ -14,25 +11,24 @@ namespace SsitEngine.QuestManager
     /// </summary>
     public abstract class QuestCondition : QuestSubasset
     {
+        private bool m_isChecking;
 
         /// <summary>
         /// Delegate to call when the condition becomes true.
         /// </summary>
         protected System.Action trueAction = delegate { };
 
-        private bool m_isChecking = false;
-
         /// <summary>
         /// True if the condition is currently monitoring the requirements that would make it true.
         /// </summary>
         protected bool IsChecking
         {
-            get { return m_isChecking; }
-            set { m_isChecking = true; }
+            get => m_isChecking;
+            set => m_isChecking = true;
         }
 
-   
-        public override void SetRuntimeReferences(Quest quest, QuestNode questNode)
+
+        public override void SetRuntimeReferences( Quest quest, QuestNode questNode )
         {
             base.SetRuntimeReferences(quest, questNode);
             IsChecking = false;
@@ -42,7 +38,7 @@ namespace SsitEngine.QuestManager
         /// Tells the condition to start checking; when true, call SetTrue().
         /// </summary>
         /// <param name="trueAction">The method to invoke when the condition becomes true.</param>
-        public virtual void StartChecking(System.Action trueAction)
+        public virtual void StartChecking( System.Action trueAction )
         {
             IsChecking = true;
             this.trueAction = trueAction;
@@ -62,10 +58,10 @@ namespace SsitEngine.QuestManager
         public virtual void SetTrue()
         {
             if (Engine.Debug)
-                SsitDebug.Debug( "QuestMachine: " + GetType().Name + ".SetTrue()", quest );
+            {
+                SsitDebug.Debug("QuestMachine: " + GetType().Name + ".SetTrue()", quest);
+            }
             trueAction();
         }
-
     }
-
 }

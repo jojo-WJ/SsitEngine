@@ -51,7 +51,9 @@ namespace SsitEngine.Unity.Timer
         {
             if (m_task != null)
                 // 回收引用
+            {
                 ReferencePool.Release((IReference) m_task);
+            }
         }
 
         /// <inheritdoc />

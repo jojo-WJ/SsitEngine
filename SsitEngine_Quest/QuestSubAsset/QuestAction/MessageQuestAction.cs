@@ -2,39 +2,33 @@
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// Sends a message to the MessageSystem.
     /// </summary>
     public class MessageQuestAction : QuestAction
     {
+        [Tooltip("Message to send.")] [SerializeField]
+        private string m_message;
 
-        [Tooltip("Required message sender.")]
-        [SerializeField]
-        private QuestMessageParticipant m_senderSpecifier = QuestMessageParticipant.QuestGiver;
+        [Tooltip("Parameter to send with message.")] [SerializeField]
+        private string m_parameter;
 
         [Tooltip("ID of message sender. Can also be {QUESTERID} or {QUESTGIVERID}. If blank, uses quest giver's ID.")]
         [SerializeField]
         private string m_senderID;
 
-        [Tooltip("Required message target.")]
-        [SerializeField]
-        private QuestMessageParticipant m_targetSpecifier = QuestMessageParticipant.Any;
+        [Tooltip("Required message sender.")] [SerializeField]
+        private QuestMessageParticipant m_senderSpecifier = QuestMessageParticipant.QuestGiver;
 
-        [Tooltip("ID of message target. Can also be {QUESTERID} or {QUESTGIVERID}. Leave blank to broadcast to all listeners.")]
+        [Tooltip(
+            "ID of message target. Can also be {QUESTERID} or {QUESTGIVERID}. Leave blank to broadcast to all listeners.")]
         [SerializeField]
         private string m_targetID;
 
-        [Tooltip("Message to send.")]
-        [SerializeField]
-        private string m_message;
+        [Tooltip("Required message target.")] [SerializeField]
+        private QuestMessageParticipant m_targetSpecifier = QuestMessageParticipant.Any;
 
-        [Tooltip("Parameter to send with message.")]
-        [SerializeField]
-        private string m_parameter;
-
-        [Tooltip("Optional value to pass with message.")]
-        [SerializeField]
+        [Tooltip("Optional value to pass with message.")] [SerializeField]
         private MessageValue m_value = new MessageValue();
 
         /// <summary>
@@ -42,8 +36,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public QuestMessageParticipant SenderSpecifier
         {
-            get { return m_senderSpecifier; }
-            set { m_senderSpecifier = value; }
+            get => m_senderSpecifier;
+            set => m_senderSpecifier = value;
         }
 
         /// <summary>
@@ -53,19 +47,14 @@ namespace SsitEngine.QuestManager
         {
             get
             {
-                if (SenderSpecifier == QuestMessageParticipant.QuestGiver || string.IsNullOrEmpty(m_senderID) || m_senderID == QuestMachineTags.QUESTGIVER)
+                if (SenderSpecifier == QuestMessageParticipant.QuestGiver || string.IsNullOrEmpty(m_senderID) ||
+                    m_senderID == QuestMachineTags.QUESTGIVER)
                 {
-                    return (quest != null) ? quest.QuestGiverId : null;
+                    return quest != null ? quest.QuestGiverId : null;
                 }
-                else
-                {
-                    return QuestMachineTags.GetIDBySpecifier(SenderSpecifier, m_senderID);
-                }
+                return QuestMachineTags.GetIDBySpecifier(SenderSpecifier, m_senderID);
             }
-            set
-            {
-                m_senderID = value;
-            }
+            set => m_senderID = value;
         }
 
         /// <summary>
@@ -73,8 +62,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public QuestMessageParticipant TargetSpecifier
         {
-            get { return m_targetSpecifier; }
-            set { m_targetSpecifier = value; }
+            get => m_targetSpecifier;
+            set => m_targetSpecifier = value;
         }
 
         /// <summary>
@@ -82,8 +71,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string TargetId
         {
-            get { return QuestMachineTags.GetIDBySpecifier(TargetSpecifier, m_targetID); }
-            set { m_targetID = value; }
+            get => QuestMachineTags.GetIDBySpecifier(TargetSpecifier, m_targetID);
+            set => m_targetID = value;
         }
 
         /// <summary>
@@ -91,8 +80,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string Message
         {
-            get { return m_message; }
-            set { m_message = value; }
+            get => m_message;
+            set => m_message = value;
         }
 
         /// <summary>
@@ -100,8 +89,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string Parameter
         {
-            get { return m_parameter; }
-            set { m_parameter = value; }
+            get => m_parameter;
+            set => m_parameter = value;
         }
 
         /// <summary>
@@ -109,34 +98,38 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public MessageValue Value
         {
-            get { return m_value; }
-            set { m_value = value; }
+            get => m_value;
+            set => m_value = value;
         }
 
-        public string RuntimeSenderId { get { return QuestMachineTags.ReplaceTags(SenderId, quest); } }
+        public string RuntimeSenderId => QuestMachineTags.ReplaceTags(SenderId, quest);
 
-        public string RuntimeTargetId { get { return QuestMachineTags.ReplaceTags(TargetId, quest); } }
+        public string RuntimeTargetId => QuestMachineTags.ReplaceTags(TargetId, quest);
 
-        public string RuntimeMessage { get { return QuestMachineTags.ReplaceTags(Message, quest); } }
+        public string RuntimeMessage => QuestMachineTags.ReplaceTags(Message, quest);
 
-        public string RuntimeParameter { get { return QuestMachineTags.ReplaceTags(Parameter, quest); } }
+        public string RuntimeParameter => QuestMachineTags.ReplaceTags(Parameter, quest);
 
-        public string RuntimeStringValue { get { return QuestMachineTags.ReplaceTags(Value.StringValue, quest); } }
+        public string RuntimeStringValue => QuestMachineTags.ReplaceTags(Value.StringValue, quest);
 
         public override string GetEditorName()
         {
-            return string.IsNullOrEmpty(m_message) ? "Message" : ("Message: " + m_message + " " + m_parameter + " " + m_value.EditorNameValue());
+            return string.IsNullOrEmpty(m_message)
+                ? "Message"
+                : "Message: " + m_message + " " + m_parameter + " " + m_value.EditorNameValue();
         }
 
         /// <summary>
         /// 事件执行派生方法
         /// </summary>
         /// <param name="node">任务节点</param>
-        public override void Execute(QuestNode node)
+        public override void Execute( QuestNode node )
         {
             if (Value == null)
+            {
                 Value = new MessageValue();
-            ushort msgid = TextUtils.ToUshort(RuntimeMessage);
+            }
+            var msgid = TextUtils.ToUshort(RuntimeMessage);
             if (msgid == 0)
             {
                 return;
@@ -144,18 +137,24 @@ namespace SsitEngine.QuestManager
             switch (Value.ValueType)
             {
                 case MessageValueType.Int:
-                    QuestUtility.SendNotification(msgid, RuntimeSenderId, RuntimeTargetId, RuntimeParameter, Value.IntValue);
+                    QuestUtility.SendNotification(msgid, RuntimeSenderId, RuntimeTargetId, RuntimeParameter,
+                        Value.IntValue);
                     break;
                 case MessageValueType.String:
-                    QuestUtility.SendNotification(msgid, RuntimeSenderId, RuntimeTargetId, RuntimeParameter, RuntimeStringValue);
+                    QuestUtility.SendNotification(msgid, RuntimeSenderId, RuntimeTargetId, RuntimeParameter,
+                        RuntimeStringValue);
                     break;
                 default:
+                {
+                    if (node != null)
                     {
-                        if (node != null)
-                            QuestUtility.SendNotification(msgid, RuntimeSenderId, RuntimeTargetId, RuntimeParameter, node);
-                        else
-                            QuestUtility.SendNotification(msgid, RuntimeSenderId, RuntimeTargetId, RuntimeParameter, quest);
+                        QuestUtility.SendNotification(msgid, RuntimeSenderId, RuntimeTargetId, RuntimeParameter, node);
                     }
+                    else
+                    {
+                        QuestUtility.SendNotification(msgid, RuntimeSenderId, RuntimeTargetId, RuntimeParameter, quest);
+                    }
+                }
 
                     break;
             }
@@ -168,9 +167,9 @@ namespace SsitEngine.QuestManager
             AddTagsToDictionary(Message);
             AddTagsToDictionary(Parameter);
             if (Value != null && Value.ValueType == MessageValueType.String)
+            {
                 AddTagsToDictionary(Value.StringValue);
+            }
         }
-
     }
-
 }

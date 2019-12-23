@@ -16,7 +16,7 @@ namespace SsitEngine.Editor
         {
             Directory.CreateDirectory(location);
 
-            using (ZipFile zip = ZipFile.Read(zipFilePath))
+            using (var zip = ZipFile.Read(zipFilePath))
             {
                 zip.ExtractAll(location, ExtractExistingFileAction.OverwriteSilently);
             }
@@ -30,7 +30,7 @@ namespace SsitEngine.Editor
         /// <param name="files"></param>
         public static void Zip( string zipFileName, string relatedStr, params string[] files )
         {
-            string path = Path.GetDirectoryName(zipFileName);
+            var path = Path.GetDirectoryName(zipFileName);
 
             Assert.IsFalse(string.IsNullOrEmpty(path));
 
@@ -39,19 +39,19 @@ namespace SsitEngine.Editor
                 Directory.CreateDirectory(path);
             }
 
-            using (ZipFile zip = new ZipFile())
+            using (var zip = new ZipFile())
             {
-                foreach (string file in files)
+                foreach (var file in files)
                 {
                     var reIndex = file.IndexOf(relatedStr, StringComparison.Ordinal);
 
-                    if ( reIndex < 0)
+                    if (reIndex < 0)
                     {
                         zip.AddFile(file, "");
                     }
                     else
                     {
-                        zip.AddFile(file,file.Substring(reIndex,file.LastIndexOf('/') - reIndex));
+                        zip.AddFile(file, file.Substring(reIndex, file.LastIndexOf('/') - reIndex));
                     }
                 }
                 zip.Save(zipFileName);

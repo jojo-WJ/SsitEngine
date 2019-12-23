@@ -147,7 +147,9 @@ namespace SsitEngine.Unity.Scene
             LoadSceneDependencyAssetCallback loadSceneDependencyAssetCallback )
         {
             if (loadSceneSuccessCallback == null)
+            {
                 throw new SsitEngineException("Load scene success callback is invalid.");
+            }
 
             LoadSceneSuccessCallback = loadSceneSuccessCallback;
             LoadSceneFailureCallback = loadSceneFailureCallback;
@@ -199,7 +201,9 @@ namespace SsitEngine.Unity.Scene
             UnloadSceneFailureCallback unloadSceneFailureCallback )
         {
             if (unloadSceneSuccessCallback == null)
+            {
                 throw new SsitEngineException("Unload scene success callback is invalid.");
+            }
 
             UnloadSceneSuccessCallback = unloadSceneSuccessCallback;
             UnloadSceneFailureCallback = unloadSceneFailureCallback;

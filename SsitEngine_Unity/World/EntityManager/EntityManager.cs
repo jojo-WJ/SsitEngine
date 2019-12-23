@@ -115,7 +115,10 @@ namespace SsitEngine.Unity.Entity
                 m_RecycleQueue.RemoveFirst();
                 var entity = entityInfo.Entity;
                 var entityGroup = (EntityGroup) entity.EntityGroup;
-                if (entityGroup == null) throw new SsitEngineException("Entity group is invalid.");
+                if (entityGroup == null)
+                {
+                    throw new SsitEngineException("Entity group is invalid.");
+                }
 
                 entityInfo.Status = EntityStatus.WillRecycle;
                 entity.OnRecycle();
@@ -123,7 +126,10 @@ namespace SsitEngine.Unity.Entity
                 entityGroup.UnspawnEntity(entity);
             }
 
-            foreach (var entityGroup in m_EntityGroups) entityGroup.Value.Update(elapsed, GameTime.Realtime);
+            foreach (var entityGroup in m_EntityGroups)
+            {
+                entityGroup.Value.Update(elapsed, GameTime.Realtime);
+            }
         }
 
         /// <inheritdoc />
@@ -151,11 +157,13 @@ namespace SsitEngine.Unity.Entity
         public void HideAllLoadedEntities( object userData )
         {
             while (m_EntityInfos.Count > 0)
+            {
                 foreach (var entityInfo in m_EntityInfos)
                 {
                     InternalHideEntity(entityInfo.Value, userData);
                     break;
                 }
+            }
         }
 
         #endregion
@@ -176,11 +184,20 @@ namespace SsitEngine.Unity.Entity
         public bool AddEntityGroup( int entityGroupName, float instanceAutoReleaseInterval, int instanceCapacity,
             float instanceExpireTime, int instancePriority, IEntityGroupHelper entityGroupHelper )
         {
-            if (entityGroupHelper == null) throw new SsitEngineException("Entity group helper is invalid.");
+            if (entityGroupHelper == null)
+            {
+                throw new SsitEngineException("Entity group helper is invalid.");
+            }
 
-            if (m_ObjectPoolManager == null) throw new SsitEngineException("You must set object pool manager first.");
+            if (m_ObjectPoolManager == null)
+            {
+                throw new SsitEngineException("You must set object pool manager first.");
+            }
 
-            if (HasEntityGroup(entityGroupName)) return false;
+            if (HasEntityGroup(entityGroupName))
+            {
+                return false;
+            }
 
             m_EntityGroups.Add(entityGroupName,
                 new EntityGroup(entityGroupName, instanceAutoReleaseInterval, instanceCapacity, instanceExpireTime,
@@ -195,7 +212,10 @@ namespace SsitEngine.Unity.Entity
         /// <param name="objectPoolManager">对象池管理器。</param>
         public void SetObjectPoolManager( IObjectPoolManager objectPoolManager )
         {
-            if (objectPoolManager == null) throw new SsitEngineException("Object pool manager is invalid.");
+            if (objectPoolManager == null)
+            {
+                throw new SsitEngineException("Object pool manager is invalid.");
+            }
 
             m_ObjectPoolManager = objectPoolManager;
         }
@@ -206,7 +226,10 @@ namespace SsitEngine.Unity.Entity
         /// <param name="resourceManager">资源管理器。</param>
         public void SetResourceManager( IResourceManager resourceManager )
         {
-            if (resourceManager == null) throw new SsitEngineException("Resource manager is invalid.");
+            if (resourceManager == null)
+            {
+                throw new SsitEngineException("Resource manager is invalid.");
+            }
 
             m_ResourceManager = resourceManager;
         }
@@ -217,7 +240,10 @@ namespace SsitEngine.Unity.Entity
         /// <param name="entityHelper">实体辅助器。</param>
         public void SetEntityHelper( IEntityHelper entityHelper )
         {
-            if (entityHelper == null) throw new SsitEngineException("Entity helper is invalid.");
+            if (entityHelper == null)
+            {
+                throw new SsitEngineException("Entity helper is invalid.");
+            }
 
             m_EntityHelper = entityHelper;
         }
@@ -244,7 +270,10 @@ namespace SsitEngine.Unity.Entity
         {
             var index = 0;
             var results = new int[m_EntitiesBeingLoaded.Count];
-            foreach (var entityBeingLoaded in m_EntitiesBeingLoaded) results[index++] = entityBeingLoaded.Key;
+            foreach (var entityBeingLoaded in m_EntitiesBeingLoaded)
+            {
+                results[index++] = entityBeingLoaded.Key;
+            }
 
             return results;
         }
@@ -255,10 +284,16 @@ namespace SsitEngine.Unity.Entity
         /// <param name="results">所有正在加载实体的编号。</param>
         public void GetAllLoadingEntityIds( List<int> results )
         {
-            if (results == null) throw new SsitEngineException("Results is invalid.");
+            if (results == null)
+            {
+                throw new SsitEngineException("Results is invalid.");
+            }
 
             results.Clear();
-            foreach (var entityBeingLoaded in m_EntitiesBeingLoaded) results.Add(entityBeingLoaded.Key);
+            foreach (var entityBeingLoaded in m_EntitiesBeingLoaded)
+            {
+                results.Add(entityBeingLoaded.Key);
+            }
         }
 
         /// <summary>
@@ -278,7 +313,10 @@ namespace SsitEngine.Unity.Entity
         /// <returns>实体是否合法。</returns>
         public bool IsValidEntity( IEntity entity )
         {
-            if (entity == null) return false;
+            if (entity == null)
+            {
+                return false;
+            }
 
             return HasEntity(entity.Id);
         }
@@ -300,11 +338,18 @@ namespace SsitEngine.Unity.Entity
         /// <returns>是否存在实体。</returns>
         public bool HasEntity( string entityAssetName )
         {
-            if (string.IsNullOrEmpty(entityAssetName)) throw new SsitEngineException("Entity asset name is invalid.");
+            if (string.IsNullOrEmpty(entityAssetName))
+            {
+                throw new SsitEngineException("Entity asset name is invalid.");
+            }
 
             foreach (var entityInfo in m_EntityInfos)
+            {
                 if (entityInfo.Value.Entity.EntityAssetName == entityAssetName)
+                {
                     return true;
+                }
+            }
 
             return false;
         }
@@ -317,7 +362,10 @@ namespace SsitEngine.Unity.Entity
             object entityInstance, bool isNewInstance, float duration, object userData )
         {
             var entity = m_EntityHelper.CreateEntity(entityInstance, entityGroup, userData);
-            if (entity == null) throw new SsitEngineException("Can not create entity in helper.");
+            if (entity == null)
+            {
+                throw new SsitEngineException("Can not create entity in helper.");
+            }
 
             var entityInfo = new EntityInfo(entity);
             m_EntityInfos.Add(entityId, entityInfo);
@@ -350,10 +398,16 @@ namespace SsitEngine.Unity.Entity
             entityInfo.Status = EntityStatus.Hidden;
 
             var entityGroup = (EntityGroup) entity.EntityGroup;
-            if (entityGroup == null) throw new SsitEngineException("Entity group is invalid.");
+            if (entityGroup == null)
+            {
+                throw new SsitEngineException("Entity group is invalid.");
+            }
 
             entityGroup.RemoveEntity(entity);
-            if (!m_EntityInfos.Remove(entity.Id)) throw new SsitEngineException("Entity info is unmanaged.");
+            if (!m_EntityInfos.Remove(entity.Id))
+            {
+                throw new SsitEngineException("Entity info is unmanaged.");
+            }
 
             /*
             if (m_HideEntityCompleteEventHandler != null)

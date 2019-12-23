@@ -33,7 +33,10 @@ namespace SsitEngine.Unity.Setting
         /// <param name="settingHelper">配置辅助器。</param>
         public void SetSettingHelper( ISettingHelper settingHelper )
         {
-            if (settingHelper == null) throw new SsitEngineException("Setting helper is invalid.");
+            if (settingHelper == null)
+            {
+                throw new SsitEngineException("Setting helper is invalid.");
+            }
 
             m_SettingHelper = settingHelper;
         }
@@ -63,7 +66,10 @@ namespace SsitEngine.Unity.Setting
         /// <returns>指定的配置项是否存在。</returns>
         public bool HasSetting( string settingName )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.HasSetting(settingName);
         }
@@ -74,7 +80,10 @@ namespace SsitEngine.Unity.Setting
         /// <param name="settingName">要移除配置项的名称。</param>
         public void RemoveSetting( string settingName )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             m_SettingHelper.RemoveSetting(settingName);
         }
@@ -94,7 +103,10 @@ namespace SsitEngine.Unity.Setting
         /// <returns>读取的布尔值。</returns>
         public bool GetBool( string settingName )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.GetBool(settingName);
         }
@@ -107,7 +119,10 @@ namespace SsitEngine.Unity.Setting
         /// <returns>读取的布尔值。</returns>
         public bool GetBool( string settingName, bool defaultValue )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.GetBool(settingName, defaultValue);
         }
@@ -119,7 +134,10 @@ namespace SsitEngine.Unity.Setting
         /// <param name="value">要写入的布尔值。</param>
         public void SetBool( string settingName, bool value )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             m_SettingHelper.SetBool(settingName, value);
         }
@@ -131,7 +149,10 @@ namespace SsitEngine.Unity.Setting
         /// <returns>读取的整数值。</returns>
         public int GetInt( string settingName )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.GetInt(settingName);
         }
@@ -144,7 +165,10 @@ namespace SsitEngine.Unity.Setting
         /// <returns>读取的整数值。</returns>
         public int GetInt( string settingName, int defaultValue )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.GetInt(settingName, defaultValue);
         }
@@ -156,7 +180,10 @@ namespace SsitEngine.Unity.Setting
         /// <param name="value">要写入的整数值。</param>
         public void SetInt( string settingName, int value )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             m_SettingHelper.SetInt(settingName, value);
         }
@@ -168,7 +195,10 @@ namespace SsitEngine.Unity.Setting
         /// <returns>读取的浮点数值。</returns>
         public float GetFloat( string settingName )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.GetFloat(settingName);
         }
@@ -181,7 +211,10 @@ namespace SsitEngine.Unity.Setting
         /// <returns>读取的浮点数值。</returns>
         public float GetFloat( string settingName, float defaultValue )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.GetFloat(settingName, defaultValue);
         }
@@ -193,7 +226,10 @@ namespace SsitEngine.Unity.Setting
         /// <param name="value">要写入的浮点数值。</param>
         public void SetFloat( string settingName, float value )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             m_SettingHelper.SetFloat(settingName, value);
         }
@@ -205,7 +241,10 @@ namespace SsitEngine.Unity.Setting
         /// <returns>读取的字符串值。</returns>
         public string GetString( string settingName )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.GetString(settingName);
         }
@@ -218,7 +257,10 @@ namespace SsitEngine.Unity.Setting
         /// <returns>读取的字符串值。</returns>
         public string GetString( string settingName, string defaultValue )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.GetString(settingName, defaultValue);
         }
@@ -230,7 +272,10 @@ namespace SsitEngine.Unity.Setting
         /// <param name="value">要写入的字符串值。</param>
         public void SetString( string settingName, string value )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             m_SettingHelper.SetString(settingName, value);
         }
@@ -243,7 +288,10 @@ namespace SsitEngine.Unity.Setting
         /// <returns>读取的对象。</returns>
         public T GetObject<T>( string settingName )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.GetObject<T>(settingName);
         }
@@ -256,9 +304,15 @@ namespace SsitEngine.Unity.Setting
         /// <returns></returns>
         public object GetObject( Type objectType, string settingName )
         {
-            if (objectType == null) throw new SsitEngineException("Object type is invalid.");
+            if (objectType == null)
+            {
+                throw new SsitEngineException("Object type is invalid.");
+            }
 
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.GetObject(objectType, settingName);
         }
@@ -272,7 +326,10 @@ namespace SsitEngine.Unity.Setting
         /// <returns>读取的对象。</returns>
         public T GetObject<T>( string settingName, T defaultObj )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.GetObject(settingName, defaultObj);
         }
@@ -286,9 +343,15 @@ namespace SsitEngine.Unity.Setting
         /// <returns></returns>
         public object GetObject( Type objectType, string settingName, object defaultObj )
         {
-            if (objectType == null) throw new SsitEngineException("Object type is invalid.");
+            if (objectType == null)
+            {
+                throw new SsitEngineException("Object type is invalid.");
+            }
 
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             return m_SettingHelper.GetObject(objectType, settingName, defaultObj);
         }
@@ -301,7 +364,10 @@ namespace SsitEngine.Unity.Setting
         /// <param name="obj">要写入的对象。</param>
         public void SetObject<T>( string settingName, T obj )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             m_SettingHelper.SetObject(settingName, obj);
         }
@@ -313,7 +379,10 @@ namespace SsitEngine.Unity.Setting
         /// <param name="obj">要写入的对象。</param>
         public void SetObject( string settingName, object obj )
         {
-            if (string.IsNullOrEmpty(settingName)) throw new SsitEngineException("Setting name is invalid.");
+            if (string.IsNullOrEmpty(settingName))
+            {
+                throw new SsitEngineException("Setting name is invalid.");
+            }
 
             m_SettingHelper.SetObject(settingName, obj);
         }

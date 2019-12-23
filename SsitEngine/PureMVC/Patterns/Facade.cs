@@ -53,11 +53,15 @@ namespace SsitEngine.PureMVC.Patterns
             get
             {
                 if (instance == null)
+                {
                     lock (StaticSyncRoot)
                     {
                         if (instance == null)
+                        {
                             instance = new Facade();
+                        }
                     }
+                }
                 return instance;
             }
         }
@@ -69,7 +73,10 @@ namespace SsitEngine.PureMVC.Patterns
         /// <returns>外包装器</returns>
         public static IFacade GetInstance( Func<IFacade> facadeFunc )
         {
-            if (instance == null) instance = facadeFunc();
+            if (instance == null)
+            {
+                instance = facadeFunc();
+            }
             return instance;
         }
 
@@ -298,7 +305,9 @@ namespace SsitEngine.PureMVC.Patterns
         protected virtual void InitializeController()
         {
             if (controller != null)
+            {
                 return;
+            }
             controller = Controller.Instance;
         }
 
@@ -308,7 +317,9 @@ namespace SsitEngine.PureMVC.Patterns
         protected virtual void InitializeModel()
         {
             if (model != null)
+            {
                 return;
+            }
             model = Model.Instance;
         }
 
@@ -318,7 +329,9 @@ namespace SsitEngine.PureMVC.Patterns
         protected virtual void InitializeView()
         {
             if (view != null)
+            {
                 return;
+            }
             view = View.Instance;
         }
 

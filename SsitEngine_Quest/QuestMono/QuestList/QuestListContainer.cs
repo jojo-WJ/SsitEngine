@@ -1,34 +1,29 @@
-﻿using UnityEngine;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using SsitEngine.DebugLog;
 using SsitEngine.Unity;
+using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// 维护对象上的任务列表
     /// </summary>
     public class QuestListContainer : MonoBehaviour
     {
-
         #region Serialized Fields
 
-        [Tooltip( "Forward quest state events to listeners that have registered for events such as questBecameOfferable, questStateChanged, and questNodeStateChanged." )]
+        [Tooltip(
+            "Forward quest state events to listeners that have registered for events such as questBecameOfferable, questStateChanged, and questNodeStateChanged.")]
         [SerializeField]
-        private bool m_forwardEventsToListeners = false;
+        private bool m_forwardEventsToListeners;
 
-        [Tooltip( "Include in saved game data." )]
-        [SerializeField]
-        private bool m_includeInSavedGameData = false;
+        [Tooltip("Include in saved game data.")] [SerializeField]
+        private bool m_includeInSavedGameData;
 
-        [Tooltip( "The current quest list. At runtime, these are runtime instances of quests." )]
-        [SerializeField]
+        [Tooltip("The current quest list. At runtime, these are runtime instances of quests.")] [SerializeField]
         private List<Quest> m_questList = new List<Quest>();
 
-        [Tooltip( "IDs of static quests that have been deleted and shouldn't be instantiated." )]
-        [SerializeField]
+        [Tooltip("IDs of static quests that have been deleted and shouldn't be instantiated.")] [SerializeField]
         private List<string> m_deletedStaticQuests = new List<string>();
 
         #endregion
@@ -41,8 +36,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public bool forwardEventsToListeners
         {
-            get { return m_forwardEventsToListeners; }
-            set { m_forwardEventsToListeners = value; }
+            get => m_forwardEventsToListeners;
+            set => m_forwardEventsToListeners = value;
         }
 
         /// <summary>
@@ -50,8 +45,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public bool includeInSavedGameData
         {
-            get { return m_includeInSavedGameData; }
-            set { m_includeInSavedGameData = value; }
+            get => m_includeInSavedGameData;
+            set => m_includeInSavedGameData = value;
         }
 
         /// <summary>
@@ -59,8 +54,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public List<Quest> questList
         {
-            get { return m_questList; }
-            protected set { m_questList = value; }
+            get => m_questList;
+            protected set => m_questList = value;
         }
 
         /// <summary>
@@ -68,27 +63,39 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public List<string> deletedStaticQuests
         {
-            get { return m_deletedStaticQuests; }
-            protected set { m_deletedStaticQuests = value; }
+            get => m_deletedStaticQuests;
+            protected set => m_deletedStaticQuests = value;
         }
 
         #endregion
 
         #region Mono
-        public virtual void Awake() { }
 
-        public virtual void Start() { }
+        public virtual void Awake()
+        {
+        }
 
-        public virtual void Reset() { }
+        public virtual void Start()
+        {
+        }
 
-        public virtual void OnEnable() { }
+        public virtual void Reset()
+        {
+        }
 
-        public virtual void OnDisable() { }
+        public virtual void OnEnable()
+        {
+        }
+
+        public virtual void OnDisable()
+        {
+        }
 
         public virtual void OnDestroy()
         {
             DestroyQuestInstances();
         }
+
         #endregion
 
         #region Runtime Properties
@@ -127,7 +134,6 @@ namespace SsitEngine.QuestManager
 
         #region Initialization
 
-
         public void OnInit()
         {
             originalQuestList = questList;
@@ -142,15 +148,18 @@ namespace SsitEngine.QuestManager
         private void InstantiateQuestAssets()
         {
             questList = new List<Quest>();
-            AddQuests( originalQuestList );
+            AddQuests(originalQuestList);
         }
 
         public void DestroyQuestInstances()
         {
-            if (questList == null || questList.Count == 0) return;
-            for (int i = questList.Count - 1; i >= 0; i--)
+            if (questList == null || questList.Count == 0)
             {
-                DeleteQuest( questList[i] );
+                return;
+            }
+            for (var i = questList.Count - 1; i >= 0; i--)
+            {
+                DeleteQuest(questList[i]);
             }
         }
 
@@ -169,40 +178,55 @@ namespace SsitEngine.QuestManager
 
         public virtual void AddQuests( List<Quest> listToAdd )
         {
-            if (listToAdd == null) return;
-            for (int i = 0; i < listToAdd.Count; i++)
+            if (listToAdd == null)
             {
-                AddQuest( listToAdd[i] );
+                return;
+            }
+            for (var i = 0; i < listToAdd.Count; i++)
+            {
+                AddQuest(listToAdd[i]);
             }
         }
 
         public virtual Quest AddQuest( Quest quest )
         {
             if (quest == null)
+            {
                 return null;
-            if (deletedStaticQuests.Contains( quest.Id ))
+            }
+            if (deletedStaticQuests.Contains(quest.Id))
+            {
                 return null;
+            }
             var instance = quest.IsAsset ? quest.Clone() : quest;
             if (instance == null)
+            {
                 return null;
-            questList.Add( instance );
-            QuestUtility.RegisterQuestInstance( instance );
-            RegisterForQuestEvents( instance );
+            }
+            questList.Add(instance);
+            QuestUtility.RegisterQuestInstance(instance);
+            RegisterForQuestEvents(instance);
             instance.RuntimeStartup();
             return instance;
         }
 
         public virtual Quest FindQuest( string questID )
         {
-            if (string.IsNullOrEmpty( questID ))
+            if (string.IsNullOrEmpty(questID))
+            {
                 return null;
-            for (int i = 0; i < questList.Count; i++)
+            }
+            for (var i = 0; i < questList.Count; i++)
             {
                 var quest = questList[i];
                 if (quest == null)
+                {
                     continue;
-                if (string.Equals( questID, quest.Id ))
+                }
+                if (string.Equals(questID, quest.Id))
+                {
                     return quest;
+                }
             }
             return null;
         }
@@ -210,43 +234,49 @@ namespace SsitEngine.QuestManager
 
         public virtual bool ContainsQuest( string questID )
         {
-            return FindQuest( questID ) != null;
+            return FindQuest(questID) != null;
         }
 
 
         public virtual void DeleteQuest( string questID )
         {
-            DeleteQuest( FindQuest( questID ) );
+            DeleteQuest(FindQuest(questID));
         }
 
         public virtual void DeleteQuest( Quest quest )
         {
             if (quest == null)
+            {
                 return;
-            questList.Remove( quest );
+            }
+            questList.Remove(quest);
             if (!quest.IsProcedurallyGenerated)
             {
                 //var questID = StringField.GetStringValue(quest.id  );
-                if (!deletedStaticQuests.Contains( quest.Id ))
-                    deletedStaticQuests.Add( quest.Id );
+                if (!deletedStaticQuests.Contains(quest.Id))
+                {
+                    deletedStaticQuests.Add(quest.Id);
+                }
             }
-            UnregisterForQuestEvents( quest );
-            QuestUtility.UnregisterQuestInstance( quest );
-            Quest.DestroyInstance( quest );
+            UnregisterForQuestEvents(quest);
+            QuestUtility.UnregisterQuestInstance(quest);
+            Quest.DestroyInstance(quest);
         }
 
         public virtual void RegisterForQuestEvents( Quest quest )
         {
             if (quest == null || !forwardEventsToListeners)
+            {
                 return;
+            }
             if (Engine.Debug)
             {
-                SsitDebug.Debug( "绑定监听事件" );
+                SsitDebug.Debug("绑定监听事件");
             }
-            questAdded( quest );
+            questAdded(quest);
             quest.OnQuestOfferable += OnOnQuestBecameOfferable;
             quest.OnQueststateChanged += OnQuestOnQueststateChanged;
-            for (int i = 0; i < quest.NodeList.Count; i++)
+            for (var i = 0; i < quest.NodeList.Count; i++)
             {
                 quest.NodeList[i].OnStateChanged += OnQuestNodeOnStateChanged;
             }
@@ -254,11 +284,14 @@ namespace SsitEngine.QuestManager
 
         public virtual void UnregisterForQuestEvents( Quest quest )
         {
-            if (quest == null || !forwardEventsToListeners) return;
-            questRemoved( quest );
+            if (quest == null || !forwardEventsToListeners)
+            {
+                return;
+            }
+            questRemoved(quest);
             quest.OnQuestOfferable -= OnOnQuestBecameOfferable;
             quest.OnQueststateChanged -= OnQuestOnQueststateChanged;
-            for (int i = 0; i < quest.NodeList.Count; i++)
+            for (var i = 0; i < quest.NodeList.Count; i++)
             {
                 quest.NodeList[i].OnStateChanged -= OnQuestNodeOnStateChanged;
             }
@@ -266,20 +299,19 @@ namespace SsitEngine.QuestManager
 
         public virtual void OnOnQuestBecameOfferable( Quest quest )
         {
-            questBecameOfferable( quest );
+            questBecameOfferable(quest);
         }
 
         public virtual void OnQuestOnQueststateChanged( Quest quest )
         {
-            questStateChanged( quest );
+            questStateChanged(quest);
         }
 
         public virtual void OnQuestNodeOnStateChanged( QuestNode questNode )
         {
-            questNodeStateChanged( questNode );
+            questNodeStateChanged(questNode);
         }
 
         #endregion
-
     }
 }

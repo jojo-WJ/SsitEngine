@@ -13,11 +13,15 @@ public static class UnityTransformExtension
     public static T Find<T>( T parentTras, string goName ) where T : Component
     {
         if (goName == parentTras.name)
+        {
             return parentTras.transform.GetComponent<T>();
+        }
         //现在parentTrans的第一层找，找不见再去它的子物体中去找
         var child = parentTras.transform.Find(goName);
         if (child != null)
+        {
             return child.GetComponent<T>();
+        }
 
         Transform go = null;
         for (var i = 0; i < parentTras.transform.childCount; i++)
@@ -25,7 +29,9 @@ public static class UnityTransformExtension
             child = parentTras.transform.GetChild(i);
             go = Find(child, goName);
             if (go != null)
+            {
                 return go.GetComponent<T>();
+            }
         }
         return null;
     }
@@ -62,7 +68,10 @@ public static class UnityTransformExtension
     public static T Find<T>( this Transform parentTras, string goName = null ) where T : Component
     {
         var tran = Find(parentTras, goName);
-        if (tran == null || tran.GetComponent<T>() == false) return null;
+        if (tran == null || tran.GetComponent<T>() == false)
+        {
+            return null;
+        }
 
 
         return tran.GetComponent<T>();
@@ -77,7 +86,10 @@ public static class UnityTransformExtension
         for (var i = 0; i < parent.transform.childCount; i++)
         {
             var t = parent.transform.GetChild(i).GetComponent<T>();
-            if (t) childList.Add(t);
+            if (t)
+            {
+                childList.Add(t);
+            }
         }
 
         return childList;

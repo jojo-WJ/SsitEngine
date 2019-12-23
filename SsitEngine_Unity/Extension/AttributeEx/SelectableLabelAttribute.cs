@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
-#endif 
+
+#endif
 public class SelectableLabelAttribute : PropertyAttribute
 {
     public string text;
 
-    public SelectableLabelAttribute(string text)
+    public SelectableLabelAttribute( string text )
     {
         this.text = text;
     }
@@ -17,23 +18,15 @@ public class SelectableLabelAttribute : PropertyAttribute
 [CustomPropertyDrawer(typeof(SelectableLabelAttribute))]
 public class SelectableLabelDrawer : PropertyDrawer
 {
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    private SelectableLabelAttribute selectableLabelAttribute => (SelectableLabelAttribute) attribute;
+
+    public override void OnGUI( Rect position, SerializedProperty property, GUIContent label )
     {
         EditorGUI.SelectableLabel(position, selectableLabelAttribute.text);
     }
 
-    private SelectableLabelAttribute selectableLabelAttribute
+    public override float GetPropertyHeight( SerializedProperty property, GUIContent label )
     {
-        get
-        {
-            return (SelectableLabelAttribute)attribute;
-        }
-    }
-
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-    {
-
-
         return selectableLabelAttribute.text.Split('\n').Length * base.GetPropertyHeight(property, label);
     }
 }

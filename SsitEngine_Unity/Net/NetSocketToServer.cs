@@ -20,8 +20,6 @@ namespace SsitEngine.Unity.NetSocket
         private readonly NetSocket clientSocket;
         private readonly NetSocket.NormalNetCallBack m_callBackConnect;
         private readonly NetSocket.NormalNetCallBack m_callBackDisConnect;
-
-        private NetSocket.NormalNetCallBack m_callBackNormal;
         private readonly NetSocket.ReceiveCallBack m_callBackReceive;
         private readonly NetSocket.NormalNetCallBack m_callBackSend;
         private readonly IMessageDecoder m_messageDecoder;
@@ -30,6 +28,8 @@ namespace SsitEngine.Unity.NetSocket
         private readonly IMessageRouter m_messageRouter;
         private readonly Queue<IMessagePackage> receiveMessagePool = new Queue<IMessagePackage>();
         private readonly Queue<IMessagePackage> sendMessagePool = new Queue<IMessagePackage>();
+
+        private NetSocket.NormalNetCallBack m_callBackNormal;
 
         private Thread sendThread;
 
@@ -96,7 +96,10 @@ namespace SsitEngine.Unity.NetSocket
         private void ReceiveCallBack( bool isSuccess, ErrorSockets error, string expection, byte[] byteData,
             string strMsg )
         {
-            if (isSuccess) ReceiveMsgToNetMsg(byteData);
+            if (isSuccess)
+            {
+                ReceiveMsgToNetMsg(byteData);
+            }
             m_callBackReceive(isSuccess, error, expection, byteData, strMsg);
         }
 
@@ -107,7 +110,10 @@ namespace SsitEngine.Unity.NetSocket
 
         private void DisConnectCallBack( bool isSuccess, ErrorSockets error, string expection )
         {
-            if (isSuccess) sendThread.Abort();
+            if (isSuccess)
+            {
+                sendThread.Abort();
+            }
             m_callBackDisConnect(isSuccess, error, expection);
         }
 
@@ -127,8 +133,12 @@ namespace SsitEngine.Unity.NetSocket
         public void Update()
         {
             if (receiveMessagePool != null && receiveMessagePool.Count > 0)
+            {
                 while (receiveMessagePool.Count > 0)
+                {
                     AnalyseData(receiveMessagePool.Dequeue());
+                }
+            }
         }
 
         /// TODO :ADD MORE
@@ -150,7 +160,10 @@ namespace SsitEngine.Unity.NetSocket
         {
             //反序列化
             var pack = m_messageDecoder.decode(data);
-            if (pack == null) return;
+            if (pack == null)
+            {
+                return;
+            }
             receiveMessagePool.Enqueue(pack);
         }
 

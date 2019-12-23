@@ -1,52 +1,44 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class PublishConfigInfo : ScriptableObject
 {
     public PublishConfig mConfig;
 
     public void Initialize()
     {
-
     }
-
 }
 
 
-
-
-[System.Serializable]
+[Serializable]
 public class PublishConfig
 {
+    public AndriodConfig andriodConfig;
     public GameEngineConfig baseConfig;
-
-    public PcConfig pcConfig;
 
     public IosConfig iosConfig;
 
-    public AndriodConfig andriodConfig;
-
+    public PcConfig pcConfig;
 }
-[System.Serializable]
 
+[Serializable]
 public class GameEngineConfig
 {
     public string CompanyName;
     public string ProductName;
 }
-[System.Serializable]
 
+[Serializable]
 public class PcConfig
 {
     public string OutPath;
 }
-[System.Serializable]
+
+[Serializable]
 public class AndriodConfig
 {
-    public string OutPath;
-
-    public string ScriptingDefine;
-
     public string ApplicationIdentifier;
 
     public string BundleVersion;
@@ -56,9 +48,12 @@ public class AndriodConfig
     public string KeystoreName;
 
     public string KeystorePass;
+    public string OutPath;
+
+    public string ScriptingDefine;
 }
 
-[System.Serializable]
+[Serializable]
 public class IosConfig
 {
     public string OutPath;

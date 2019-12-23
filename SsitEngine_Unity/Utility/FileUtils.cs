@@ -15,7 +15,6 @@ using System.Security.Cryptography;
 using SsitEngine.DebugLog;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Networking;
 
 namespace SsitEngine.Unity
 {
@@ -53,7 +52,10 @@ namespace SsitEngine.Unity
                 return string.Empty;
             }
 
-            if (string.IsNullOrEmpty(savePath)) savePath = Application.persistentDataPath;
+            if (string.IsNullOrEmpty(savePath))
+            {
+                savePath = Application.persistentDataPath;
+            }
 
             var filePath = savePath + "/" + name;
 
@@ -84,9 +86,15 @@ namespace SsitEngine.Unity
             if (Directory.Exists(folderPath))
             {
                 var searchResult = Directory.GetFiles(folderPath, $"{uuid}.*");
-                if (searchResult.Length == 0) return null;
+                if (searchResult.Length == 0)
+                {
+                    return null;
+                }
 
-                if (searchResult.Length != 1) SsitDebug.Warning("you search folder is not simple one");
+                if (searchResult.Length != 1)
+                {
+                    SsitDebug.Warning("you search folder is not simple one");
+                }
                 return searchResult[0];
             }
 
@@ -116,10 +124,16 @@ namespace SsitEngine.Unity
         public static void CopyFolder( string srcPath, string destPath )
         {
             //如果源文件夹不存在，则创建
-            if (!Directory.Exists(srcPath)) Directory.CreateDirectory(srcPath);
+            if (!Directory.Exists(srcPath))
+            {
+                Directory.CreateDirectory(srcPath);
+            }
 
             //如果目标文件夹中没有源文件夹则在目标文件夹中创建源文件夹
-            if (!Directory.Exists(destPath)) Directory.CreateDirectory(destPath);
+            if (!Directory.Exists(destPath))
+            {
+                Directory.CreateDirectory(destPath);
+            }
 
             var dir = new DirectoryInfo(srcPath);
 
@@ -139,8 +153,13 @@ namespace SsitEngine.Unity
 
 
                 if (tmpFile is FileInfo)
+                {
                     File.Copy(tmpSoure, tmpDist, true);
-                else if (tmpFile is DirectoryInfo) CopyFolder(tmpSoure, tmpDist);
+                }
+                else if (tmpFile is DirectoryInfo)
+                {
+                    CopyFolder(tmpSoure, tmpDist);
+                }
             }
         }
 
@@ -152,8 +171,8 @@ namespace SsitEngine.Unity
         public static void CopyFolderFormStreamToPersitentPath( string streamPath, Action onFinishedAction = null )
         {
             Assert.IsFalse(string.IsNullOrEmpty(streamPath));
-            string sP = Path.Combine(Application.streamingAssetsPath, streamPath);
-            string pP = Path.Combine(Application.persistentDataPath, streamPath);
+            var sP = Path.Combine(Application.streamingAssetsPath, streamPath);
+            var pP = Path.Combine(Application.persistentDataPath, streamPath);
             if (!File.Exists(pP))
             {
 #if !UNITY_EDITOR && UNITY_ANDROID
@@ -185,14 +204,14 @@ namespace SsitEngine.Unity
                     }
                 }
 #else
-                string folderPath = Path.GetDirectoryName(pP);
+                var folderPath = Path.GetDirectoryName(pP);
                 Assert.IsFalse(string.IsNullOrEmpty(folderPath), "存放路径不存在");
                 if (!Directory.Exists(folderPath))
                 {
                     //创建文件夹
                     Directory.CreateDirectory(folderPath);
                 }
-                File.Copy(sP, pP,true);
+                File.Copy(sP, pP, true);
                 onFinishedAction?.Invoke();
 #endif
             }
@@ -210,16 +229,16 @@ namespace SsitEngine.Unity
         public static void CopyFolderFormStreamToPersitentPath( List<string> streamPaths,
             Action onFinishedAction = null )
         {
-            int copyCount = streamPaths.Count;
+            var copyCount = streamPaths.Count;
 
-            int curCopyCount = 0;
+            var curCopyCount = 0;
 
             void OnListener()
             {
                 curCopyCount++;
             }
 
-            for (int i = 0; i < streamPaths.Count; i++)
+            for (var i = 0; i < streamPaths.Count; i++)
             {
                 CopyFolderFormStreamToPersitentPath(streamPaths[i], OnListener);
             }
@@ -237,7 +256,9 @@ namespace SsitEngine.Unity
                 {
                     var fi = new FileInfo(d);
                     if (fi.Attributes.ToString().IndexOf("ReadOnly", StringComparison.Ordinal) != -1)
+                    {
                         fi.Attributes = FileAttributes.Normal;
+                    }
                     File.Delete(d);
                 }
                 else
@@ -245,10 +266,16 @@ namespace SsitEngine.Unity
                     DeleteFolder(d);
                 }
 
-                if (Directory.Exists(d)) Directory.Delete(d);
+                if (Directory.Exists(d))
+                {
+                    Directory.Delete(d);
+                }
             }
 
-            if (Directory.Exists(dir)) Directory.Delete(dir);
+            if (Directory.Exists(dir))
+            {
+                Directory.Delete(dir);
+            }
         }
 
         #endregion
@@ -257,14 +284,20 @@ namespace SsitEngine.Unity
 
         public static void MemCpy( byte[] des, byte[] source, int desStart )
         {
-            if (des == null || source == null) return;
+            if (des == null || source == null)
+            {
+                return;
+            }
 
             Buffer.BlockCopy(source, 0, des, desStart, source.Length);
         }
 
         public static void MemCpy( byte[] des, int desStart, byte[] sou, int souStart, int length )
         {
-            if (des == null || sou == null) return;
+            if (des == null || sou == null)
+            {
+                return;
+            }
 
             Buffer.BlockCopy(sou, souStart, des, desStart, length);
         }
@@ -276,7 +309,10 @@ namespace SsitEngine.Unity
 
         public static void MemCpy( byte[] des, byte[] sou, int desStart, int souStart, int length )
         {
-            if (des.Length - desStart < length || sou.Length - souStart < length) return;
+            if (des.Length - desStart < length || sou.Length - souStart < length)
+            {
+                return;
+            }
 
             Buffer.BlockCopy(sou, souStart, des, desStart, length);
         }

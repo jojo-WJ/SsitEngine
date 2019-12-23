@@ -25,8 +25,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public bool RememberCompletedQuests
         {
-            get { return m_rememberCompletedQuests; }
-            set { m_rememberCompletedQuests = value; }
+            get => m_rememberCompletedQuests;
+            set => m_rememberCompletedQuests = value;
         }
 
         public override void Reset()

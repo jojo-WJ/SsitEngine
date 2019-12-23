@@ -1,8 +1,5 @@
-﻿
-
-namespace SsitEngine.QuestManager
+﻿namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// 任务可以进入的状态.
     /// [注意]任务节点的状态归属任务节点自己
@@ -39,5 +36,4 @@ namespace SsitEngine.QuestManager
         /// </summary>
         Disabled
     }
-
 }

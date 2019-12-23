@@ -75,7 +75,10 @@ namespace SsitEngine.Unity.WebRequest
         /// <param name="task">要处理的 Web 请求任务。</param>
         public void Start( WebRequestTask task, float elapseSeconds )
         {
-            if (task == null) throw new SsitEngineException();
+            if (task == null)
+            {
+                throw new SsitEngineException();
+            }
 
             Task = task;
             Task.Status = WebRequestTaskStatus.Doing;

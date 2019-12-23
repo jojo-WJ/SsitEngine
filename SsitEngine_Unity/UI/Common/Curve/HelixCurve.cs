@@ -38,7 +38,9 @@ namespace SsitEngine.Unity.UI.Common.Curve
                 var num1 = 0.0f;
                 var num2 = MaxKey * 0.05f;
                 for (var radian = 0.0f; (double) radian < (double) MaxKey; radian += num2)
+                {
                     num1 += Vector3.Distance(GetPointAt(radian), GetPointAt(radian + num2));
+                }
                 return num1;
             }
         }
@@ -67,7 +69,9 @@ namespace SsitEngine.Unity.UI.Common.Curve
             float radian )
         {
             if (maxRadian == 0.0)
+            {
                 maxRadian = Mathf.Epsilon;
+            }
             return Vector3.Lerp(EllipseCurve.GetPointAt(bottomEllipse, radian),
                 EllipseCurve.GetPointAt(topEllipse, radian), radian / maxRadian);
         }

@@ -7,20 +7,20 @@ namespace SsitEngine.Editor
     [CustomEditor(typeof(LoopListView2))]
     public class LoopListViewEditor2 : UnityEditor.Editor
     {
+        private SerializedProperty mArrangeType;
+        private readonly GUIContent mArrangeTypeGuiContent = new GUIContent("ArrangeType");
+        private SerializedProperty mItemPrefabDataList;
+        private readonly GUIContent mItemPrefabListContent = new GUIContent("ItemPrefabList");
+        private SerializedProperty mItemSnapEnable;
+        private readonly GUIContent mItemSnapEnableContent = new GUIContent("ItemSnapEnable");
+        private SerializedProperty mItemSnapPivot;
+        private readonly GUIContent mItemSnapPivotContent = new GUIContent("ItemSnapPivot");
 
-        SerializedProperty mSupportScrollBar;
-        SerializedProperty mItemSnapEnable;
-        SerializedProperty mArrangeType;
-        SerializedProperty mItemPrefabDataList;
-        SerializedProperty mItemSnapPivot;
-        SerializedProperty mViewPortSnapPivot;
+        private SerializedProperty mSupportScrollBar;
 
-        GUIContent mSupportScrollBarContent = new GUIContent("SupportScrollBar");
-        GUIContent mItemSnapEnableContent = new GUIContent("ItemSnapEnable");
-        GUIContent mArrangeTypeGuiContent = new GUIContent("ArrangeType");
-        GUIContent mItemPrefabListContent = new GUIContent("ItemPrefabList");
-        GUIContent mItemSnapPivotContent = new GUIContent("ItemSnapPivot");
-        GUIContent mViewPortSnapPivotContent = new GUIContent("ViewPortSnapPivot");
+        private readonly GUIContent mSupportScrollBarContent = new GUIContent("SupportScrollBar");
+        private SerializedProperty mViewPortSnapPivot;
+        private readonly GUIContent mViewPortSnapPivotContent = new GUIContent("ViewPortSnapPivot");
 
         protected virtual void OnEnable()
         {
@@ -33,7 +33,7 @@ namespace SsitEngine.Editor
         }
 
 
-        void ShowItemPrefabDataList( LoopListView2 listView )
+        private void ShowItemPrefabDataList( LoopListView2 listView )
         {
             EditorGUILayout.PropertyField(mItemPrefabDataList, mItemPrefabListContent);
             if (mItemPrefabDataList.isExpanded == false)
@@ -46,20 +46,20 @@ namespace SsitEngine.Editor
                 mItemPrefabDataList.InsertArrayElementAtIndex(mItemPrefabDataList.arraySize);
                 if (mItemPrefabDataList.arraySize > 0)
                 {
-                    SerializedProperty itemData = mItemPrefabDataList.GetArrayElementAtIndex(mItemPrefabDataList.arraySize - 1);
-                    SerializedProperty mItemPrefab = itemData.FindPropertyRelative("mItemPrefab");
+                    var itemData = mItemPrefabDataList.GetArrayElementAtIndex(mItemPrefabDataList.arraySize - 1);
+                    var mItemPrefab = itemData.FindPropertyRelative("mItemPrefab");
                     mItemPrefab.objectReferenceValue = null;
                 }
             }
-            int removeIndex = -1;
+            var removeIndex = -1;
             EditorGUILayout.PropertyField(mItemPrefabDataList.FindPropertyRelative("Array.size"));
-            for (int i = 0; i < mItemPrefabDataList.arraySize; i++)
+            for (var i = 0; i < mItemPrefabDataList.arraySize; i++)
             {
-                SerializedProperty itemData = mItemPrefabDataList.GetArrayElementAtIndex(i);
-                SerializedProperty mInitCreateCount = itemData.FindPropertyRelative("mInitCreateCount");
-                SerializedProperty mItemPrefab = itemData.FindPropertyRelative("mItemPrefab");
-                SerializedProperty mItemPrefabPadding = itemData.FindPropertyRelative("mPadding");
-                SerializedProperty mItemStartPosOffset = itemData.FindPropertyRelative("mStartPosOffset");
+                var itemData = mItemPrefabDataList.GetArrayElementAtIndex(i);
+                var mInitCreateCount = itemData.FindPropertyRelative("mInitCreateCount");
+                var mItemPrefab = itemData.FindPropertyRelative("mItemPrefab");
+                var mItemPrefabPadding = itemData.FindPropertyRelative("mPadding");
+                var mItemStartPosOffset = itemData.FindPropertyRelative("mStartPosOffset");
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.PropertyField(itemData);
                 if (GUILayout.Button("Remove"))
@@ -71,15 +71,20 @@ namespace SsitEngine.Editor
                 {
                     continue;
                 }
-                mItemPrefab.objectReferenceValue = EditorGUILayout.ObjectField("ItemPrefab", mItemPrefab.objectReferenceValue, typeof(GameObject), true);
-                mItemPrefabPadding.floatValue = EditorGUILayout.FloatField("ItemPadding", mItemPrefabPadding.floatValue);
-                if (listView.ArrangeType == ListItemArrangeType.TopToBottom || listView.ArrangeType == ListItemArrangeType.BottomToTop)
+                mItemPrefab.objectReferenceValue = EditorGUILayout.ObjectField("ItemPrefab",
+                    mItemPrefab.objectReferenceValue, typeof(GameObject), true);
+                mItemPrefabPadding.floatValue =
+                    EditorGUILayout.FloatField("ItemPadding", mItemPrefabPadding.floatValue);
+                if (listView.ArrangeType == ListItemArrangeType.TopToBottom ||
+                    listView.ArrangeType == ListItemArrangeType.BottomToTop)
                 {
-                    mItemStartPosOffset.floatValue = EditorGUILayout.FloatField("XPosOffset", mItemStartPosOffset.floatValue);
+                    mItemStartPosOffset.floatValue =
+                        EditorGUILayout.FloatField("XPosOffset", mItemStartPosOffset.floatValue);
                 }
                 else
                 {
-                    mItemStartPosOffset.floatValue = EditorGUILayout.FloatField("YPosOffset", mItemStartPosOffset.floatValue);
+                    mItemStartPosOffset.floatValue =
+                        EditorGUILayout.FloatField("YPosOffset", mItemStartPosOffset.floatValue);
                 }
                 mInitCreateCount.intValue = EditorGUILayout.IntField("InitCreateCount", mInitCreateCount.intValue);
                 EditorGUILayout.Space();
@@ -95,7 +100,7 @@ namespace SsitEngine.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            LoopListView2 tListView = serializedObject.targetObject as LoopListView2;
+            var tListView = serializedObject.targetObject as LoopListView2;
             if (tListView == null)
             {
                 return;
@@ -104,7 +109,7 @@ namespace SsitEngine.Editor
             EditorGUILayout.Space();
             EditorGUILayout.PropertyField(mSupportScrollBar, mSupportScrollBarContent);
             EditorGUILayout.PropertyField(mItemSnapEnable, mItemSnapEnableContent);
-            if (mItemSnapEnable.boolValue == true)
+            if (mItemSnapEnable.boolValue)
             {
                 EditorGUILayout.PropertyField(mItemSnapPivot, mItemSnapPivotContent);
                 EditorGUILayout.PropertyField(mViewPortSnapPivot, mViewPortSnapPivotContent);

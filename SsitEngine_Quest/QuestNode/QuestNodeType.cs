@@ -1,6 +1,5 @@
 ﻿namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// Types of nodes supported in quests.
     /// </summary>
@@ -31,6 +30,4 @@
         /// </summary>
         Condition
     }
-
-
 }

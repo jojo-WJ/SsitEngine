@@ -43,9 +43,15 @@ namespace SsitEngine.Fsm
         public Fsm( string name, T owner, params FsmState<T>[] states )
             : base(name)
         {
-            if (owner == null) throw new SsitEngineException("FSM owner is invalid.");
+            if (owner == null)
+            {
+                throw new SsitEngineException("FSM owner is invalid.");
+            }
 
-            if (states == null || states.Length < 1) throw new SsitEngineException("FSM states is invalid.");
+            if (states == null || states.Length < 1)
+            {
+                throw new SsitEngineException("FSM states is invalid.");
+            }
 
             Owner = owner;
             m_states = new Dictionary<int, FsmState<T>>();
@@ -53,12 +59,17 @@ namespace SsitEngine.Fsm
 
             foreach (var state in states)
             {
-                if (state == null) throw new SsitEngineException("FSM states is invalid.");
+                if (state == null)
+                {
+                    throw new SsitEngineException("FSM states is invalid.");
+                }
 
                 var stateName = state.GetStateId();
                 if (m_states.ContainsKey(stateName))
+                {
                     throw new SsitEngineException(TextUtils.Format("FSM '{0}' state '{1}' is already exist.",
                         TextUtils.GetFullName<T>(name), stateName));
+                }
 
                 m_states.Add(stateName, state);
                 state.OnInit(this);
@@ -115,14 +126,19 @@ namespace SsitEngine.Fsm
         /// <param name="stateId">要开始的有限状态机状态类型。</param>
         public void Start( int stateId )
         {
-            if (IsRunning) throw new SsitEngineException("FSM is running, can not start again.");
+            if (IsRunning)
+            {
+                throw new SsitEngineException("FSM is running, can not start again.");
+            }
 
             var state = GetState(stateId);
 
             if (state == null)
+            {
                 throw new SsitEngineException(TextUtils.Format(
                     "FSM '{0}' can not start state '{1}' which is not exist.", TextUtils.GetFullName<T>(Name),
                     stateId));
+            }
 
             m_currentStateTime = 0f;
             CurrentState = state;
@@ -147,7 +163,10 @@ namespace SsitEngine.Fsm
         public FsmState<T> GetState( int stateId )
         {
             FsmState<T> state = null;
-            if (m_states.TryGetValue(stateId, out state)) return state;
+            if (m_states.TryGetValue(stateId, out state))
+            {
+                return state;
+            }
             return null;
         }
 
@@ -159,7 +178,10 @@ namespace SsitEngine.Fsm
         {
             var index = 0;
             var results = new FsmState<T>[m_states.Count];
-            foreach (var state in m_states) results[index++] = state.Value;
+            foreach (var state in m_states)
+            {
+                results[index++] = state.Value;
+            }
 
             return results;
         }
@@ -170,10 +192,16 @@ namespace SsitEngine.Fsm
         /// <param name="results">有限状态机的所有状态。</param>
         public void GetAllStates( List<FsmState<T>> results )
         {
-            if (results == null) throw new SsitEngineException("Results is invalid.");
+            if (results == null)
+            {
+                throw new SsitEngineException("Results is invalid.");
+            }
 
             results.Clear();
-            foreach (var state in m_states) results.Add(state.Value);
+            foreach (var state in m_states)
+            {
+                results.Add(state.Value);
+            }
         }
 
         /// <summary>
@@ -183,7 +211,10 @@ namespace SsitEngine.Fsm
         /// <param name="eventId">事件编号。</param>
         public void FireEvent( object sender, int eventId )
         {
-            if (CurrentState == null) throw new SsitEngineException("Current state is invalid.");
+            if (CurrentState == null)
+            {
+                throw new SsitEngineException("Current state is invalid.");
+            }
 
             CurrentState.OnEvent(this, sender, eventId, null);
         }
@@ -196,7 +227,10 @@ namespace SsitEngine.Fsm
         /// <param name="userData">用户自定义数据。</param>
         public void FireEvent( object sender, int eventId, object userData )
         {
-            if (CurrentState == null) throw new SsitEngineException("Current state is invalid.");
+            if (CurrentState == null)
+            {
+                throw new SsitEngineException("Current state is invalid.");
+            }
 
             CurrentState.OnEvent(this, sender, eventId, userData);
         }
@@ -208,7 +242,10 @@ namespace SsitEngine.Fsm
         /// <returns>有限状态机数据是否存在。</returns>
         public bool HasData( string name )
         {
-            if (string.IsNullOrEmpty(name)) throw new SsitEngineException("Data name is invalid.");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new SsitEngineException("Data name is invalid.");
+            }
 
             return m_datas.ContainsKey(name);
         }
@@ -231,10 +268,16 @@ namespace SsitEngine.Fsm
         /// <returns>要获取的有限状态机数据。</returns>
         public AllocatedObject GetData( string name )
         {
-            if (string.IsNullOrEmpty(name)) throw new SsitEngineException("Data name is invalid.");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new SsitEngineException("Data name is invalid.");
+            }
 
             AllocatedObject data = null;
-            if (m_datas.TryGetValue(name, out data)) return data;
+            if (m_datas.TryGetValue(name, out data))
+            {
+                return data;
+            }
 
             return null;
         }
@@ -247,7 +290,10 @@ namespace SsitEngine.Fsm
         /// <param name="data">要设置的有限状态机数据。</param>
         public void SetData<TData>( string name, TData data ) where TData : AllocatedObject
         {
-            if (string.IsNullOrEmpty(name)) throw new SsitEngineException("Data name is invalid.");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new SsitEngineException("Data name is invalid.");
+            }
 
             m_datas[name] = data;
         }
@@ -259,7 +305,10 @@ namespace SsitEngine.Fsm
         /// <param name="data">要设置的有限状态机数据。</param>
         public void SetData( string name, AllocatedObject data )
         {
-            if (string.IsNullOrEmpty(name)) throw new SsitEngineException("Data name is invalid.");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new SsitEngineException("Data name is invalid.");
+            }
 
             m_datas[name] = data;
         }
@@ -271,7 +320,10 @@ namespace SsitEngine.Fsm
         /// <returns>是否移除有限状态机数据成功。</returns>
         public bool RemoveData( string name )
         {
-            if (string.IsNullOrEmpty(name)) throw new SsitEngineException("Data name is invalid.");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new SsitEngineException("Data name is invalid.");
+            }
 
             return m_datas.Remove(name);
         }
@@ -282,18 +334,26 @@ namespace SsitEngine.Fsm
         /// <param name="stateId">要切换到的有限状态机状态Id。</param>
         public bool ChangeState( int stateId )
         {
-            if (CurrentState == null) throw new SsitEngineException("Current state is invalid.");
+            if (CurrentState == null)
+            {
+                throw new SsitEngineException("Current state is invalid.");
+            }
 
             var state = GetState(stateId);
             if (state == null)
+            {
                 throw new SsitEngineException(TextUtils.Format(
                     "FSM '{0}' can not change state to '{1}' which is not exist.", TextUtils.GetFullName<T>(Name),
                     stateId));
+            }
 
             var canChange = true;
 
             //检测状态条件
-            if (OnStateCheckHandler != null) canChange = OnStateCheckHandler(Owner, CurrentState.GetStateId(), stateId);
+            if (OnStateCheckHandler != null)
+            {
+                canChange = OnStateCheckHandler(Owner, CurrentState.GetStateId(), stateId);
+            }
             if (canChange)
             {
                 var lastStateId = CurrentState.GetStateId();
@@ -302,7 +362,10 @@ namespace SsitEngine.Fsm
                 CurrentState = state;
                 CurrentState.OnEnter(this);
 
-                if (OnStateChangedHandler != null) OnStateChangedHandler(Owner, lastStateId, stateId);
+                if (OnStateChangedHandler != null)
+                {
+                    OnStateChangedHandler(Owner, lastStateId, stateId);
+                }
             }
             else
             {
@@ -318,7 +381,10 @@ namespace SsitEngine.Fsm
         /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
         public override void OnUpdate( float elapseSeconds )
         {
-            if (CurrentState == null) return;
+            if (CurrentState == null)
+            {
+                return;
+            }
 
             m_currentStateTime += elapseSeconds;
             CurrentState.OnUpdate(this, elapseSeconds);
@@ -336,7 +402,10 @@ namespace SsitEngine.Fsm
                 m_currentStateTime = 0f;
             }
 
-            foreach (var state in m_states) state.Value.OnDestroy(this);
+            foreach (var state in m_states)
+            {
+                state.Value.OnDestroy(this);
+            }
 
             m_states.Clear();
             m_datas.Clear();

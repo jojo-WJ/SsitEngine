@@ -7,11 +7,9 @@
 *└──────────────────────────────────────────────────────────────┘
 */
 
-using SsitEngine.Unity.UI;
 using System.Collections.Generic;
 using System.IO;
 using SsitEngine.Unity;
-using SsitEngine.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,16 +18,13 @@ namespace SsitEngine.Editor.SsitEngineInspector
     [CustomEditor(typeof(InternalAssetConfig), true)]
     public class InternalAssetsEditor : UnityEditor.Editor
     {
-        protected InternalAssetConfig Target
-        {
-            get { return this.target as InternalAssetConfig; }
-        }
+        protected InternalAssetConfig Target => target as InternalAssetConfig;
 
         [MenuItem("Tools/Beta/Generate SteamingCopyAsset")]
         protected static void FocusSettings()
         {
-            string str = "Assets/Resources/InternalAssetConfig.asset";
-            InternalAssetConfig config = AssetDatabase.LoadAssetAtPath(str, typeof(InternalAssetConfig)) as InternalAssetConfig;
+            var str = "Assets/Resources/InternalAssetConfig.asset";
+            var config = AssetDatabase.LoadAssetAtPath(str, typeof(InternalAssetConfig)) as InternalAssetConfig;
             if (config == null)
             {
                 RequireDirectory($"{Application.dataPath}/Resources/InternalAssetConfig.asset");
@@ -41,24 +36,28 @@ namespace SsitEngine.Editor.SsitEngineInspector
 
         private static void RequireDirectory( string path )
         {
-            string directoryName = Path.GetDirectoryName(path);
+            var directoryName = Path.GetDirectoryName(path);
             if (Directory.Exists(directoryName))
+            {
                 return;
+            }
             Directory.CreateDirectory(directoryName);
         }
 
         protected bool CheckRepeated<T>( ICollection<T> collections )
         {
-            HashSet<T> objSet = new HashSet<T>(collections);
+            var objSet = new HashSet<T>(collections);
             return collections.Count != objSet.Count;
         }
 
         protected bool CheckNullOrEmpty( IEnumerable<string> enums )
         {
-            foreach (string str in enums)
+            foreach (var str in enums)
             {
                 if (string.IsNullOrEmpty(str))
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -69,15 +68,19 @@ namespace SsitEngine.Editor.SsitEngineInspector
             base.OnInspectorGUI();
 
             if (!GUILayout.Button("Auto calc streaming Assets"))
+            {
                 return;
+            }
             if (!Directory.Exists(Application.streamingAssetsPath))
+            {
                 return;
-            DirectoryInfo directoryInfo = new DirectoryInfo(Application.streamingAssetsPath);
+            }
+            var directoryInfo = new DirectoryInfo(Application.streamingAssetsPath);
 
             Target.mStreamingAsset.Clear();
-            
+
             var files = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
-            for (int i = 0; i < files.Length; i++)
+            for (var i = 0; i < files.Length; i++)
             {
                 var info = files[i];
 
@@ -85,7 +88,7 @@ namespace SsitEngine.Editor.SsitEngineInspector
                 {
                     continue;
                 }
-                
+
                 Target.mStreamingAsset.Add(EditorFileUtility.GetStreamingAssetPath(info.FullName));
             }
             AssetDatabase.Refresh();

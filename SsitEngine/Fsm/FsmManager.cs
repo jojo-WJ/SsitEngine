@@ -51,7 +51,10 @@ namespace SsitEngine.Fsm
         /// <returns>是否存在有限状态机。</returns>
         public bool HasFsm( Type ownerType )
         {
-            if (ownerType == null) throw new SsitEngineException("Owner type is invalid.");
+            if (ownerType == null)
+            {
+                throw new SsitEngineException("Owner type is invalid.");
+            }
 
             return HasFsm(TextUtils.GetFullName(ownerType, string.Empty));
         }
@@ -75,7 +78,10 @@ namespace SsitEngine.Fsm
         /// <returns>是否存在有限状态机。</returns>
         public bool HasFsm( Type ownerType, string name )
         {
-            if (ownerType == null) throw new SsitEngineException("Owner type is invalid.");
+            if (ownerType == null)
+            {
+                throw new SsitEngineException("Owner type is invalid.");
+            }
 
             return HasFsm(TextUtils.GetFullName(ownerType, name));
         }
@@ -97,7 +103,10 @@ namespace SsitEngine.Fsm
         /// <returns>要获取的有限状态机。</returns>
         public FsmBase GetFsm( Type ownerType )
         {
-            if (ownerType == null) throw new SsitEngineException("Owner type is invalid.");
+            if (ownerType == null)
+            {
+                throw new SsitEngineException("Owner type is invalid.");
+            }
 
             return GetFsm(TextUtils.GetFullName(ownerType, string.Empty));
         }
@@ -121,7 +130,10 @@ namespace SsitEngine.Fsm
         /// <returns>要获取的有限状态机。</returns>
         public FsmBase GetFsm( Type ownerType, string name )
         {
-            if (ownerType == null) throw new SsitEngineException("Owner type is invalid.");
+            if (ownerType == null)
+            {
+                throw new SsitEngineException("Owner type is invalid.");
+            }
 
             return GetFsm(TextUtils.GetFullName(ownerType, name));
         }
@@ -134,7 +146,10 @@ namespace SsitEngine.Fsm
         {
             var index = 0;
             var results = new FsmBase[m_Fsms.Count];
-            foreach (var fsm in m_Fsms) results[index++] = fsm.Value;
+            foreach (var fsm in m_Fsms)
+            {
+                results[index++] = fsm.Value;
+            }
 
             return results;
         }
@@ -145,10 +160,16 @@ namespace SsitEngine.Fsm
         /// <param name="results">所有有限状态机。</param>
         public void GetAllFsms( List<FsmBase> results )
         {
-            if (results == null) throw new SsitEngineException("Results is invalid.");
+            if (results == null)
+            {
+                throw new SsitEngineException("Results is invalid.");
+            }
 
             results.Clear();
-            foreach (var fsm in m_Fsms) results.Add(fsm.Value);
+            foreach (var fsm in m_Fsms)
+            {
+                results.Add(fsm.Value);
+            }
         }
 
         /// <summary>
@@ -174,8 +195,10 @@ namespace SsitEngine.Fsm
         public IFsm<T> CreateFsm<T>( string name, T owner, params FsmState<T>[] states ) where T : class
         {
             if (HasFsm<T>(name))
+            {
                 throw new SsitEngineException(TextUtils.Format("Already exist FSM '{0}'.",
                     TextUtils.GetFullName<T>(name)));
+            }
 
             var fsm = new Fsm<T>(name, owner, states);
             m_Fsms.Add(TextUtils.GetFullName<T>(name), fsm);
@@ -199,7 +222,10 @@ namespace SsitEngine.Fsm
         /// <returns>是否销毁有限状态机成功。</returns>
         public bool DestroyFsm( Type ownerType )
         {
-            if (ownerType == null) throw new SsitEngineException("Owner type is invalid.");
+            if (ownerType == null)
+            {
+                throw new SsitEngineException("Owner type is invalid.");
+            }
 
             return DestroyFsm(TextUtils.GetFullName(ownerType, string.Empty));
         }
@@ -223,7 +249,10 @@ namespace SsitEngine.Fsm
         /// <returns>是否销毁有限状态机成功。</returns>
         public bool DestroyFsm( Type ownerType, string name )
         {
-            if (ownerType == null) throw new SsitEngineException("Owner type is invalid.");
+            if (ownerType == null)
+            {
+                throw new SsitEngineException("Owner type is invalid.");
+            }
 
             return DestroyFsm(TextUtils.GetFullName(ownerType, name));
         }
@@ -236,7 +265,10 @@ namespace SsitEngine.Fsm
         /// <returns>是否销毁有限状态机成功。</returns>
         public bool DestroyFsm<T>( IFsm<T> fsm ) where T : class
         {
-            if (fsm == null) throw new SsitEngineException("FSM is invalid.");
+            if (fsm == null)
+            {
+                throw new SsitEngineException("FSM is invalid.");
+            }
 
             return DestroyFsm(TextUtils.GetFullName<T>(fsm.Name));
         }
@@ -248,7 +280,10 @@ namespace SsitEngine.Fsm
         /// <returns>是否销毁有限状态机成功。</returns>
         public bool DestroyFsm( FsmBase fsm )
         {
-            if (fsm == null) throw new SsitEngineException("FSM is invalid.");
+            if (fsm == null)
+            {
+                throw new SsitEngineException("FSM is invalid.");
+            }
 
             return DestroyFsm(TextUtils.GetFullName(fsm.OwnerType, fsm.Name));
         }
@@ -261,7 +296,10 @@ namespace SsitEngine.Fsm
         private FsmBase GetFsm( string fullName )
         {
             FsmBase fsm = null;
-            if (m_Fsms.TryGetValue(fullName, out fsm)) return fsm;
+            if (m_Fsms.TryGetValue(fullName, out fsm))
+            {
+                return fsm;
+            }
 
             return null;
         }
@@ -296,13 +334,22 @@ namespace SsitEngine.Fsm
         public void OnUpdate( float elapseSeconds )
         {
             m_TempFsms.Clear();
-            if (m_Fsms.Count <= 0) return;
+            if (m_Fsms.Count <= 0)
+            {
+                return;
+            }
 
-            foreach (var fsm in m_Fsms) m_TempFsms.Add(fsm.Value);
+            foreach (var fsm in m_Fsms)
+            {
+                m_TempFsms.Add(fsm.Value);
+            }
 
             foreach (var fsm in m_TempFsms)
             {
-                if (fsm.IsDestroyed) continue;
+                if (fsm.IsDestroyed)
+                {
+                    continue;
+                }
 
                 fsm.OnUpdate(elapseSeconds);
             }
@@ -313,7 +360,10 @@ namespace SsitEngine.Fsm
         /// </summary>
         public void Shutdown()
         {
-            foreach (var fsm in m_Fsms) fsm.Value.Shutdown();
+            foreach (var fsm in m_Fsms)
+            {
+                fsm.Value.Shutdown();
+            }
 
             m_Fsms.Clear();
             m_TempFsms.Clear();

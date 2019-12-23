@@ -15,7 +15,10 @@
             {
                 lock (s_lock)
                 {
-                    if (!_mInstance) _mInstance = CreateMonoSingleton<T>();
+                    if (!_mInstance)
+                    {
+                        _mInstance = CreateMonoSingleton<T>();
+                    }
                 }
                 return _mInstance;
             }

@@ -1,50 +1,64 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using UnityEngine;
 
-namespace JxDebug {
+namespace JxDebug
+{
     [Serializable]
-    public class ScrollView {
-        public delegate void ScrollViewDrawer(Rect rect, Vector2 scrollPosition);
+    public class ScrollView
+    {
+        public delegate void ScrollViewDrawer( Rect rect, Vector2 scrollPosition );
 
-        [SerializeField]
-        protected ScrollBar scrollBar;
-        
-        [HideInInspector]
-        public Vector2 position;
-        float? targetScrollTo;
-        Rect viewRect;
-        Rect contentsRect;
+        private Rect contentsRect;
 
-        public bool isScrollbarVisible { get { return contentsRect.height > viewRect.height; } }
-        public float scrollBarWidth { get { return scrollBar.width; } }
+        [HideInInspector] public Vector2 position;
 
-        public void Draw(Rect viewRect, Rect contentsRect, ScrollViewDrawer contentsDrawer) {
+        [SerializeField] protected ScrollBar scrollBar;
+
+        private float? targetScrollTo;
+        private Rect viewRect;
+
+        public bool isScrollbarVisible => contentsRect.height > viewRect.height;
+        public float scrollBarWidth => scrollBar.width;
+
+        public void Draw( Rect viewRect, Rect contentsRect, ScrollViewDrawer contentsDrawer )
+        {
             this.viewRect = viewRect;
             this.contentsRect = contentsRect;
             HandleScrollWheel();
             DrawVerticalScrollBar();
             DrawViewRect(contentsDrawer);
-            if(targetScrollTo.HasValue)
+            if (targetScrollTo.HasValue)
+            {
                 DoScrollToTarget();
+            }
         }
 
-        void HandleScrollWheel() {
-            if(isScrollbarVisible) {
-                if(Event.current.type != EventType.ScrollWheel || !viewRect.Contains(Event.current.mousePosition))
+        private void HandleScrollWheel()
+        {
+            if (isScrollbarVisible)
+            {
+                if (Event.current.type != EventType.ScrollWheel || !viewRect.Contains(Event.current.mousePosition))
+                {
                     return;
+                }
                 position.y += scrollBar.sensitivity * Event.current.delta.y;
                 Event.current.Use();
             }
         }
 
-        void DrawVerticalScrollBar() {
-            if(isScrollbarVisible) {
+        private void DrawVerticalScrollBar()
+        {
+            if (isScrollbarVisible)
+            {
                 viewRect.width -= scrollBar.width;
-                position.y = scrollBar.Draw(new Rect(viewRect.x + viewRect.width, viewRect.y, scrollBar.width, viewRect.height), position.y, contentsRect.height);
+                position.y =
+                    scrollBar.Draw(new Rect(viewRect.x + viewRect.width, viewRect.y, scrollBar.width, viewRect.height),
+                        position.y, contentsRect.height);
             }
         }
 
-        void DrawViewRect(ScrollViewDrawer contentsDrawer) {
+        private void DrawViewRect( ScrollViewDrawer contentsDrawer )
+        {
             GUI.BeginGroup(viewRect);
             contentsRect.y -= viewRect.y;
             contentsRect.y -= position.y;
@@ -54,20 +68,24 @@ namespace JxDebug {
             GUI.EndGroup();
         }
 
-        void DoScrollToTarget() {
+        private void DoScrollToTarget()
+        {
             position.y = targetScrollTo.Value;
             targetScrollTo = null;
         }
 
-        public void ScrollToBottom() {
+        public void ScrollToBottom()
+        {
             ScrollTo(float.PositiveInfinity);
         }
 
-        public void ScrollToTop() {
+        public void ScrollToTop()
+        {
             ScrollTo(0);
         }
 
-        public void ScrollTo(float position) {
+        public void ScrollTo( float position )
+        {
             targetScrollTo = position;
         }
     }

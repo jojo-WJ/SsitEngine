@@ -97,9 +97,15 @@ namespace SsitEngine.Core.ObjectPool
             get => m_capacity;
             set
             {
-                if (value < 0) throw new SsitEngineException("Capacity is invalid.");
+                if (value < 0)
+                {
+                    throw new SsitEngineException("Capacity is invalid.");
+                }
 
-                if (m_capacity == value) return;
+                if (m_capacity == value)
+                {
+                    return;
+                }
 
                 //SsitDebug.Debug("Object pool '{0}' capacity changed from '{1}' to '{2}'.", TextUtils.GetFullName<T>(Name), m_capacity.ToString(), value.ToString());
                 m_capacity = value;
@@ -116,9 +122,15 @@ namespace SsitEngine.Core.ObjectPool
 
             set
             {
-                if (value < 0f) throw new SsitEngineException("ExpireTime is invalid.");
+                if (value < 0f)
+                {
+                    throw new SsitEngineException("ExpireTime is invalid.");
+                }
 
-                if (ExpireTime == value) return;
+                if (ExpireTime == value)
+                {
+                    return;
+                }
 
                 //SsitDebug.Debug("Object pool '{0}' expire time changed from '{1}' to '{2}'.", TextUtils.GetFullName<T>(Name), m_expireTime.ToString(), value.ToString());
                 m_expireTime = value;
@@ -142,7 +154,10 @@ namespace SsitEngine.Core.ObjectPool
         /// <param name="spawned">对象是否已被获取。</param>
         public bool Register( T obj, bool spawned )
         {
-            if (obj == null) throw new SsitEngineException("Object is invalid.");
+            if (obj == null)
+            {
+                throw new SsitEngineException("Object is invalid.");
+            }
 
             SsitDebug.Debug(spawned ? "Object pool '{0}' create and spawned one." : "Object pool '{0}' create one.",
                 TextUtils.GetFullName<T>(Name));
@@ -166,8 +181,12 @@ namespace SsitEngine.Core.ObjectPool
         public bool CanSpawn()
         {
             foreach (var obj in m_objects)
+            {
                 if (AllowMultiSpawn || !obj.IsInUse)
+                {
                     return true;
+                }
+            }
 
             return false;
         }
@@ -180,7 +199,10 @@ namespace SsitEngine.Core.ObjectPool
         {
             foreach (var obj in m_objects)
             {
-                if (obj.Name != name) continue;
+                if (obj.Name != name)
+                {
+                    continue;
+                }
 
                 var attachCondition = m_spawnCondition == null ? true : m_spawnCondition();
 
@@ -191,7 +213,10 @@ namespace SsitEngine.Core.ObjectPool
                 }
             }
 
-            if (m_loadFunction == null) return null;
+            if (m_loadFunction == null)
+            {
+                return null;
+            }
 
             if (m_objects.Count == m_capacity)
             {
@@ -214,7 +239,10 @@ namespace SsitEngine.Core.ObjectPool
         {
             foreach (var obj in m_objects)
             {
-                if (obj.Name != name) continue;
+                if (obj.Name != name)
+                {
+                    continue;
+                }
                 if (!obj.IsInUse && condition(obj.Data))
                 {
                     SsitDebug.Debug("Object pool '{0}' spawn one.", TextUtils.GetFullName<T>(Name));
@@ -235,7 +263,10 @@ namespace SsitEngine.Core.ObjectPool
         /// <param name="obj">要回收的内部对象。</param>
         public void Unspawn( T obj )
         {
-            if (obj == null) throw new SsitEngineException("Object is invalid.");
+            if (obj == null)
+            {
+                throw new SsitEngineException("Object is invalid.");
+            }
 
             if (m_objects.First(x => { return x.Data == obj; }) == null)
             {
@@ -253,15 +284,20 @@ namespace SsitEngine.Core.ObjectPool
         /// <param name="target">要回收的对象。</param>
         public void Unspawn( object target )
         {
-            if (target == null) throw new SsitEngineException("Target is invalid.");
+            if (target == null)
+            {
+                throw new SsitEngineException("Target is invalid.");
+            }
 
             foreach (var obj in m_objects)
+            {
                 if (obj.Data.Target == target)
                 {
                     obj.Unspawn();
                     Release();
                     return;
                 }
+            }
             throw new SsitEngineException(TextUtils.Format("Can not find target in object pool '{0}'.",
                 TextUtils.GetFullName<T>(Name)));
         }
@@ -304,29 +340,46 @@ namespace SsitEngine.Core.ObjectPool
         public void Release( int toReleaseCount, ReleaseObjectFilterCallback<T> releaseObjectFilterCallback )
         {
             if (releaseObjectFilterCallback == null)
+            {
                 throw new SsitEngineException("Release object filter callback is invalid.");
+            }
 
             m_autoReleaseTime = 0f;
-            if (toReleaseCount < 0) toReleaseCount = 0;
+            if (toReleaseCount < 0)
+            {
+                toReleaseCount = 0;
+            }
 
             var expireTime = DateTime.MinValue;
 
             //correct timer
-            if (m_expireTime < float.MaxValue) expireTime = DateTime.Now.AddSeconds(-m_expireTime);
+            if (m_expireTime < float.MaxValue)
+            {
+                expireTime = DateTime.Now.AddSeconds(-m_expireTime);
+            }
 
             var canReleaseObjects = GetCanReleaseObjects();
             var toReleaseObjects = releaseObjectFilterCallback(canReleaseObjects, toReleaseCount, expireTime);
-            if (toReleaseObjects == null || toReleaseObjects.Count <= 0) return;
+            if (toReleaseObjects == null || toReleaseObjects.Count <= 0)
+            {
+                return;
+            }
 
             foreach (var toReleaseObject in toReleaseObjects)
             {
-                if (toReleaseObject == null) throw new SsitEngineException("Can not release null object.");
+                if (toReleaseObject == null)
+                {
+                    throw new SsitEngineException("Can not release null object.");
+                }
 
                 var found = false;
 
                 foreach (var obj in m_objects)
                 {
-                    if (obj.Data != toReleaseObject) continue;
+                    if (obj.Data != toReleaseObject)
+                    {
+                        continue;
+                    }
 
                     m_objects.Remove(obj);
                     obj.Release(false);
@@ -335,7 +388,10 @@ namespace SsitEngine.Core.ObjectPool
                     break;
                 }
 
-                if (!found) throw new SsitEngineException("Can not release object which is not found.");
+                if (!found)
+                {
+                    throw new SsitEngineException("Can not release object which is not found.");
+                }
             }
         }
 
@@ -372,7 +428,10 @@ namespace SsitEngine.Core.ObjectPool
         /// <param name="locked">是否被加锁。</param>
         public void SetLocked( T obj, bool locked )
         {
-            if (obj == null) throw new SsitEngineException("Object is invalid.");
+            if (obj == null)
+            {
+                throw new SsitEngineException("Object is invalid.");
+            }
 
             SetLocked(obj.Target, locked);
         }
@@ -384,14 +443,19 @@ namespace SsitEngine.Core.ObjectPool
         /// <param name="locked">是否被加锁。</param>
         public void SetLocked( object target, bool locked )
         {
-            if (target == null) throw new SsitEngineException("Target is invalid.");
+            if (target == null)
+            {
+                throw new SsitEngineException("Target is invalid.");
+            }
 
             foreach (var obj in m_objects)
+            {
                 if (obj.Data.Target == target)
                 {
                     obj.Locked = locked;
                     return;
                 }
+            }
 
             throw new SsitEngineException(TextUtils.Format("Can not find target in object pool '{0}'.",
                 TextUtils.GetFullName<T>(Name)));
@@ -404,7 +468,10 @@ namespace SsitEngine.Core.ObjectPool
         /// <param name="priority">优先级。</param>
         public void SetPriority( T obj, int priority )
         {
-            if (obj == null) throw new SsitEngineException("Object is invalid.");
+            if (obj == null)
+            {
+                throw new SsitEngineException("Object is invalid.");
+            }
 
             SetPriority(obj.Target, priority);
         }
@@ -416,14 +483,19 @@ namespace SsitEngine.Core.ObjectPool
         /// <param name="priority">优先级。</param>
         public void SetPriority( object target, int priority )
         {
-            if (target == null) throw new SsitEngineException("Target is invalid.");
+            if (target == null)
+            {
+                throw new SsitEngineException("Target is invalid.");
+            }
 
             foreach (var obj in m_objects)
+            {
                 if (obj.Data.Target == target)
                 {
                     obj.Priority = priority;
                     return;
                 }
+            }
 
             throw new SsitEngineException(TextUtils.Format("Can not find target in object pool '{0}'.",
                 TextUtils.GetFullName<T>(Name)));
@@ -462,7 +534,10 @@ namespace SsitEngine.Core.ObjectPool
         public override void OnUpdate( float elapseSeconds )
         {
             m_autoReleaseTime += elapseSeconds;
-            if (m_autoReleaseTime < AutoReleaseInterval) return;
+            if (m_autoReleaseTime < AutoReleaseInterval)
+            {
+                return;
+            }
 
             //SsitDebug.Debug("Object pool '{0}' auto release start.", TextUtils.GetFullName<T>(Name));
             Release();
@@ -501,7 +576,10 @@ namespace SsitEngine.Core.ObjectPool
 
             foreach (var obj in m_objects)
             {
-                if (obj.IsInUse || obj.Locked || !obj.CustomCanReleaseFlag) continue;
+                if (obj.IsInUse || obj.Locked || !obj.CustomCanReleaseFlag)
+                {
+                    continue;
+                }
 
                 canReleaseObjects.AddLast(obj.Data);
             }
@@ -545,6 +623,7 @@ namespace SsitEngine.Core.ObjectPool
             for (var i = candidateObjects.First; toReleaseCount > 0 && i != null; i = i.Next)
             {
                 for (var j = i.Next; j != null; j = j.Next)
+                {
                     if (i.Value.Priority > j.Value.Priority || i.Value.Priority == j.Value.Priority &&
                         i.Value.LastUseTime > j.Value.LastUseTime)
                     {
@@ -552,6 +631,7 @@ namespace SsitEngine.Core.ObjectPool
                         i.Value = j.Value;
                         j.Value = temp;
                     }
+                }
 
                 toReleaseObjects.AddLast(i.Value);
                 toReleaseCount--;
@@ -569,7 +649,9 @@ namespace SsitEngine.Core.ObjectPool
         {
             T target = null;
             if (m_loadFunction == null)
+            {
                 throw new SsitEngineException("the loadFunction of the auto create pool object is null");
+            }
             target = m_loadFunction();
             target.Initial();
 
@@ -590,7 +672,9 @@ namespace SsitEngine.Core.ObjectPool
             var index = 0;
             var results = new ObjectInfo[m_objects.Count];
             foreach (var obj in m_objects)
+            {
                 results[index++] = new ObjectInfo(name, obj.Locked, obj.Priority, obj.LastUseTime, obj.SpawnCount);
+            }
             return results;
         }
 

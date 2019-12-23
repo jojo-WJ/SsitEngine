@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UnityEditor;
 using UnityEngine;
 
 namespace SsitEngine.Editor
 {
     public class TableToModelBase
     {
-
-        List<string> mSubClassList;
         private readonly string ExportPath = "/Scripts/Data/Common";
         private readonly string ScriptsName = "ModelBase.cs";
+
+        private readonly List<string> mSubClassList;
 
         public TableToModelBase()
         {
@@ -19,40 +20,39 @@ namespace SsitEngine.Editor
             InitMaps();
         }
 
-        void InitMaps()
+        private void InitMaps()
         {
-            if (Directory.Exists(Application.dataPath + TableTool.DataScriptsFolderPath))
+            var tempPath = Application.dataPath + TableTool.DataScriptsFolderPath;
+            if (Directory.Exists(tempPath))
             {
-                DirectoryInfo folder = new DirectoryInfo(Application.dataPath + TableTool.DataScriptsFolderPath);
+                var folder = new DirectoryInfo(tempPath);
 
                 foreach (var ff in folder.GetFiles("*.cs", SearchOption.AllDirectories))
                 {
-                    string fName = Path.GetFileNameWithoutExtension(ff.Name);
+                    var fName = Path.GetFileNameWithoutExtension(ff.Name);
                     mSubClassList.Add(fName + "Model");
                 }
             }
-
         }
 
 
         public void ExportModelBase()
         {
-            string content = CombineModel();
+            var content = CombineModel();
 
             if (!string.IsNullOrEmpty(content))
             {
-                System.IO.Directory.CreateDirectory(Application.dataPath + ExportPath);
+                Directory.CreateDirectory(Application.dataPath + ExportPath);
                 EditorFileUtility.WriteFile(Application.dataPath + ExportPath + "/" + ScriptsName, content);
             }
 
-            UnityEditor.AssetDatabase.Refresh();
+            AssetDatabase.Refresh();
         }
 
 
         public string CombineModel()
         {
-
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             //写头部引用
             sb.AppendLine("using Tabtoy;");
@@ -78,9 +78,7 @@ namespace SsitEngine.Editor
         }
 
 
-
-
-        void WriteBaseCalss( StringBuilder sb )
+        private void WriteBaseCalss( StringBuilder sb )
         {
             sb.AppendLine("  public abstract class ModelBase");
             WriteClassBegin(sb);
@@ -91,7 +89,7 @@ namespace SsitEngine.Editor
             WriteClassEnd(sb);
         }
 
-        void WriteSubClass( StringBuilder sb )
+        private void WriteSubClass( StringBuilder sb )
         {
             foreach (var item in mSubClassList)
             {
@@ -129,40 +127,39 @@ namespace SsitEngine.Editor
 
             foreach (var item in mSubClassList)
             {
-                sb.AppendFormat("       {0},", item.Replace("Model",""));
+                sb.AppendFormat("       {0},", item.Replace("Model", ""));
                 sb.AppendLine();
             }
             WriteClassEnd(sb);
-
         }
 
-        void WriteSpaceBegin( StringBuilder sb )
+        private void WriteSpaceBegin( StringBuilder sb )
         {
             sb.AppendLine("{");
         }
 
-        void WriteSpaceEnd( StringBuilder sb )
+        private void WriteSpaceEnd( StringBuilder sb )
         {
             sb.AppendLine("}");
         }
 
-        void WriteClassBegin( StringBuilder sb )
+        private void WriteClassBegin( StringBuilder sb )
         {
             sb.AppendLine("   {");
         }
 
-        void WriteClassEnd( StringBuilder sb )
+        private void WriteClassEnd( StringBuilder sb )
         {
             sb.AppendLine("   }");
         }
 
 
-        void WriteMethodBegin( StringBuilder sb )
+        private void WriteMethodBegin( StringBuilder sb )
         {
             sb.AppendLine("     {");
         }
 
-        void WriteMethodEnd( StringBuilder sb )
+        private void WriteMethodEnd( StringBuilder sb )
         {
             sb.AppendLine("     }");
         }

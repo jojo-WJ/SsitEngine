@@ -1,123 +1,127 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace SsitEngine.Editor
 {
     public static class GUIUtility
     {
+        // Static Fields Related to locating the TextMesh Pro Asset
+        private static string folderPath = "Not Found";
+        private static string m_PackageFullPath;
 
-        private static GUIStyle welcomeScreenTextHeaderGUIStyle = null;
-        private static GUIStyle welcomeScreenTextDescriptionGUIStyle = null;
-        private static GUIStyle preferencesPaneGUIStyle = null;
-        private static GUIStyle graphBackgroundGUIStyle = null;
-        private static GUIStyle selectionGUIStyle = (GUIStyle)null;
-        private static GUIStyle toolbarButtonSelectionGUIStyle = null;
-        private static GUIStyle labelWrapGUIStyle = null;
-        private static GUIStyle propertyBoxGUIStyle = null;
-        [NonSerialized]
-        private static Dictionary<System.Type, Dictionary<System.Reflection.FieldInfo, bool>> attributeFieldCache = new Dictionary<System.Type, Dictionary<System.Reflection.FieldInfo, bool>>();
-        private static Dictionary<string, Texture2D> textureCache = new Dictionary<string, Texture2D>();
-        private static Dictionary<string, Texture2D> iconCache = new Dictionary<string, Texture2D>();
+        private static GUIStyle welcomeScreenTextHeaderGUIStyle;
+        private static GUIStyle welcomeScreenTextDescriptionGUIStyle;
+        private static GUIStyle preferencesPaneGUIStyle;
+        private static GUIStyle graphBackgroundGUIStyle;
+        private static GUIStyle selectionGUIStyle;
+        private static GUIStyle toolbarButtonSelectionGUIStyle;
+        private static GUIStyle labelWrapGUIStyle;
+        private static GUIStyle propertyBoxGUIStyle;
+
+        [NonSerialized] private static Dictionary<Type, Dictionary<FieldInfo, bool>> attributeFieldCache =
+            new Dictionary<Type, Dictionary<FieldInfo, bool>>();
+
+        private static readonly Dictionary<string, Texture2D> textureCache = new Dictionary<string, Texture2D>();
+        private static readonly Dictionary<string, Texture2D> iconCache = new Dictionary<string, Texture2D>();
 
         //Texture
-        private static Texture2D screenshotBackgroundTexture = null;
+        private static Texture2D screenshotBackgroundTexture;
 
 
         //Graghic
-        private static GUIStyle taskTitleGUIStyle = null;
+        private static GUIStyle taskTitleGUIStyle;
+
+        /// <summary>
+        /// Returns the fully qualified path of the package.
+        /// </summary>
+        public static string packageFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(m_PackageFullPath))
+                {
+                    m_PackageFullPath = GetPackageFullPath();
+                }
+
+                return m_PackageFullPath;
+            }
+        }
 
 
         public static GUIStyle TextHeaderGUIStyle
         {
             get
             {
-                if (GUIUtility.welcomeScreenTextHeaderGUIStyle == null)
-                    GUIUtility.InitTextHeaderGUIStyle();
-                return GUIUtility.welcomeScreenTextHeaderGUIStyle;
+                if (welcomeScreenTextHeaderGUIStyle == null)
+                {
+                    InitTextHeaderGUIStyle();
+                }
+                return welcomeScreenTextHeaderGUIStyle;
             }
         }
-        private static void InitTextHeaderGUIStyle()
-        {
-            GUIUtility.welcomeScreenTextHeaderGUIStyle = new GUIStyle(GUI.skin.label);
-            GUIUtility.welcomeScreenTextHeaderGUIStyle.alignment = TextAnchor.MiddleLeft;
-            GUIUtility.welcomeScreenTextHeaderGUIStyle.fontSize = 14;
-            GUIUtility.welcomeScreenTextHeaderGUIStyle.fontStyle = FontStyle.Bold;
-        }
+
         public static GUIStyle TextDescriptionGUIStyle
         {
             get
             {
-                if (GUIUtility.welcomeScreenTextDescriptionGUIStyle == null)
-                    GUIUtility.InitWelcomeScreenTextDescriptionGUIStyle();
-                return GUIUtility.welcomeScreenTextDescriptionGUIStyle;
+                if (welcomeScreenTextDescriptionGUIStyle == null)
+                {
+                    InitWelcomeScreenTextDescriptionGUIStyle();
+                }
+                return welcomeScreenTextDescriptionGUIStyle;
             }
-        }
-        private static void InitWelcomeScreenTextDescriptionGUIStyle()
-        {
-            GUIUtility.welcomeScreenTextDescriptionGUIStyle = new GUIStyle(GUI.skin.label);
-            GUIUtility.welcomeScreenTextDescriptionGUIStyle.wordWrap = true;
         }
 
         public static GUIStyle PreferencesPaneGUIStyle
         {
             get
             {
-                if (GUIUtility.preferencesPaneGUIStyle == null)
-                    GUIUtility.InitPreferencesPaneGUIStyle();
-                return GUIUtility.preferencesPaneGUIStyle;
+                if (preferencesPaneGUIStyle == null)
+                {
+                    InitPreferencesPaneGUIStyle();
+                }
+                return preferencesPaneGUIStyle;
             }
-        }
-        private static void InitPreferencesPaneGUIStyle()
-        {
-            GUIUtility.preferencesPaneGUIStyle = new GUIStyle(GUI.skin.box);
-            GUIUtility.preferencesPaneGUIStyle.normal.background = EditorStyles.toolbarButton.normal.background;
         }
 
         public static GUIStyle ToolbarButtonSelectionGUIStyle
         {
             get
             {
-                if (GUIUtility.toolbarButtonSelectionGUIStyle == null)
-                    GUIUtility.InitToolbarButtonSelectionGUIStyle();
-                return GUIUtility.toolbarButtonSelectionGUIStyle;
+                if (toolbarButtonSelectionGUIStyle == null)
+                {
+                    InitToolbarButtonSelectionGUIStyle();
+                }
+                return toolbarButtonSelectionGUIStyle;
             }
-        }
-
-        private static void InitToolbarButtonSelectionGUIStyle()
-        {
-            GUIUtility.toolbarButtonSelectionGUIStyle = new GUIStyle(EditorStyles.toolbarButton);
-            GUIUtility.toolbarButtonSelectionGUIStyle.normal.background = GUIUtility.toolbarButtonSelectionGUIStyle.active.background;
         }
 
         public static GUIStyle LabelWrapGUIStyle
         {
             get
             {
-                if (GUIUtility.labelWrapGUIStyle == null)
-                    GUIUtility.InitLabelWrapGUIStyle();
-                return GUIUtility.labelWrapGUIStyle;
+                if (labelWrapGUIStyle == null)
+                {
+                    InitLabelWrapGUIStyle();
+                }
+                return labelWrapGUIStyle;
             }
-        }
-
-        private static void InitLabelWrapGUIStyle()
-        {
-            GUIUtility.labelWrapGUIStyle = new GUIStyle(GUI.skin.label);
-            GUIUtility.labelWrapGUIStyle.wordWrap = true;
-            GUIUtility.labelWrapGUIStyle.alignment = TextAnchor.MiddleCenter;
         }
 
         public static GUIStyle PropertyBoxGUIStyle
         {
             get
             {
-                if (GUIUtility.propertyBoxGUIStyle == null)
-                    GUIUtility.InitPropertyBoxGUIStyle();
-                return GUIUtility.propertyBoxGUIStyle;
+                if (propertyBoxGUIStyle == null)
+                {
+                    InitPropertyBoxGUIStyle();
+                }
+                return propertyBoxGUIStyle;
             }
         }
 
@@ -125,72 +129,132 @@ namespace SsitEngine.Editor
         {
             get
             {
-                if (GUIUtility.graphBackgroundGUIStyle == null)
-                    GUIUtility.InitGraphBackgroundGUIStyle();
-                return GUIUtility.graphBackgroundGUIStyle;
+                if (graphBackgroundGUIStyle == null)
+                {
+                    InitGraphBackgroundGUIStyle();
+                }
+                return graphBackgroundGUIStyle;
             }
         }
-        private static void InitGraphBackgroundGUIStyle()
-        {
-            Texture2D texture2D = new Texture2D(1, 1, TextureFormat.RGBA32, false, true);
-            if (EditorGUIUtility.isProSkin)
-                texture2D.SetPixel(1, 1, new Color(0.1647f, 0.1647f, 0.1647f));
-            else
-                texture2D.SetPixel(1, 1, new Color(0.3647f, 0.3647f, 0.3647f));
-            texture2D.hideFlags = HideFlags.HideAndDontSave;
-            texture2D.Apply();
-            GUIUtility.graphBackgroundGUIStyle = new GUIStyle(GUI.skin.box);
-            GUIUtility.graphBackgroundGUIStyle.normal.background = texture2D;
-            GUIUtility.graphBackgroundGUIStyle.active.background = texture2D;
-            GUIUtility.graphBackgroundGUIStyle.hover.background = texture2D;
-            GUIUtility.graphBackgroundGUIStyle.focused.background = texture2D;
-            GUIUtility.graphBackgroundGUIStyle.normal.textColor = Color.white;
-            GUIUtility.graphBackgroundGUIStyle.active.textColor = Color.white;
-            GUIUtility.graphBackgroundGUIStyle.hover.textColor = Color.white;
-            GUIUtility.graphBackgroundGUIStyle.focused.textColor = Color.white;
-        }
+
         public static GUIStyle SelectionGUIStyle
         {
             get
             {
-                if (GUIUtility.selectionGUIStyle == null)
-                    GUIUtility.InitSelectionGUIStyle();
-                return GUIUtility.selectionGUIStyle;
+                if (selectionGUIStyle == null)
+                {
+                    InitSelectionGUIStyle();
+                }
+                return selectionGUIStyle;
             }
-        }
-
-        private static void InitSelectionGUIStyle()
-        {
-            Texture2D texture2D = new Texture2D(1, 1, TextureFormat.RGBA32, false, true);
-            Color color = !EditorGUIUtility.isProSkin ? new Color(0.243f, 0.5686f, 0.839f, 0.5f) : new Color(0.188f, 0.4588f, 0.6862f, 0.5f);
-            texture2D.SetPixel(1, 1, color);
-            texture2D.hideFlags = HideFlags.HideAndDontSave;
-            texture2D.Apply();
-            GUIUtility.selectionGUIStyle = new GUIStyle(GUI.skin.box);
-            GUIUtility.selectionGUIStyle.normal.background = texture2D;
-            GUIUtility.selectionGUIStyle.active.background = texture2D;
-            GUIUtility.selectionGUIStyle.hover.background = texture2D;
-            GUIUtility.selectionGUIStyle.focused.background = texture2D;
-            GUIUtility.selectionGUIStyle.normal.textColor = Color.white;
-            GUIUtility.selectionGUIStyle.active.textColor = Color.white;
-            GUIUtility.selectionGUIStyle.hover.textColor = Color.white;
-            GUIUtility.selectionGUIStyle.focused.textColor = Color.white;
-        }
-
-        private static void InitPropertyBoxGUIStyle()
-        {
-            GUIUtility.propertyBoxGUIStyle = new GUIStyle();
-            GUIUtility.propertyBoxGUIStyle.padding = new RectOffset(2, 2, 0, 0);
         }
 
         public static Texture2D ScreenshotBackgroundTexture
         {
             get
             {
-                if (GUIUtility.screenshotBackgroundTexture == null)
-                    GUIUtility.InitScreenshotBackgroundTexture();
-                return GUIUtility.screenshotBackgroundTexture;
+                if (screenshotBackgroundTexture == null)
+                {
+                    InitScreenshotBackgroundTexture();
+                }
+                return screenshotBackgroundTexture;
             }
+        }
+
+        public static GUIStyle TaskTitleGUIStyle
+        {
+            get
+            {
+                if (taskTitleGUIStyle == null)
+                {
+                    InitTaskTitleGUIStyle();
+                }
+                return taskTitleGUIStyle;
+            }
+        }
+
+        private static void InitTextHeaderGUIStyle()
+        {
+            welcomeScreenTextHeaderGUIStyle = new GUIStyle(GUI.skin.label);
+            welcomeScreenTextHeaderGUIStyle.alignment = TextAnchor.MiddleLeft;
+            welcomeScreenTextHeaderGUIStyle.fontSize = 14;
+            welcomeScreenTextHeaderGUIStyle.fontStyle = FontStyle.Bold;
+        }
+
+        private static void InitWelcomeScreenTextDescriptionGUIStyle()
+        {
+            welcomeScreenTextDescriptionGUIStyle = new GUIStyle(GUI.skin.label);
+            welcomeScreenTextDescriptionGUIStyle.wordWrap = true;
+        }
+
+        private static void InitPreferencesPaneGUIStyle()
+        {
+            preferencesPaneGUIStyle = new GUIStyle(GUI.skin.box);
+            preferencesPaneGUIStyle.normal.background = EditorStyles.toolbarButton.normal.background;
+        }
+
+        private static void InitToolbarButtonSelectionGUIStyle()
+        {
+            toolbarButtonSelectionGUIStyle = new GUIStyle(EditorStyles.toolbarButton);
+            toolbarButtonSelectionGUIStyle.normal.background =
+                toolbarButtonSelectionGUIStyle.active.background;
+        }
+
+        private static void InitLabelWrapGUIStyle()
+        {
+            labelWrapGUIStyle = new GUIStyle(GUI.skin.label);
+            labelWrapGUIStyle.wordWrap = true;
+            labelWrapGUIStyle.alignment = TextAnchor.MiddleCenter;
+        }
+
+        private static void InitGraphBackgroundGUIStyle()
+        {
+            var texture2D = new Texture2D(1, 1, TextureFormat.RGBA32, false, true);
+            if (EditorGUIUtility.isProSkin)
+            {
+                texture2D.SetPixel(1, 1, new Color(0.1647f, 0.1647f, 0.1647f));
+            }
+            else
+            {
+                texture2D.SetPixel(1, 1, new Color(0.3647f, 0.3647f, 0.3647f));
+            }
+            texture2D.hideFlags = HideFlags.HideAndDontSave;
+            texture2D.Apply();
+            graphBackgroundGUIStyle = new GUIStyle(GUI.skin.box);
+            graphBackgroundGUIStyle.normal.background = texture2D;
+            graphBackgroundGUIStyle.active.background = texture2D;
+            graphBackgroundGUIStyle.hover.background = texture2D;
+            graphBackgroundGUIStyle.focused.background = texture2D;
+            graphBackgroundGUIStyle.normal.textColor = Color.white;
+            graphBackgroundGUIStyle.active.textColor = Color.white;
+            graphBackgroundGUIStyle.hover.textColor = Color.white;
+            graphBackgroundGUIStyle.focused.textColor = Color.white;
+        }
+
+        private static void InitSelectionGUIStyle()
+        {
+            var texture2D = new Texture2D(1, 1, TextureFormat.RGBA32, false, true);
+            var color = !EditorGUIUtility.isProSkin
+                ? new Color(0.243f, 0.5686f, 0.839f, 0.5f)
+                : new Color(0.188f, 0.4588f, 0.6862f, 0.5f);
+            texture2D.SetPixel(1, 1, color);
+            texture2D.hideFlags = HideFlags.HideAndDontSave;
+            texture2D.Apply();
+            selectionGUIStyle = new GUIStyle(GUI.skin.box);
+            selectionGUIStyle.normal.background = texture2D;
+            selectionGUIStyle.active.background = texture2D;
+            selectionGUIStyle.hover.background = texture2D;
+            selectionGUIStyle.focused.background = texture2D;
+            selectionGUIStyle.normal.textColor = Color.white;
+            selectionGUIStyle.active.textColor = Color.white;
+            selectionGUIStyle.hover.textColor = Color.white;
+            selectionGUIStyle.focused.textColor = Color.white;
+        }
+
+        private static void InitPropertyBoxGUIStyle()
+        {
+            propertyBoxGUIStyle = new GUIStyle();
+            propertyBoxGUIStyle.padding = new RectOffset(2, 2, 0, 0);
         }
 
 
@@ -198,20 +262,34 @@ namespace SsitEngine.Editor
         {
             screenshotBackgroundTexture = new Texture2D(1, 1, TextureFormat.RGB24, false, true);
             if (EditorGUIUtility.isProSkin)
+            {
                 screenshotBackgroundTexture.SetPixel(1, 1, new Color(0.1647f, 0.1647f, 0.1647f));
+            }
             else
+            {
                 screenshotBackgroundTexture.SetPixel(1, 1, new Color(0.3647f, 0.3647f, 0.3647f));
+            }
             screenshotBackgroundTexture.Apply();
         }
 
 
-        public static Texture2D LoadTexture(string imageName, bool useSkinColor = true, UnityEngine.Object obj = null)
+        public static Texture2D LoadTexture( string imageName, bool useSkinColor = true, Object obj = null )
         {
             if (textureCache.ContainsKey(imageName))
+            {
                 return textureCache[imageName];
+            }
             Texture2D texture2D = null;
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(string.Format("{0}{1}", !useSkinColor ? string.Empty : (!EditorGUIUtility.isProSkin ? "Light" : "Dark"), imageName))
-                ?? Assembly.GetExecutingAssembly().GetManifestResourceStream(string.Format("SsitEngine.Editor.Res.{0}{1}", !useSkinColor ? (object)string.Empty : (!EditorGUIUtility.isProSkin ? "Light" : "Dark"), imageName));
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(string.Format("{0}{1}",
+                             !useSkinColor ? string.Empty : !EditorGUIUtility.isProSkin ? "Light" : "Dark",
+                             imageName))
+                         ?? Assembly.GetExecutingAssembly().GetManifestResourceStream(
+                             string.Format("SsitEngine.Editor.Res.{0}{1}",
+                                 !useSkinColor
+                                     ? string.Empty
+                                     : !EditorGUIUtility.isProSkin
+                                         ? "Light"
+                                         : "Dark", imageName));
             if (stream != null)
             {
                 texture2D = new Texture2D(0, 0, TextureFormat.RGBA32, false, true);
@@ -219,10 +297,14 @@ namespace SsitEngine.Editor
                 stream.Close();
             }
             if (texture2D != null)
+            {
                 texture2D.hideFlags = HideFlags.HideAndDontSave;
+            }
             else
-                Debug.LogWarning("图标加载错误");                
-            GUIUtility.textureCache.Add(imageName, texture2D);
+            {
+                Debug.LogWarning("图标加载错误");
+            }
+            textureCache.Add(imageName, texture2D);
             return texture2D;
         }
 
@@ -246,34 +328,49 @@ namespace SsitEngine.Editor
         //    return texture2D;
         //}
 
-        public static Texture2D LoadIcon(string iconName, ScriptableObject obj = null)
+        public static Texture2D LoadIcon( string iconName, ScriptableObject obj = null )
         {
-            if (GUIUtility.iconCache.ContainsKey(iconName))
-                return GUIUtility.iconCache[iconName];
-            Texture2D texture2D = (Texture2D)null;
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(iconName.Replace("{SkinColor}", !EditorGUIUtility.isProSkin ? "Light" : "Dark"))
-                ?? Assembly.GetExecutingAssembly().GetManifestResourceStream(string.Format("SimpleGameUtility.Resources.{0}", iconName.Replace("{SkinColor}", !EditorGUIUtility.isProSkin ? "Light" : "Dark")));
+            if (iconCache.ContainsKey(iconName))
+            {
+                return iconCache[iconName];
+            }
+            var texture2D = (Texture2D) null;
+            var stream = Assembly.GetExecutingAssembly()
+                             .GetManifestResourceStream(iconName.Replace("{SkinColor}",
+                                 !EditorGUIUtility.isProSkin ? "Light" : "Dark"))
+                         ?? Assembly.GetExecutingAssembly().GetManifestResourceStream(
+                             string.Format("SimpleGameUtility.Resources.{0}",
+                                 iconName.Replace("{SkinColor}", !EditorGUIUtility.isProSkin ? "Light" : "Dark")));
             if (stream != null)
             {
                 texture2D = new Texture2D(0, 0, TextureFormat.RGBA32, false, true);
-                texture2D.LoadImage(GUIUtility.ReadToEnd(stream));
+                texture2D.LoadImage(ReadToEnd(stream));
                 stream.Close();
             }
             if (texture2D == null)
-                texture2D = AssetDatabase.LoadAssetAtPath(iconName.Replace("{SkinColor}", !EditorGUIUtility.isProSkin ? "Light" : "Dark"), typeof(Texture2D)) as Texture2D;
+            {
+                texture2D = AssetDatabase.LoadAssetAtPath(
+                    iconName.Replace("{SkinColor}", !EditorGUIUtility.isProSkin ? "Light" : "Dark"),
+                    typeof(Texture2D)) as Texture2D;
+            }
             if (texture2D != null)
+            {
                 texture2D.hideFlags = HideFlags.HideAndDontSave;
-            GUIUtility.iconCache.Add(iconName, texture2D);
+            }
+            iconCache.Add(iconName, texture2D);
             return texture2D;
         }
-        private static byte[] ReadToEnd(Stream stream)
+
+        private static byte[] ReadToEnd( Stream stream )
         {
-            byte[] buffer = new byte[16384];
-            using (MemoryStream memoryStream = new MemoryStream())
+            var buffer = new byte[16384];
+            using (var memoryStream = new MemoryStream())
             {
                 int count;
                 while ((count = stream.Read(buffer, 0, buffer.Length)) > 0)
+                {
                     memoryStream.Write(buffer, 0, count);
+                }
                 return memoryStream.ToArray();
             }
         }
@@ -281,19 +378,73 @@ namespace SsitEngine.Editor
 
         private static void InitTaskTitleGUIStyle()
         {
-            GUIUtility.taskTitleGUIStyle = new GUIStyle(GUI.skin.label);
-            GUIUtility.taskTitleGUIStyle.alignment = TextAnchor.UpperCenter;
-            GUIUtility.taskTitleGUIStyle.fontSize = 12;
-            GUIUtility.taskTitleGUIStyle.fontStyle = FontStyle.Normal;
+            taskTitleGUIStyle = new GUIStyle(GUI.skin.label);
+            taskTitleGUIStyle.alignment = TextAnchor.UpperCenter;
+            taskTitleGUIStyle.fontSize = 12;
+            taskTitleGUIStyle.fontStyle = FontStyle.Normal;
         }
-        public static GUIStyle TaskTitleGUIStyle
+
+        #region Editor Package
+
+        private static string GetPackageFullPath()
         {
-            get
+            // Check for potential UPM package
+            var packagePath = Path.GetFullPath("Packages/com.coffee.upm-ssitengine");
+            if (Directory.Exists(packagePath))
             {
-                if (GUIUtility.taskTitleGUIStyle == null)
-                    GUIUtility.InitTaskTitleGUIStyle();
-                return GUIUtility.taskTitleGUIStyle;
+                return packagePath;
             }
+
+            packagePath = Path.GetFullPath("Assets/..");
+            if (Directory.Exists(packagePath))
+            {
+                // Search default location for development package
+                if (Directory.Exists(packagePath + "/Assets/Packages/com.coffee.upm-ssitengine/Editor Resources"))
+                {
+                    return packagePath + "/Assets/Packages/com.coffee.upm-ssitengine";
+                }
+
+                // Search for default location of normal TextMesh Pro AssetStore package
+                if (Directory.Exists(packagePath + "/Assets/SsitEngine/Editor Resources"))
+                {
+                    return packagePath + "/Assets/TextMesh Pro";
+                }
+
+                // Search for potential alternative locations in the user project
+                var matchingPaths =
+                    Directory.GetDirectories(packagePath, "SsitEngineAssets", SearchOption.AllDirectories);
+                var path = ValidateLocation(matchingPaths, packagePath);
+                if (path != null)
+                {
+                    return packagePath + path;
+                }
+            }
+
+            return null;
         }
+
+
+        /// <summary>
+        /// Method to validate the location of the asset folder by making sure the GUISkins folder exists.
+        /// </summary>
+        /// <param name="paths"></param>
+        /// <returns></returns>
+        private static string ValidateLocation( string[] paths, string projectPath )
+        {
+            for (var i = 0; i < paths.Length; i++)
+            {
+                // Check if any of the matching directories contain a GUISkins directory.
+                if (Directory.Exists(paths[i] + "/Editor Resources"))
+                {
+                    folderPath = paths[i].Replace(projectPath, "");
+                    folderPath = folderPath.TrimStart('\\', '/');
+                    return folderPath;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }

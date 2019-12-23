@@ -1,49 +1,52 @@
 ﻿using System;
 using UnityEngine;
-
 #if UNITY_EDITOR
 using UnityEditor;
+
 #endif
 
 public class AddDescribeAttribute : PropertyAttribute
 {
-    public string toolTipName;
     public Color textColor;
+    public string toolTipName;
+
     public AddDescribeAttribute()
     {
         textColor = Color.white;
     }
-    public AddDescribeAttribute(string toolTip)
+
+    public AddDescribeAttribute( string toolTip )
     {
-        this.toolTipName = toolTip;
+        toolTipName = toolTip;
         textColor = Color.white;
     }
-    public AddDescribeAttribute(string toolTip, float r, float g, float b, float a)
+
+    public AddDescribeAttribute( string toolTip, float r, float g, float b, float a )
     {
-        this.toolTipName = toolTip;
+        toolTipName = toolTip;
         textColor = new Color(r, g, b, a);
     }
-    public AddDescribeAttribute(string toolTip, float r, float g, float b)
+
+    public AddDescribeAttribute( string toolTip, float r, float g, float b )
     {
-        this.toolTipName = toolTip;
+        toolTipName = toolTip;
         textColor = new Color(r, g, b, 1);
     }
 }
-
 
 
 #if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(AddDescribeAttribute))]
 public class AddDescribeDrawer : PropertyDrawer
 {
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+    public override float GetPropertyHeight( SerializedProperty property, GUIContent label )
     {
         return EditorGUI.GetPropertyHeight(property, label, true);
     }
 
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    public override void OnGUI( Rect position, SerializedProperty property, GUIContent label )
     {
-        AddDescribeAttribute att = (AddDescribeAttribute)attribute;
+        var att = (AddDescribeAttribute) attribute;
         GUI.color = att.textColor;
         if (!string.IsNullOrEmpty(att.toolTipName))
         {

@@ -12,7 +12,6 @@ using UnityEngine.Events;
 
 namespace SsitEngine.Unity.Resource
 {
-    
     /// <summary>
     ///     资源加载器接口
     /// </summary>
@@ -97,5 +96,4 @@ namespace SsitEngine.Unity.Resource
         /// <param name="obj">卸载对象资源</param>
         void UnloadAsset<T>( Object obj );
     }
-
 }

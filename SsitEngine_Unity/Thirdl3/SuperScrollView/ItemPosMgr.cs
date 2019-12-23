@@ -4,13 +4,13 @@ namespace SuperScrollView
 {
     public class ItemSizeGroup
     {
+        private readonly float mItemDefaultSize;
         private int mDirtyBeginIndex = ItemPosMgr.mItemMaxCountPerGroup;
         public float mGroupEndPos;
         public int mGroupIndex;
         public float mGroupSize;
         public float mGroupStartPos;
         public int mItemCount;
-        private readonly float mItemDefaultSize;
 
         public float[] mItemSizeArray;
         public float[] mItemStartPosArray;
@@ -28,16 +28,24 @@ namespace SuperScrollView
         {
             mItemSizeArray = new float[ItemPosMgr.mItemMaxCountPerGroup];
             if (mItemDefaultSize != 0)
+            {
                 for (var i = 0; i < mItemSizeArray.Length; ++i)
+                {
                     mItemSizeArray[i] = mItemDefaultSize;
+                }
+            }
             mItemStartPosArray = new float[ItemPosMgr.mItemMaxCountPerGroup];
             mItemStartPosArray[0] = 0;
             mItemCount = ItemPosMgr.mItemMaxCountPerGroup;
             mGroupSize = mItemDefaultSize * mItemSizeArray.Length;
             if (mItemDefaultSize != 0)
+            {
                 mDirtyBeginIndex = 0;
+            }
             else
+            {
                 mDirtyBeginIndex = ItemPosMgr.mItemMaxCountPerGroup;
+            }
         }
 
         public float GetItemStartPos( int index )
@@ -48,9 +56,15 @@ namespace SuperScrollView
         public float SetItemSize( int index, float size )
         {
             var old = mItemSizeArray[index];
-            if (old == size) return 0;
+            if (old == size)
+            {
+                return 0;
+            }
             mItemSizeArray[index] = size;
-            if (index < mDirtyBeginIndex) mDirtyBeginIndex = index;
+            if (index < mDirtyBeginIndex)
+            {
+                mDirtyBeginIndex = index;
+            }
             var ds = size - old;
             mGroupSize = mGroupSize + ds;
             return ds;
@@ -58,7 +72,10 @@ namespace SuperScrollView
 
         public void SetItemCount( int count )
         {
-            if (mItemCount == count) return;
+            if (mItemCount == count)
+            {
+                return;
+            }
             mItemCount = count;
             RecalcGroupSize();
         }
@@ -66,12 +83,18 @@ namespace SuperScrollView
         public void RecalcGroupSize()
         {
             mGroupSize = 0;
-            for (var i = 0; i < mItemCount; ++i) mGroupSize += mItemSizeArray[i];
+            for (var i = 0; i < mItemCount; ++i)
+            {
+                mGroupSize += mItemSizeArray[i];
+            }
         }
 
         public int GetItemIndexByPos( float pos )
         {
-            if (mItemCount == 0) return -1;
+            if (mItemCount == 0)
+            {
+                return -1;
+            }
             var low = 0;
             var high = mItemCount - 1;
             while (low <= high)
@@ -80,21 +103,32 @@ namespace SuperScrollView
                 var startPos = mItemStartPosArray[mid];
                 var endPos = startPos + mItemSizeArray[mid];
                 if (startPos <= pos && endPos >= pos)
+                {
                     return mid;
+                }
                 if (pos > endPos)
+                {
                     low = mid + 1;
+                }
                 else
+                {
                     high = mid - 1;
+                }
             }
             return -1;
         }
 
         public void UpdateAllItemStartPos()
         {
-            if (mDirtyBeginIndex >= mItemCount) return;
+            if (mDirtyBeginIndex >= mItemCount)
+            {
+                return;
+            }
             var startIndex = mDirtyBeginIndex < 1 ? 1 : mDirtyBeginIndex;
             for (var i = startIndex; i < mItemCount; ++i)
+            {
                 mItemStartPosArray[i] = mItemStartPosArray[i - 1] + mItemSizeArray[i - 1];
+            }
             mDirtyBeginIndex = mItemCount;
         }
     }
@@ -102,9 +136,9 @@ namespace SuperScrollView
     public class ItemPosMgr
     {
         public const int mItemMaxCountPerGroup = 100;
+        private readonly List<ItemSizeGroup> mItemSizeGroupList = new List<ItemSizeGroup>();
         private int mDirtyBeginIndex = int.MaxValue;
         public float mItemDefaultSize = 20;
-        private readonly List<ItemSizeGroup> mItemSizeGroupList = new List<ItemSizeGroup>();
         public float mTotalSize;
 
         public ItemPosMgr( float itemDefaultSize )
@@ -120,9 +154,13 @@ namespace SuperScrollView
             var lastGroupItemCount = st;
             var needMaxGroupCount = maxCount / mItemMaxCountPerGroup;
             if (st > 0)
+            {
                 needMaxGroupCount++;
+            }
             else
+            {
                 lastGroupItemCount = mItemMaxCountPerGroup;
+            }
             var count = mItemSizeGroupList.Count;
             if (count > needMaxGroupCount)
             {
@@ -139,10 +177,19 @@ namespace SuperScrollView
                 }
             }
             count = mItemSizeGroupList.Count;
-            if (count == 0) return;
-            for (var i = 0; i < count - 1; ++i) mItemSizeGroupList[i].SetItemCount(mItemMaxCountPerGroup);
+            if (count == 0)
+            {
+                return;
+            }
+            for (var i = 0; i < count - 1; ++i)
+            {
+                mItemSizeGroupList[i].SetItemCount(mItemMaxCountPerGroup);
+            }
             mItemSizeGroupList[count - 1].SetItemCount(lastGroupItemCount);
-            for (var i = 0; i < count; ++i) mTotalSize = mTotalSize + mItemSizeGroupList[i].mGroupSize;
+            for (var i = 0; i < count; ++i)
+            {
+                mTotalSize = mTotalSize + mItemSizeGroupList[i].mGroupSize;
+            }
         }
 
         public void SetItemSize( int itemIndex, float size )
@@ -152,8 +199,12 @@ namespace SuperScrollView
             var tGroup = mItemSizeGroupList[groupIndex];
             var changedSize = tGroup.SetItemSize(indexInGroup, size);
             if (changedSize != 0f)
+            {
                 if (groupIndex < mDirtyBeginIndex)
+                {
                     mDirtyBeginIndex = groupIndex;
+                }
+            }
             mTotalSize += changedSize;
         }
 
@@ -171,7 +222,10 @@ namespace SuperScrollView
             index = 0;
             itemPos = 0f;
             var count = mItemSizeGroupList.Count;
-            if (count == 0) return;
+            if (count == 0)
+            {
+                return;
+            }
             ItemSizeGroup hitGroup = null;
 
             var low = 0;
@@ -196,10 +250,17 @@ namespace SuperScrollView
             }
             var hitIndex = -1;
             if (hitGroup != null)
+            {
                 hitIndex = hitGroup.GetItemIndexByPos(pos - hitGroup.mGroupStartPos);
+            }
             else
+            {
                 return;
-            if (hitIndex < 0) return;
+            }
+            if (hitIndex < 0)
+            {
+                return;
+            }
             index = hitIndex + hitGroup.mGroupIndex * mItemMaxCountPerGroup;
             itemPos = hitGroup.GetItemStartPos(hitIndex);
         }
@@ -207,8 +268,14 @@ namespace SuperScrollView
         public void Update( bool updateAll )
         {
             var count = mItemSizeGroupList.Count;
-            if (count == 0) return;
-            if (mDirtyBeginIndex >= count) return;
+            if (count == 0)
+            {
+                return;
+            }
+            if (mDirtyBeginIndex >= count)
+            {
+                return;
+            }
             var loopCount = 0;
             for (var i = mDirtyBeginIndex; i < count; ++i)
             {
@@ -226,7 +293,10 @@ namespace SuperScrollView
                     tGroup.mGroupStartPos = mItemSizeGroupList[i - 1].mGroupEndPos;
                     tGroup.mGroupEndPos = tGroup.mGroupStartPos + tGroup.mGroupSize;
                 }
-                if (!updateAll && loopCount > 1) return;
+                if (!updateAll && loopCount > 1)
+                {
+                    return;
+                }
             }
         }
     }

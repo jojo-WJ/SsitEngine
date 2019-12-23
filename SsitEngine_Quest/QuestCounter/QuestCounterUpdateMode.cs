@@ -1,8 +1,5 @@
-﻿using UnityEngine;
-
-namespace SsitEngine.QuestManager
+﻿namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// 计数器的更新方式
     /// </summary>
@@ -19,6 +16,4 @@ namespace SsitEngine.QuestManager
         /// </summary>
         Messages
     }
-
 }
-

@@ -1,69 +1,53 @@
-﻿using System.IO;
-using UnityEngine;
-using UnityEditor;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml.Serialization;
-using System;
+using UnityEditor;
+using UnityEngine;
 
 public class PPTools : EditorWindow
 {
-
-    static string COPYFILEPATH = "/Packages";
-    static string TARGETFOLDERPATH = "/Resources/Packages";
-    static string CONFIGPATH = "Assets/Editor/MyTools/PublishPackage";
-    static string CONGFIGASSETNAME = "GamePublishConfig.asset";
-    //static string CONGFIGASSETNAME = "GamePublishConfig.json";
-
-    private string[] mPlats = new string[]
-    {
-        "Pc",
-        "Ios",
-        "Andirod",
-    };
-
-    enum EnumPlat
-    {
-        None,
-        Pc,
-        Ios,
-        Andirod,
-    }
-
-    private string[] mSdks = new string[]
-    {
-        "Aone",
-        "微信",
-        "QQ",
-        "小米",
-    };
-
-    enum EnumSDK
-    {
-        None,
-        Aone,
-        微信,
-        QQ,
-        小米,
-    }
-
-    private Dictionary<string, object> mFielDic;
-
-    public Vector2 mScrollPos;
-    private bool mIsHelper = true;
-    private float mButtonWidth = 200;
-    private float mButtonHeight = 60;
+    private static readonly string COPYFILEPATH = "/Packages";
+    private static readonly string TARGETFOLDERPATH = "/Resources/Packages";
+    private static readonly string CONFIGPATH = "Assets/Editor/MyTools/PublishPackage";
+    private static readonly string CONGFIGASSETNAME = "GamePublishConfig.asset";
 
 
     //Config
     private static PublishConfigInfo mConfigInfo;
-    //private static PublishConfig mConfigInfo;
-    
-        //interval variable
-    private string mCurPlat;
     private static EnumPlat mCurEnumPlat = EnumPlat.None;
-    private string mCurSdk;
     private static EnumSDK mCurEnumSDK = EnumSDK.None;
-    private static bool mCanPublish = false;
+    private static bool mCanPublish;
+    private float mButtonHeight = 60;
+
+    private float mButtonWidth = 200;
+    //private static PublishConfig mConfigInfo;
+
+    //interval variable
+    private string mCurPlat;
+    private string mCurSdk;
+
+    private Dictionary<string, object> mFielDic;
+
+    private readonly bool mIsHelper = true;
+    //static string CONGFIGASSETNAME = "GamePublishConfig.json";
+
+    private readonly string[] mPlats =
+    {
+        "Pc",
+        "Ios",
+        "Andirod"
+    };
+
+    public Vector2 mScrollPos;
+
+    private readonly string[] mSdks =
+    {
+        "Aone",
+        "微信",
+        "QQ",
+        "小米"
+    };
 
     private void Awake()
     {
@@ -96,13 +80,14 @@ public class PPTools : EditorWindow
         mCurEnumSDK = EnumSDK.None;
         mCanPublish = false;
     }
-    [MenuItem("Tools/Pulish package/Pulish Window #&o", false, 1)]
-    static void InitWindow()
+
+    //[MenuItem("Tools/Pulish package/Pulish Window #&o", false, 1)]
+    private static void InitWindow()
     {
-        var mWindow = EditorWindow.GetWindow(typeof(PPTools));
+        var mWindow = GetWindow(typeof(PPTools));
     }
 
-    void OnGUI()
+    private void OnGUI()
     {
         mScrollPos = GUILayout.BeginScrollView(mScrollPos);
         {
@@ -132,12 +117,54 @@ public class PPTools : EditorWindow
         }
     }
 
-    void OnInspectorUpdate()
+    private void OnInspectorUpdate()
     {
-        this.Repaint();
+        Repaint();
+    }
+
+
+    #region 资源卸载
+
+    private static void UnloadPackageAssets( string folder )
+    {
+        var allAssetPath = AssetDatabase.GetAllAssetPaths();
+        foreach (var path in allAssetPath)
+        {
+            if (!path.Contains(folder))
+            {
+                continue;
+            }
+            var asset = AssetDatabase.LoadMainAssetAtPath(path);
+            if (asset == null)
+            {
+                continue;
+            }
+            //报错？？不能用【只能卸载Asset/component失败】
+            Resources.UnloadAsset(asset);
+        }
+    }
+
+    #endregion
+
+    private enum EnumPlat
+    {
+        None,
+        Pc,
+        Ios,
+        Andirod
+    }
+
+    private enum EnumSDK
+    {
+        None,
+        Aone,
+        微信,
+        QQ,
+        小米
     }
 
     #region Draw window
+
     private void DrawFileFresh()
     {
         GUILayout.Space(10);
@@ -146,44 +173,41 @@ public class PPTools : EditorWindow
         HeaderLable("Refresh Package");
         EditorGUILayout.EndHorizontal();
 
-        EditorGUILayout.BeginHorizontal("AnimationCurveEditorBackground"
-            , new GUILayoutOption[]
-            {
-                GUILayout.Height(EditorGUIUtility.fieldWidth),
-            });
+        EditorGUILayout.BeginHorizontal("AnimationCurveEditorBackground",
+            GUILayout.Height(EditorGUIUtility.fieldWidth));
         EditorGUI.indentLevel = 2;
-        Rect rect = EditorGUILayout.GetControlRect();
+        var rect = EditorGUILayout.GetControlRect();
         GUI.enabled = mCanPublish;
-        string refresh = "Refresh";
+        var refresh = "Refresh";
         if (GUI.Button(new Rect(rect.x, rect.y, mButtonWidth, mButtonHeight), refresh))
         {
             if (mCurEnumPlat != EnumPlat.None)
             {
                 EditorGUI.BeginChangeCheck();
-                string path = "";
+                var path = "";
                 switch (mCurEnumPlat)
                 {
                     case EnumPlat.Pc:
-                        {
-                            mConfigInfo.mConfig.pcConfig.OutPath = EditorUtility.SaveFilePanel("存储位置",
-                                Application.dataPath, "魂迹", "apk");
-                            path = mConfigInfo.mConfig.pcConfig.OutPath;
-                            break;
-                        }
+                    {
+                        mConfigInfo.mConfig.pcConfig.OutPath = EditorUtility.SaveFilePanel("存储位置",
+                            Application.dataPath, "魂迹", "apk");
+                        path = mConfigInfo.mConfig.pcConfig.OutPath;
+                        break;
+                    }
                     case EnumPlat.Ios:
-                        {
-                            mConfigInfo.mConfig.iosConfig.OutPath = EditorUtility.SaveFilePanel("存储位置",
-                                Application.dataPath, "魂迹", "apk");
-                            path = mConfigInfo.mConfig.iosConfig.OutPath;
-                            break;
-                        }
+                    {
+                        mConfigInfo.mConfig.iosConfig.OutPath = EditorUtility.SaveFilePanel("存储位置",
+                            Application.dataPath, "魂迹", "apk");
+                        path = mConfigInfo.mConfig.iosConfig.OutPath;
+                        break;
+                    }
                     case EnumPlat.Andirod:
-                        {
-                            mConfigInfo.mConfig.andriodConfig.OutPath = EditorUtility.SaveFilePanel("存储位置",
-                                Application.dataPath, "魂迹", "apk");
-                            path = mConfigInfo.mConfig.andriodConfig.OutPath;
-                            break;
-                        }
+                    {
+                        mConfigInfo.mConfig.andriodConfig.OutPath = EditorUtility.SaveFilePanel("存储位置",
+                            Application.dataPath, "魂迹", "apk");
+                        path = mConfigInfo.mConfig.andriodConfig.OutPath;
+                        break;
+                    }
                 }
                 if (!string.IsNullOrEmpty(path))
                 {
@@ -207,29 +231,27 @@ public class PPTools : EditorWindow
 
         float curWidth = Screen.width;
 
-        int row = Mathf.FloorToInt(curWidth / mButtonWidth);
-        int count = 0;
-        for (int i = 0; i < mPlats.Length; i += row, count++)
+        var row = Mathf.FloorToInt(curWidth / mButtonWidth);
+        var count = 0;
+        for (var i = 0; i < mPlats.Length; i += row, count++)
         {
-            EditorGUILayout.BeginHorizontal("AnimationCurveEditorBackground"
-                                                , new GUILayoutOption[]
-                                                {
-                                                    GUILayout.Height(EditorGUIUtility.fieldWidth)
-                                                });
-            Rect rect = EditorGUILayout.GetControlRect();
-            for (int j = 0; j < row; j++)
+            EditorGUILayout.BeginHorizontal("AnimationCurveEditorBackground",
+                GUILayout.Height(EditorGUIUtility.fieldWidth));
+            var rect = EditorGUILayout.GetControlRect();
+            for (var j = 0; j < row; j++)
             {
-                int curIndex = row * count + j;
+                var curIndex = row * count + j;
                 if (curIndex >= mPlats.Length)
                 {
                     break;
                 }
-                string curButtonSytle = "button";
+                var curButtonSytle = "button";
                 if (!string.IsNullOrEmpty(mCurPlat) && mCurPlat.Equals(mPlats[curIndex]))
                 {
                     curButtonSytle = "TL SelectionButton PreDropGlow";
                 }
-                if (GUI.Button(new Rect(rect.x + j * mButtonWidth, rect.y, mButtonWidth, mButtonHeight), mPlats[curIndex], new GUIStyle(curButtonSytle)))
+                if (GUI.Button(new Rect(rect.x + j * mButtonWidth, rect.y, mButtonWidth, mButtonHeight),
+                    mPlats[curIndex], new GUIStyle(curButtonSytle)))
                 {
                     OnDrawPlat(mPlats[curIndex]);
                 }
@@ -249,29 +271,27 @@ public class PPTools : EditorWindow
 
         float curWidth = Screen.width;
 
-        int row = Mathf.FloorToInt(curWidth / mButtonWidth);
-        int count = 0;
-        for (int i = 0; i < mSdks.Length; i += row, count++)
+        var row = Mathf.FloorToInt(curWidth / mButtonWidth);
+        var count = 0;
+        for (var i = 0; i < mSdks.Length; i += row, count++)
         {
-            EditorGUILayout.BeginHorizontal("AnimationCurveEditorBackground"
-                                                , new GUILayoutOption[]
-                                                {
-                                                    GUILayout.Height(EditorGUIUtility.fieldWidth)
-                                                });
-            Rect rect = EditorGUILayout.GetControlRect();
-            for (int j = 0; j < row; j++)
+            EditorGUILayout.BeginHorizontal("AnimationCurveEditorBackground",
+                GUILayout.Height(EditorGUIUtility.fieldWidth));
+            var rect = EditorGUILayout.GetControlRect();
+            for (var j = 0; j < row; j++)
             {
-                int curIndex = row * count + j;
+                var curIndex = row * count + j;
                 if (curIndex >= mSdks.Length)
                 {
                     break;
                 }
-                string curButtonSytle = "button";
+                var curButtonSytle = "button";
                 if (!string.IsNullOrEmpty(mCurSdk) && mCurSdk.Equals(mSdks[curIndex]))
                 {
                     curButtonSytle = "TL SelectionButton PreDropGlow";
                 }
-                if (GUI.Button(new Rect(rect.x + j * mButtonWidth, rect.y, mButtonWidth, mButtonHeight), mSdks[curIndex], new GUIStyle(curButtonSytle)))
+                if (GUI.Button(new Rect(rect.x + j * mButtonWidth, rect.y, mButtonWidth, mButtonHeight),
+                    mSdks[curIndex], new GUIStyle(curButtonSytle)))
                 {
                     OnDrawSdk(mSdks[curIndex]);
                 }
@@ -281,98 +301,99 @@ public class PPTools : EditorWindow
         }
     }
 
-
     #endregion
 
     #region 绘制回调
 
-    private void OnDrawFresh(string flag)
+    private void OnDrawFresh( string flag )
     {
         Debug.Log("点击" + flag);
 
         switch (mCurEnumPlat)
         {
             case EnumPlat.Pc:
-                {
-                    BuildPCGamePackage();
-                    break;
-                }
+            {
+                BuildPCGamePackage();
+                break;
+            }
             case EnumPlat.Andirod:
-                {
-                    BuildAndriodGamePackage();
-                    break;
-                }
+            {
+                BuildAndriodGamePackage();
+                break;
+            }
         }
     }
 
-    private void OnDrawPlat(string flag)
+    private void OnDrawPlat( string flag )
     {
         mCurPlat = flag;
-        mCurEnumPlat = (EnumPlat)Enum.Parse(typeof(EnumPlat), mCurPlat, true);
+        mCurEnumPlat = (EnumPlat) Enum.Parse(typeof(EnumPlat), mCurPlat, true);
 
 
         SwitchPlat();
     }
 
-    private void OnDrawSdk(string flag)
+    private void OnDrawSdk( string flag )
     {
         mCurSdk = flag;
-        mCurEnumSDK = (EnumSDK)Enum.Parse(typeof(EnumSDK), mCurSdk, true);
+        mCurEnumSDK = (EnumSDK) Enum.Parse(typeof(EnumSDK), mCurSdk, true);
     }
+
     #endregion
 
     #region Publish
+
     private static void SwitchPlat()
     {
-        BuildTarget curTarget = EditorUserBuildSettings.activeBuildTarget;
+        var curTarget = EditorUserBuildSettings.activeBuildTarget;
         switch (mCurEnumPlat)
         {
             case EnumPlat.Pc:
+            {
+                if (curTarget == BuildTarget.StandaloneWindows)
                 {
-                    if (curTarget == BuildTarget.StandaloneWindows)
+                    mCanPublish = true;
+                    Debug.Log("平台确认");
+
+                    return;
+                }
+
+                EditorUserBuildSettings.activeBuildTargetChanged = delegate
+                {
+                    if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.StandaloneWindows)
                     {
                         mCanPublish = true;
-                        Debug.Log("平台确认");
-
-                        return;
+                        Debug.Log("平台转换完成");
                     }
-
-                    EditorUserBuildSettings.activeBuildTargetChanged = delegate ()
-                    {
-                        if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.StandaloneWindows)
-                        {
-                            mCanPublish = true;
-                            Debug.Log("平台转换完成");
-                        }
-                    };
-                    EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows);
-                    break;
-                }
+                };
+                EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.StandaloneWindows);
+                break;
+            }
             case EnumPlat.Ios:
-                {
-                    break;
-                }
+            {
+                break;
+            }
             case EnumPlat.Andirod:
+            {
+                if (curTarget == BuildTarget.Android)
                 {
-                    if (curTarget == BuildTarget.Android)
+                    mCanPublish = true;
+                    Debug.Log("平台确认");
+
+                    return;
+                }
+
+                EditorUserBuildSettings.activeBuildTargetChanged = delegate
+                {
+                    if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android)
                     {
                         mCanPublish = true;
-                        Debug.Log("平台确认");
-
-                        return;
+                        Debug.Log("平台转换完成");
                     }
-
-                    EditorUserBuildSettings.activeBuildTargetChanged = delegate ()
-                    {
-                        if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android)
-                        {
-                            mCanPublish = true;
-                            Debug.Log("平台转换完成");
-                        }
-                    };
-                    EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.Android);
-                    break;
-                }
+                };
+                EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.Android);
+                break;
+            }
         }
     }
 
@@ -380,10 +401,12 @@ public class PPTools : EditorWindow
     {
         MovePackage();
     }
+
     private static void BuildAndriodGamePackage()
     {
         MovePackage();
     }
+
     private static void PPBegain()
     {
         //卸载回调
@@ -398,7 +421,7 @@ public class PPTools : EditorWindow
         //设置配置
 
 
-        string path = SetBwPlayerSetting();
+        var path = SetBwPlayerSetting();
 
         //Debug.LogError("这是打完之后的包,存放的路径:" + path);
         //选择平台
@@ -407,7 +430,7 @@ public class PPTools : EditorWindow
         {
             target = BuildTarget.StandaloneWindows;
         }
-#else 
+#else
         {
            target = BuildTarget.StandaloneOSXIntel;
         }
@@ -426,19 +449,19 @@ public class PPTools : EditorWindow
         }
 
         BuildPipeline.BuildPlayer(GetBuildScenes(), path, target, BuildOptions.None); //开始进行打包......
-
     }
+
     #endregion
 
 
     #region MenuItem
-    [MenuItem("Assets/Create/Publish Asset")]
-    static void Execute()
-    {
 
+    [MenuItem("Assets/Create/Publish Asset")]
+    private static void Execute()
+    {
         //实例化SysData               
 
-        PublishConfigInfo sd = ScriptableObject.CreateInstance<PublishConfigInfo>();
+        var sd = CreateInstance<PublishConfigInfo>();
 
         //随便设置一些数据给content                 
 
@@ -466,8 +489,8 @@ public class PPTools : EditorWindow
         //删除面板上的那个临时对象               
 
         //AssetDatabase.DeleteAsset(p);
-
     }
+
     [MenuItem("Tools/Pulish package/Move Package")]
     private static void MovePackageFolder()
     {
@@ -518,20 +541,22 @@ public class PPTools : EditorWindow
         }
         AssetDatabase.Refresh();
     }
+
     #endregion
 
 
     #region 配置加载
+
     [MenuItem("Tools/Pulish package/LoadLocalConfig", false, 2)]
-    static void LoadLocalConfig()
+    private static void LoadLocalConfig()
     {
-        PublishConfigInfo configInfo = AssetDatabase.LoadAssetAtPath<PublishConfigInfo>(Path.Combine(CONFIGPATH, CONGFIGASSETNAME));
+        var configInfo = AssetDatabase.LoadAssetAtPath<PublishConfigInfo>(Path.Combine(CONFIGPATH, CONGFIGASSETNAME));
 
         configInfo.mConfig.baseConfig.CompanyName = PlayerSettings.companyName;
         configInfo.mConfig.baseConfig.ProductName = PlayerSettings.productName;
 
 
-        BuildTarget curTarget = EditorUserBuildSettings.activeBuildTarget;
+        var curTarget = EditorUserBuildSettings.activeBuildTarget;
         Debug.Log(curTarget);
 
         switch (curTarget)
@@ -539,35 +564,34 @@ public class PPTools : EditorWindow
             case BuildTarget.StandaloneLinuxUniversal:
             case BuildTarget.StandaloneOSXIntel:
             case BuildTarget.StandaloneWindows:
-                {
-                    break;
-                }
+            {
+                break;
+            }
             case BuildTarget.iOS:
-                {
-
-                    break;
-                }
+            {
+                break;
+            }
             case BuildTarget.Android:
-                {
-                    AndriodConfig curConfig = configInfo.mConfig.andriodConfig;
-                    curConfig.ScriptingDefine =
-                        PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android);
-                    curConfig.ApplicationIdentifier = PlayerSettings.applicationIdentifier;
-                    curConfig.BundleVersion = PlayerSettings.bundleVersion;
+            {
+                var curConfig = configInfo.mConfig.andriodConfig;
+                curConfig.ScriptingDefine =
+                    PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android);
+                curConfig.ApplicationIdentifier = PlayerSettings.applicationIdentifier;
+                curConfig.BundleVersion = PlayerSettings.bundleVersion;
 
-                    curConfig.KeystorePass = PlayerSettings.keystorePass;
+                curConfig.KeystorePass = PlayerSettings.keystorePass;
 
-                    curConfig.BundleVersionCode = PlayerSettings.Android.bundleVersionCode;
-                    curConfig.KeystoreName = PlayerSettings.Android.keystoreName;
+                curConfig.BundleVersionCode = PlayerSettings.Android.bundleVersionCode;
+                curConfig.KeystoreName = PlayerSettings.Android.keystoreName;
 
-                    break;
-                }
+                break;
+            }
         }
     }
 
     private static string SetBwPlayerSetting()
     {
-        string path = "";
+        var path = "";
 
         PlayerSettings.companyName = mConfigInfo.mConfig.baseConfig.CompanyName;
         PlayerSettings.productName = mConfigInfo.mConfig.baseConfig.ProductName;
@@ -576,33 +600,34 @@ public class PPTools : EditorWindow
         switch (mCurEnumPlat)
         {
             case EnumPlat.Pc:
-                {
-                    PcConfig curConfig = mConfigInfo.mConfig.pcConfig;
-                    path = curConfig.OutPath;
-                    break;
-                }
+            {
+                var curConfig = mConfigInfo.mConfig.pcConfig;
+                path = curConfig.OutPath;
+                break;
+            }
             case EnumPlat.Ios:
-                {
-                    IosConfig curConfig = mConfigInfo.mConfig.iosConfig;
-                    path = curConfig.OutPath;
-                    break;
-                }
+            {
+                var curConfig = mConfigInfo.mConfig.iosConfig;
+                path = curConfig.OutPath;
+                break;
+            }
             case EnumPlat.Andirod:
-                {
-                    AndriodConfig curConfig = mConfigInfo.mConfig.andriodConfig;
+            {
+                var curConfig = mConfigInfo.mConfig.andriodConfig;
 
-                    PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, curConfig.ScriptingDefine); //设置宏,打包的为Android
+                PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android,
+                    curConfig.ScriptingDefine); //设置宏,打包的为Android
 
-                    PlayerSettings.applicationIdentifier = curConfig.ApplicationIdentifier;// "com.playbyone.chyz.bw";
-                    PlayerSettings.bundleVersion = curConfig.BundleVersion;
-                    PlayerSettings.Android.bundleVersionCode = ++curConfig.BundleVersionCode;
+                PlayerSettings.applicationIdentifier = curConfig.ApplicationIdentifier; // "com.playbyone.chyz.bw";
+                PlayerSettings.bundleVersion = curConfig.BundleVersion;
+                PlayerSettings.Android.bundleVersionCode = ++curConfig.BundleVersionCode;
 
-                    PlayerSettings.Android.keystoreName = curConfig.KeystoreName;
-                    PlayerSettings.keystorePass = curConfig.KeystorePass;
+                PlayerSettings.Android.keystoreName = curConfig.KeystoreName;
+                PlayerSettings.keystorePass = curConfig.KeystorePass;
 
-                    path = curConfig.OutPath;
-                    break;
-                }
+                path = curConfig.OutPath;
+                break;
+            }
         }
         return path;
     }
@@ -622,7 +647,6 @@ public class PPTools : EditorWindow
             //移动
             AssetDatabase.MoveAsset("Assets" + COPYFILEPATH,
                 "Assets" + TARGETFOLDERPATH);
-
         }
         else
         {
@@ -630,32 +654,11 @@ public class PPTools : EditorWindow
         }
         AssetDatabase.Refresh();
     }
-    #endregion
 
-
-
-
-    #region 资源卸载
-
-    static void UnloadPackageAssets(string folder)
-    {
-        string[] allAssetPath = AssetDatabase.GetAllAssetPaths();
-        foreach (string path in allAssetPath)
-        {
-            if (!path.Contains(folder))
-                continue;
-            var asset = AssetDatabase.LoadMainAssetAtPath(path);
-            if (asset == null)
-            {
-                continue;
-            }
-            //报错？？不能用【只能卸载Asset/component失败】
-            Resources.UnloadAsset(asset);
-        }
-    }
     #endregion
 
     #region Postprocess事件监听回调
+
     private static void OnMoveFolderPackage()
     {
         Debug.Log("文件导入完成：：OnPublishPackage");
@@ -671,22 +674,25 @@ public class PPTools : EditorWindow
         ResetPackageFolder();
         Debug.Log("文件还原中");
     }
+
     #endregion
 
 
-
     #region Interval helper
+
     /// <summary>
     /// 获取选定的Scene
     /// </summary>
     /// <returns></returns>
     private static string[] GetBuildScenes()
     {
-        List<string> names = new List<string>();
-        foreach (EditorBuildSettingsScene e in EditorBuildSettings.scenes)
+        var names = new List<string>();
+        foreach (var e in EditorBuildSettings.scenes)
         {
             if (e == null)
+            {
                 continue;
+            }
             if (e.enabled)
             {
                 names.Add(e.path);
@@ -711,37 +717,40 @@ public class PPTools : EditorWindow
     private static void SaveConfigInfo()
     {
         //序列化这个对象
-        XmlSerializer serializer = new XmlSerializer(typeof(PublishConfig));
+        var serializer = new XmlSerializer(typeof(PublishConfig));
 
         //将对象序列化输出到控制台
         //serializer.Serialize(,);
     }
 
-    private void CheckButtonValue(string fieldName, Action<bool> action)
+    private void CheckButtonValue( string fieldName, Action<bool> action )
     {
         if (action != null)
+        {
             action(GetFieldByFieldName<bool>(fieldName, false));
+        }
     }
 
-    private T GetFieldByFieldName<T>(string fieldName, object defaultValue)
+    private T GetFieldByFieldName<T>( string fieldName, object defaultValue )
     {
         if (string.IsNullOrEmpty(fieldName))
-            return default(T);
+        {
+            return default;
+        }
         if (mFielDic.ContainsKey(fieldName))
         {
-            return (T)mFielDic[fieldName];
+            return (T) mFielDic[fieldName];
         }
-        else
-        {
-            mFielDic.Add(fieldName, defaultValue);
-        }
-        return (T)mFielDic[fieldName];
+        mFielDic.Add(fieldName, defaultValue);
+        return (T) mFielDic[fieldName];
     }
 
-    private void SetFieldByFeildName(string fieldName, object value)
+    private void SetFieldByFeildName( string fieldName, object value )
     {
         if (string.IsNullOrEmpty(fieldName))
+        {
             return;
+        }
         if (mFielDic.ContainsKey(fieldName))
         {
             mFielDic[fieldName] = value;
@@ -752,7 +761,7 @@ public class PPTools : EditorWindow
         }
     }
 
-    void HeaderLable(string message)
+    private void HeaderLable( string message )
     {
         if (!mIsHelper)
         {
@@ -760,14 +769,14 @@ public class PPTools : EditorWindow
         }
         GUI.color = Color.cyan;
         //GUILayout.Space(Screen.width / 2 - EditorGUIUtility.fieldWidth * 5);
-        GUILayout.Label(message, "label"/*, new GUILayoutOption[]
+        GUILayout.Label(message, "label" /*, new GUILayoutOption[]
         {
             GUILayout.ExpandWidth(true)
         }*/);
         GUI.color = Color.white;
     }
 
-    void HelpLable(string message)
+    private void HelpLable( string message )
     {
         if (!mIsHelper)
         {
@@ -777,8 +786,8 @@ public class PPTools : EditorWindow
         GUILayout.Label(message, "label");
         GUI.color = Color.white;
     }
-    #endregion
 
+    #endregion
 }
 
 /*[XmlRoot]
@@ -809,4 +818,3 @@ public class AndriodConfig
     [XmlAttribute("outPath")]
     public string OutPath { get; set; }
 }*/
-

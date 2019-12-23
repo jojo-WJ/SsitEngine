@@ -1,6 +1,6 @@
-﻿using SsitEngine.PureMVC.Interfaces;
+﻿using System.Collections.Generic;
+using SsitEngine.PureMVC.Interfaces;
 using SsitEngine.Unity;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SsitEngine.QuestManager
@@ -12,31 +12,40 @@ namespace SsitEngine.QuestManager
     /// </summary>
     public class QuestManager : ManagerBase<QuestManager>
     {
+        #region Give Journal
+
+        public void AbandonQuest( Quest quest )
+        {
+            m_sysQuestJournal.AbandonQuest(quest);
+        }
+
+        #endregion
 
         #region Serialized Fields
 
-        [Tooltip("What to show in dialogue when quest givers only have completed quests.")]
-        [SerializeField]
-        private CompletedQuestGlobalDialogueMode m_completedQuestDialogueMode = CompletedQuestGlobalDialogueMode.ShowCompletedQuest;
+        [Tooltip("What to show in dialogue when quest givers only have completed quests.")] [SerializeField]
+        private CompletedQuestGlobalDialogueMode m_completedQuestDialogueMode =
+            CompletedQuestGlobalDialogueMode.ShowCompletedQuest;
 
         [Tooltip("When saving and loading quests to JSON, format the output for readability over minimum size.")]
         [SerializeField]
         private bool m_prettyPrintJson;
 
-        [Tooltip("预案任务资源最大限制")]
-        [SerializeField]
+        [Tooltip("预案任务资源最大限制")] [SerializeField]
         protected int maxQuestsToGenerate = 100;
+
         #endregion
 
         #region NotSerialized Field
 
-        const string sysQuestGiverId = "SYSQUESTGIVERID";
-        const string sysQuestJournalId = "SYSQUESTJOURNALID";
+        private const string sysQuestGiverId = "SYSQUESTGIVERID";
+        private const string sysQuestJournalId = "SYSQUESTJOURNALID";
 
         /// <summary>
         /// 系统任务发布者
         /// </summary>
         private QuestGiver m_sysGiver;
+
         /// <summary>
         /// 系统任务日志
         /// </summary>
@@ -50,14 +59,14 @@ namespace SsitEngine.QuestManager
         /// <summary>
         /// 外部条件判定附加回调
         /// </summary>
-        private OnQuestComleteAttachConditionHandler OnQuestComleteAttachConditionCallBack = null;
+        private OnQuestComleteAttachConditionHandler OnQuestComleteAttachConditionCallBack;
 
         private Dictionary<string, Quest> m_questAssets = new Dictionary<string, Quest>(); //key=questID
 
         private Dictionary<string, List<Quest>> m_questInstances = new Dictionary<string, List<Quest>>(); // key=questID
 
-        private Dictionary<string, IdentifiableQuestListContainer> m_questListContainers = new Dictionary<string, IdentifiableQuestListContainer>(); // key=ID.
-
+        private Dictionary<string, IdentifiableQuestListContainer> m_questListContainers =
+            new Dictionary<string, IdentifiableQuestListContainer>(); // key=ID.
 
         #endregion
 
@@ -65,61 +74,34 @@ namespace SsitEngine.QuestManager
 
         public QuestGiver SysGiver
         {
-            get
-            {
-                return m_sysGiver;
-            }
+            get => m_sysGiver;
 
-            set
-            {
-                m_sysGiver = value;
-            }
+            set => m_sysGiver = value;
         }
 
         public QuestJournal SysQuestJournal
         {
-            get
-            {
-                return m_sysQuestJournal;
-            }
+            get => m_sysQuestJournal;
 
-            set
-            {
-                m_sysQuestJournal = value;
-            }
+            set => m_sysQuestJournal = value;
         }
 
-        public IQuestHelper QuestHelper
-        {
-            get { return m_questHelper; }
-        }
+        public IQuestHelper QuestHelper => m_questHelper;
 
         /// <summary>
         /// What to show in dialogue when quest givers only have completed quests.
         /// </summary>
         public CompletedQuestGlobalDialogueMode CompletedQuestDialogueMode
         {
-            get { return m_completedQuestDialogueMode; }
-            set { m_completedQuestDialogueMode = value; }
+            get => m_completedQuestDialogueMode;
+            set => m_completedQuestDialogueMode = value;
         }
 
-        public Dictionary<string, Quest> QuestAssets
-        {
-            get { return m_questAssets; }
-        }
+        public Dictionary<string, Quest> QuestAssets => m_questAssets;
 
-        public Dictionary<string, List<Quest>> QuestInstances
-        {
-            get
-            {
-                return m_questInstances;
-            }
-        }
+        public Dictionary<string, List<Quest>> QuestInstances => m_questInstances;
 
-        public Dictionary<string, IdentifiableQuestListContainer> QuestListContainers
-        {
-            get { return m_questListContainers; }
-        }
+        public Dictionary<string, IdentifiableQuestListContainer> QuestListContainers => m_questListContainers;
 
         #endregion
 
@@ -135,7 +117,7 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public void SetQuestSystem()
         {
-            m_sysGiver = this.gameObject.AddComponent<QuestGiver>();
+            m_sysGiver = gameObject.AddComponent<QuestGiver>();
             //RoomProxy roomProxy = Facade.Instance.RetrieveProxy(RoomProxy.NAME) as RoomProxy;
             //if (roomProxy!= null)
             {
@@ -143,19 +125,18 @@ namespace SsitEngine.QuestManager
                 m_sysGiver.displayName = "任务系统";
                 m_sysGiver.OnEnable();
             }
-            m_sysQuestJournal = this.gameObject.AddComponent<QuestJournal>();
+            m_sysQuestJournal = gameObject.AddComponent<QuestJournal>();
             {
                 m_sysQuestJournal.id = sysQuestJournalId;
                 m_sysQuestJournal.displayName = "任务系统";
                 m_sysQuestJournal.OnEnable();
             }
             m_sysQuestJournal.forwardEventsToListeners = true;
-
         }
 
         public void SetQuestBuildHelper( IQuestHelper questHelper )
         {
-            this.m_questHelper = questHelper;
+            m_questHelper = questHelper;
         }
 
         public void SetQuest( Quest quest )
@@ -179,14 +160,10 @@ namespace SsitEngine.QuestManager
 
         #region QuestMoudle
 
-        public override int Priority
-        {
-            get { return (int)EnModuleType.ENMODULECUSTOM5; }
-        }
+        public override int Priority => (int) EnModuleType.ENMODULECUSTOM5;
 
         public override void OnUpdate( float elapseSeconds )
         {
-
         }
 
         public override void Shutdown()
@@ -217,13 +194,15 @@ namespace SsitEngine.QuestManager
         /// <param name="quest">Quest to give to quester.</param>
         /// <param name="questerTextInfo">Quester's text info.</param>
         /// <param name="questerQuestListContainer">Quester's quest list container.</param>
-        public void GiveQuestToQuester( Quest quest, QuestParticipantTextInfo questerTextInfo, QuestListContainer questerQuestListContainer, QuestCompleteMode mode = QuestCompleteMode.SingleComplet )
+        public void GiveQuestToQuester( Quest quest, QuestParticipantTextInfo questerTextInfo,
+            QuestListContainer questerQuestListContainer, QuestCompleteMode mode = QuestCompleteMode.SingleComplet )
         {
             m_sysGiver.GiveQuestToQuester(quest, questerTextInfo, questerQuestListContainer, mode);
-
         }
 
-        public void GiveQuestToQuester( Quest quest, QuestParticipantTextInfo questGiverTextInfo, QuestParticipantTextInfo questerTextInfo, QuestListContainer questerQuestListContainer, QuestCompleteMode mode = QuestCompleteMode.SingleComplet )
+        public void GiveQuestToQuester( Quest quest, QuestParticipantTextInfo questGiverTextInfo,
+            QuestParticipantTextInfo questerTextInfo, QuestListContainer questerQuestListContainer,
+            QuestCompleteMode mode = QuestCompleteMode.SingleComplet )
         {
             m_sysGiver.GiveQuestToQuester(quest, questGiverTextInfo, questerTextInfo, questerQuestListContainer, mode);
         }
@@ -235,39 +214,56 @@ namespace SsitEngine.QuestManager
         /// </summary>
         /// <param name="quest">Quest to give to quester.</param>
         /// <param name="questerQuestListContainer">Quester's quest list container.</param>
-        public virtual void GiveQuestToQuester( Quest quest, string questGiverId, string questerId, QuestCompleteMode mode = QuestCompleteMode.SingleComplet )
+        public virtual void GiveQuestToQuester( Quest quest, string questGiverId, string questerId,
+            QuestCompleteMode mode = QuestCompleteMode.SingleComplet )
         {
-            if (quest == null) return;
+            if (quest == null)
+            {
+                return;
+            }
             if (m_sysQuestJournal == null)
             {
-                Debug.LogWarning("Quest Machine: " + name + ".GiveQuestToQuester - quester (QuestListContainer) is null.", this);
+                Debug.LogWarning(
+                    "Quest Machine: " + name + ".GiveQuestToQuester - quester (QuestListContainer) is null.", this);
                 return;
             }
             var questGiverTextInfo = new QuestParticipantTextInfo(questGiverId, questGiverId, null);
             var questerTextInfo = new QuestParticipantTextInfo(questerId, questerId, null);
             GiveQuestToQuester(quest, questGiverTextInfo, questerTextInfo, m_sysQuestJournal, mode);
         }
-        public virtual void GiveQuestToQuester( Quest quest, QuestListContainer questerQuestListContainer, QuestCompleteMode mode = QuestCompleteMode.SingleComplet )
+
+        public virtual void GiveQuestToQuester( Quest quest, QuestListContainer questerQuestListContainer,
+            QuestCompleteMode mode = QuestCompleteMode.SingleComplet )
         {
-            if (quest == null) return;
-            if (questerQuestListContainer == null)
+            if (quest == null)
             {
-                Debug.LogWarning("Quest Machine: " + name + ".GiveQuestToQuester - quester (QuestListContainer) is null.", this);
                 return;
             }
-            var questerTextInfo = new QuestParticipantTextInfo(QuestUtility.GetID(questerQuestListContainer), QuestUtility.GetDisplayName(questerQuestListContainer), null);
+            if (questerQuestListContainer == null)
+            {
+                Debug.LogWarning(
+                    "Quest Machine: " + name + ".GiveQuestToQuester - quester (QuestListContainer) is null.", this);
+                return;
+            }
+            var questerTextInfo = new QuestParticipantTextInfo(QuestUtility.GetID(questerQuestListContainer),
+                QuestUtility.GetDisplayName(questerQuestListContainer), null);
             GiveQuestToQuester(quest, questerTextInfo, questerQuestListContainer, mode);
         }
 
         public virtual void GiveQuestToQuesterObj( Quest quest, QuestListContainer questerQuestListContainer )
         {
-            if (quest == null) return;
-            if (questerQuestListContainer == null)
+            if (quest == null)
             {
-                Debug.LogWarning("Quest Machine: " + name + ".GiveQuestToQuester - quester (QuestListContainer) is null.", this);
                 return;
             }
-            var questerTextInfo = new QuestParticipantTextInfo(QuestUtility.GetID(questerQuestListContainer.gameObject), QuestUtility.GetDisplayName(questerQuestListContainer.gameObject), null);
+            if (questerQuestListContainer == null)
+            {
+                Debug.LogWarning(
+                    "Quest Machine: " + name + ".GiveQuestToQuester - quester (QuestListContainer) is null.", this);
+                return;
+            }
+            var questerTextInfo = new QuestParticipantTextInfo(QuestUtility.GetID(questerQuestListContainer.gameObject),
+                QuestUtility.GetDisplayName(questerQuestListContainer.gameObject), null);
             GiveQuestToQuester(quest, questerTextInfo, questerQuestListContainer);
         }
 
@@ -307,17 +303,11 @@ namespace SsitEngine.QuestManager
         /// <param name="quester">Quester.</param>
         public virtual void GiveAllQuestsToQuester( GameObject quester )
         {
-            if (quester == null) return;
+            if (quester == null)
+            {
+                return;
+            }
             GiveAllQuestsToQuester(quester.GetComponent<QuestListContainer>());
-        }
-
-        #endregion
-
-        #region Give Journal
-
-        public void AbandonQuest( Quest quest )
-        {
-            m_sysQuestJournal.AbandonQuest(quest);
         }
 
         #endregion
@@ -333,6 +323,7 @@ namespace SsitEngine.QuestManager
         {
             return OnQuestComleteAttachConditionCallBack;
         }
+
         #endregion
 
         #region 消息处理
@@ -340,14 +331,14 @@ namespace SsitEngine.QuestManager
         /// <summary>
         /// 管理器激活
         /// </summary>
-        void OnEnable()
+        private void OnEnable()
         {
-            m_msgList = new ushort[]
+            m_msgList = new[]
             {
                 (ushort) EnQuestEvent.QuestStateChangedMessage,
                 (ushort) EnQuestEvent.QuestCounterChangedMessage,
                 (ushort) EnQuestEvent.SetIndicatorStateMessage,
-                (ushort) EnQuestEvent.RefreshIndicatorMessage,
+                (ushort) EnQuestEvent.RefreshIndicatorMessage
             };
             RegisterMsg(m_msgList);
         }
@@ -355,19 +346,19 @@ namespace SsitEngine.QuestManager
         /// <summary>
         /// 管理器禁用
         /// </summary>
-        void OnDisable()
+        private void OnDisable()
         {
             UnRegisterMsg(m_msgList);
         }
 
         public override void HandleNotification( INotification notification )
         {
-            QuestMessageArgs messageArgs = notification.Body as QuestMessageArgs;
+            var messageArgs = notification.Body as QuestMessageArgs;
             if (messageArgs == null)
             {
                 return;
             }
-            EnQuestEvent msgId = (EnQuestEvent)messageArgs.msgId;
+            var msgId = (EnQuestEvent) messageArgs.msgId;
 
             switch (msgId)
             {

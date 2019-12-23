@@ -1,55 +1,65 @@
-﻿using UnityEngine;
+﻿using System.Linq;
 using UnityEditor;
-using System.Linq;
+using UnityEngine;
 
-namespace JxDebug {
+namespace JxDebug
+{
     [CustomEditor(typeof(Settings))]
-    public class SettingsEditor : Editor {
-        GUIContent[] tabsContents = new GUIContent[] {
+    public class SettingsEditor : Editor
+    {
+        private SerializedProperty selectedTab;
+
+        private readonly GUIContent[] tabsContents =
+        {
             new GUIContent("Behaviour"),
             new GUIContent("Look & Feel"),
-            new GUIContent("Icons"),
+            new GUIContent("Icons")
         };
-        SerializedProperty selectedTab;
 
-        void OnEnable() {
+        private void OnEnable()
+        {
             selectedTab = serializedObject.FindProperty("selectedTab");
         }
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
             serializedObject.Update();
             DrawScript();
             DrawTabs();
             serializedObject.ApplyModifiedProperties();
         }
 
-        void DrawScript() {
+        private void DrawScript()
+        {
             GUI.enabled = false;
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"));
             GUI.enabled = true;
         }
 
-        void DrawTabs() {
+        private void DrawTabs()
+        {
             selectedTab.intValue = GUILayout.Toolbar(selectedTab.intValue, tabsContents);
-            switch(selectedTab.intValue) {
-            case 0:
-                DrawBehaviour();
-                break;
-            case 1:
-                DrawLookAndFeel();
-                break;
-            case 2:
-                DrawIcons();
-                break;
-            case 3:
-                GUI.enabled = !EditorApplication.isPlaying;
-                DrawBuiltInCommands();
-                GUI.enabled = true;
-                break;
+            switch (selectedTab.intValue)
+            {
+                case 0:
+                    DrawBehaviour();
+                    break;
+                case 1:
+                    DrawLookAndFeel();
+                    break;
+                case 2:
+                    DrawIcons();
+                    break;
+                case 3:
+                    GUI.enabled = !EditorApplication.isPlaying;
+                    DrawBuiltInCommands();
+                    GUI.enabled = true;
+                    break;
             }
         }
 
-        void DrawBehaviour() {
+        private void DrawBehaviour()
+        {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("showGUIButton"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("showOpenButton"));
 
@@ -70,7 +80,8 @@ namespace JxDebug {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultTag"));
         }
 
-        void DrawLookAndFeel() {
+        private void DrawLookAndFeel()
+        {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("scale"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("preferredHeight"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("showOpenButton"));
@@ -89,7 +100,8 @@ namespace JxDebug {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("animationY"));
         }
 
-        void DrawIcons() {
+        private void DrawIcons()
+        {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("errorIcon"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("warningIcon"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("closeConsoleIcon"));
@@ -115,26 +127,36 @@ namespace JxDebug {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("sliderThumbIcon"));
         }
 
-        void DrawBuiltInCommands() {
-            SerializedProperty currentCommand = serializedObject.FindProperty("builtInCommands");
-            SerializedProperty[] commands = new SerializedProperty[currentCommand.Copy().CountRemaining()];
-            for(int i = 0; currentCommand.Next(true); i++)
+        private void DrawBuiltInCommands()
+        {
+            var currentCommand = serializedObject.FindProperty("builtInCommands");
+            var commands = new SerializedProperty[currentCommand.Copy().CountRemaining()];
+            for (var i = 0; currentCommand.Next(true); i++)
+            {
                 commands[i] = currentCommand.Copy();
+            }
             commands = commands.OrderBy(x => x.name).ToArray();
 
-            int firstColumnCount = commands.Length/2;
+            var firstColumnCount = commands.Length / 2;
             SerializedProperty commandToggled = null;
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
-            for(int i = 0; i < commands.Length; i++) {
-                if (i == firstColumnCount+1)
+            for (var i = 0; i < commands.Length; i++)
+            {
+                if (i == firstColumnCount + 1)
+                {
                     EditorGUILayout.BeginVertical();
+                }
                 EditorGUI.BeginChangeCheck();
                 EditorGUILayout.PropertyField(commands[i], true);
-                if(EditorGUI.EndChangeCheck())
-                    commandToggled = commands[i];                
+                if (EditorGUI.EndChangeCheck())
+                {
+                    commandToggled = commands[i];
+                }
                 if (i == firstColumnCount)
+                {
                     EditorGUILayout.EndVertical();
+                }
             }
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
@@ -142,24 +164,34 @@ namespace JxDebug {
             ProcessCommandToggled(commandToggled);
         }
 
-        void ProcessCommandToggled(SerializedProperty command) {
-            if(command == null)
+        private void ProcessCommandToggled( SerializedProperty command )
+        {
+            if (command == null)
+            {
                 return;
-            switch(command.name) {
-            case "microphone":
-                AddOrRemoveDefineSymbol("COMMAND_SYSTEM_USE_MICROPHONE", BuildTargetGroup.Android, command.boolValue);
-                break;
-            case "locationService":
-                AddOrRemoveDefineSymbol("COMMAND_SYSTEM_USE_LOCATION", BuildTargetGroup.Android, command.boolValue);
-                break;
+            }
+            switch (command.name)
+            {
+                case "microphone":
+                    AddOrRemoveDefineSymbol("COMMAND_SYSTEM_USE_MICROPHONE", BuildTargetGroup.Android,
+                        command.boolValue);
+                    break;
+                case "locationService":
+                    AddOrRemoveDefineSymbol("COMMAND_SYSTEM_USE_LOCATION", BuildTargetGroup.Android, command.boolValue);
+                    break;
             }
         }
 
-        void AddOrRemoveDefineSymbol(string define, BuildTargetGroup group, bool add) {
-            if(add)
+        private void AddOrRemoveDefineSymbol( string define, BuildTargetGroup group, bool add )
+        {
+            if (add)
+            {
                 DefineSymbolsManager.AddDefine(define, group);
+            }
             else
+            {
                 DefineSymbolsManager.RemoveDefine(define, group);
+            }
         }
     }
 }

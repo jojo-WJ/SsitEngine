@@ -1,50 +1,42 @@
 ﻿using System;
 using UnityEngine;
 
-namespace JxDebug {
+namespace JxDebug
+{
     [Serializable]
-    public class Entry {
-        public delegate void EntryDelegate(Entry entry);
+    public class Entry
+    {
+        public delegate void EntryDelegate( Entry entry );
 
-        const float spacing = 5;
-        const string namePrefix = "entry";
+        private const float spacing = 5;
+        private const string namePrefix = "entry";
 
-        static readonly float alpha = 0.3f;
-        static readonly Color backgroundColor;
+        private static readonly float alpha = 0.3f;
+        private static readonly Color backgroundColor;
 
-        static int nextId = 1000;
-        static GUIContent foldoutCollapsedContent;
-        static GUIContent foldoutExpandedContent;
-        static GUIContent stackTraceContent;
-        static GUIContent removeContent;
+        private static int nextId = 1000;
+        private static readonly GUIContent foldoutCollapsedContent;
+        private static readonly GUIContent foldoutExpandedContent;
+        private static readonly GUIContent stackTraceContent;
+        private static readonly GUIContent removeContent;
+        private readonly SimpleTextBuilder builder = new SimpleTextBuilder();
+        private float groupContentWidth;
 
-        int id;
-        string name;
-        GUIContent timeStampContent;
-        GUIContent textContent = new GUIContent();
-        Vector2 timeStampSize;
-        float groupContentWidth;
-        int lastGroupContentLength;
-        Vector2 textSize;
-        float lastTextHeight;
-        float lastEntriesSpacing;
-        float unExpadedTextHeight;
-        int lastFontSize;
-        GUIStyle textStyle;
-        SimpleTextBuilder builder = new SimpleTextBuilder();
+        private readonly int id;
+        private float lastEntriesSpacing;
+        private int lastFontSize;
+        private int lastGroupContentLength;
+        private float lastTextHeight;
+        private readonly string name;
+        private readonly GUIContent textContent = new GUIContent();
+        private Vector2 textSize;
+        private readonly GUIStyle textStyle;
+        private readonly GUIContent timeStampContent;
+        private Vector2 timeStampSize;
+        private float unExpadedTextHeight;
 
-        public event EntryDelegate onEntryRemoved;
-        public event EntryDelegate onEntryRebuilt;
-        
-        public EntryData data { get; private set; }
-        public string timeStamp { get; private set; }
-        public bool showStackTrace { get; set; }
-        public bool isExpanded { get; set; }
-        public EntryGroup group { get; set; }
-
-        public float height { get { return textSize.y + JxDebug.Setting.entriesSpacing * 2; } }
-
-        static Entry() {
+        static Entry()
+        {
             backgroundColor = Color.black;
             backgroundColor.a = alpha;
             foldoutCollapsedContent = new GUIContent(JxDebug.Setting.entryCollapsedIcon);
@@ -53,7 +45,8 @@ namespace JxDebug {
             removeContent = new GUIContent(JxDebug.Setting.removeEntryIcon);
         }
 
-        public Entry(EntryData data) {
+        public Entry( EntryData data )
+        {
             id = nextId++;
             name = namePrefix + id;
             data.CutOffExceedingText();
@@ -63,28 +56,45 @@ namespace JxDebug {
             textStyle = new GUIStyle(GUIUtils.TextStyle);
         }
 
-        public void Draw(float positionY, float entryWidth, bool isVisible) {
+        public EntryData data { get; private set; }
+        public string timeStamp { get; private set; }
+        public bool showStackTrace { get; set; }
+        public bool isExpanded { get; set; }
+        public EntryGroup group { get; set; }
+
+        public float height => textSize.y + JxDebug.Setting.entriesSpacing * 2;
+
+        public event EntryDelegate onEntryRemoved;
+        public event EntryDelegate onEntryRebuilt;
+
+        public void Draw( float positionY, float entryWidth, bool isVisible )
+        {
             DoLayout(entryWidth);
-            if(!isVisible)
+            if (!isVisible)
+            {
                 return;
+            }
 
             GUIUtils.DrawBox(new Rect(0, positionY, entryWidth, height), backgroundColor);
-            Rect rect = new Rect(0, positionY + JxDebug.Setting.entriesSpacing, 0, 0);
+            var rect = new Rect(0, positionY + JxDebug.Setting.entriesSpacing, 0, 0);
             DrawFoldoutToggle(ref rect);
             rect.x += rect.width;
-            if(JxDebug.Setting.showTimeStamp) {
+            if (JxDebug.Setting.showTimeStamp)
+            {
                 DrawTimeStamp(ref rect);
                 rect.x += rect.width;
                 rect.x += spacing;
             }
-            if(data.icon != null) {
+            if (data.icon != null)
+            {
                 DrawIcon(ref rect);
                 rect.x += rect.width;
                 rect.x += spacing;
             }
             DrawText(ref rect, textSize.x);
             rect.x += rect.width;
-            if(JxDebug.Setting.groupIdenticalEntries) {
+            if (JxDebug.Setting.groupIdenticalEntries)
+            {
                 DrawGroupContent(ref rect);
                 rect.x += rect.width;
             }
@@ -93,190 +103,245 @@ namespace JxDebug {
             DrawRemoveButton(ref rect);
         }
 
-        void DoLayout(float entryWidth) {
+        private void DoLayout( float entryWidth )
+        {
             //The styled is applied to calculate sizes properly
             ApplyStyle();
             builder.RebuildIfNecessary(this, textSize.x);
             SetContentText();
             RestoreStyle();
 
-            if(lastFontSize != JxDebug.Setting.fontSize) {
+            if (lastFontSize != JxDebug.Setting.fontSize)
+            {
                 lastFontSize = JxDebug.Setting.fontSize;
                 timeStampSize = textStyle.CalcSize(timeStampContent);
                 groupContentWidth = textStyle.CalcSize(group.content).x;
             }
-            else if(lastGroupContentLength != group.content.text.Length) {
+            else if (lastGroupContentLength != group.content.text.Length)
+            {
                 lastGroupContentLength = group.content.text.Length;
                 groupContentWidth = textStyle.CalcSize(group.content).x;
             }
 
             CalculateTextSize(entryWidth);
 
-            if(!isExpanded && !showStackTrace)
+            if (!isExpanded && !showStackTrace)
+            {
                 unExpadedTextHeight = textSize.y;
+            }
 
-            bool alreadyRebuilt = false;
-            if(JxDebug.Setting.entriesSpacing != lastEntriesSpacing) {
+            var alreadyRebuilt = false;
+            if (JxDebug.Setting.entriesSpacing != lastEntriesSpacing)
+            {
                 lastEntriesSpacing = JxDebug.Setting.entriesSpacing;
                 onEntryRebuilt(this);
                 alreadyRebuilt = true;
             }
-            if(textSize.y != lastTextHeight) {
+            if (textSize.y != lastTextHeight)
+            {
                 lastTextHeight = textSize.y;
                 if (!alreadyRebuilt)
+                {
                     onEntryRebuilt(this);
+                }
             }
         }
 
-        void CalculateTextSize(float entryWidth) {
+        private void CalculateTextSize( float entryWidth )
+        {
             textSize.x = CalculateTextWidth(entryWidth);
             textSize.y = textStyle.CalcHeight(textContent, textSize.x);
         }
 
-        float CalculateTextWidth(float entryWidth) {
+        private float CalculateTextWidth( float entryWidth )
+        {
             entryWidth -= foldoutCollapsedContent.image.width;
             entryWidth -= stackTraceContent.image.width;
             entryWidth -= removeContent.image.width;
-            if(JxDebug.Setting.showTimeStamp) {
+            if (JxDebug.Setting.showTimeStamp)
+            {
                 entryWidth -= timeStampSize.x;
                 entryWidth -= spacing;
             }
-            if(data.icon != null) {
+            if (data.icon != null)
+            {
                 entryWidth -= Mathf.Min(data.icon.height, unExpadedTextHeight);
                 entryWidth -= spacing;
             }
-            if(JxDebug.Setting.groupIdenticalEntries)
+            if (JxDebug.Setting.groupIdenticalEntries)
+            {
                 entryWidth -= groupContentWidth;
+            }
             return entryWidth;
         }
 
-        void SetContentText() {
+        private void SetContentText()
+        {
             textContent.text = isExpanded ? data.text : builder.simpleText;
-            if(showStackTrace)
+            if (showStackTrace)
+            {
                 textContent.text += "\n\n" + data.stackTrace;
+            }
         }
 
-        void DrawFoldoutToggle(ref Rect rect) {
-            float oldY = rect.y;
+        private void DrawFoldoutToggle( ref Rect rect )
+        {
+            var oldY = rect.y;
             rect.width = foldoutCollapsedContent.image.width;
             rect.height = height - textSize.y + timeStampSize.y - JxDebug.Setting.entriesSpacing * 2;
-            bool expand = false;
-            if(builder.needsExpandToggle) {
+            var expand = false;
+            if (builder.needsExpandToggle)
+            {
                 expand = isExpanded;
-                if(GUIUtils.DrawCenteredButton(rect, isExpanded ? foldoutExpandedContent : foldoutCollapsedContent, Color.clear))
+                if (GUIUtils.DrawCenteredButton(rect, isExpanded ? foldoutExpandedContent : foldoutCollapsedContent,
+                    Color.clear))
+                {
                     expand = !isExpanded;
+                }
             }
             isExpanded = expand;
             rect.y = oldY;
         }
 
-        void DrawTimeStamp(ref Rect rect) {
+        private void DrawTimeStamp( ref Rect rect )
+        {
             rect.width = timeStampSize.x;
             rect.height = height;
             GUI.Label(rect, timeStampContent, textStyle);
         }
 
-        void DrawIcon(ref Rect rect) {
+        private void DrawIcon( ref Rect rect )
+        {
             rect.width = rect.height = Mathf.Min(data.icon.height, unExpadedTextHeight);
             GUI.DrawTexture(rect, data.icon, ScaleMode.ScaleToFit);
         }
 
-        void DrawText(ref Rect rect, float width) {
+        private void DrawText( ref Rect rect, float width )
+        {
             rect.width = width;
             rect.height = height;
 
             GUIUtility.GetControlID(id, FocusType.Keyboard);
             ApplyStyle();
             GUI.SetNextControlName(name);
-            if(Application.isMobilePlatform)
+            if (Application.isMobilePlatform)
+            {
                 GUI.Label(rect, textContent.text, textStyle);
+            }
             else
+            {
                 GUI.TextField(rect, textContent.text, textStyle);
+            }
             RestoreStyle();
         }
 
-        void ApplyStyle() {
+        private void ApplyStyle()
+        {
             textStyle.fontStyle = data.options.style;
-            if(data.options.size > 0)
+            if (data.options.size > 0)
+            {
                 textStyle.fontSize = data.options.size;
+            }
             textStyle.normal.textColor = data.options.color;
         }
 
-        void RestoreStyle() {
+        private void RestoreStyle()
+        {
             textStyle.fontStyle = GUIUtils.TextStyle.fontStyle;
             textStyle.fontSize = GUIUtils.TextStyle.fontSize;
             textStyle.normal.textColor = GUIUtils.TextStyle.normal.textColor;
         }
 
-        void DrawGroupContent(ref Rect rect) {
+        private void DrawGroupContent( ref Rect rect )
+        {
             rect.width = groupContentWidth;
             rect.height = height;
-            GUI.Label(rect, group.content, textStyle); 
+            GUI.Label(rect, group.content, textStyle);
         }
 
-        void DrawStackTraceToggle(ref Rect rect) {
+        private void DrawStackTraceToggle( ref Rect rect )
+        {
             rect.width = stackTraceContent.image.width;
-            rect.height = height - textSize.y + timeStampSize.y- JxDebug.Setting.entriesSpacing * 2;
-            if(GUIUtils.DrawCenteredButton(rect, stackTraceContent, Color.clear))
+            rect.height = height - textSize.y + timeStampSize.y - JxDebug.Setting.entriesSpacing * 2;
+            if (GUIUtils.DrawCenteredButton(rect, stackTraceContent, Color.clear))
+            {
                 showStackTrace = !showStackTrace;
+            }
         }
 
-        void DrawRemoveButton(ref Rect rect) {
+        private void DrawRemoveButton( ref Rect rect )
+        {
             rect.width = removeContent.image.width;
             rect.height = height - textSize.y + timeStampSize.y - JxDebug.Setting.entriesSpacing * 2;
-            if(GUIUtils.DrawCenteredButton(rect, removeContent, Color.clear))
+            if (GUIUtils.DrawCenteredButton(rect, removeContent, Color.clear))
+            {
                 Remove();
+            }
         }
 
-        public void Remove() {
+        public void Remove()
+        {
             onEntryRemoved(this);
         }
 
         [Serializable]
-        class SimpleTextBuilder {
-            const string toBeContinuedText = " [...]";
-            
-            float widthReservedForText;
-            float realTextWidth;
-            GUIContent content = new GUIContent();
-            public string simpleText = string.Empty;
+        private class SimpleTextBuilder
+        {
+            private const string toBeContinuedText = " [...]";
+            private readonly GUIContent content = new GUIContent();
             public bool needsExpandToggle;
+            private float realTextWidth;
+            public string simpleText = string.Empty;
+
+            private float widthReservedForText;
 
             //Entry is received as a method parameter instead of as a constructor parameter to avoid Unity recursive serialization problems
-            public void RebuildIfNecessary(Entry entry, float widthReservedForText) {
-                float realTextWidth = entry.textStyle.CalcSize(entry.textContent).x;
-                if(Event.current.type == EventType.Repaint && (!Mathf.Approximately(widthReservedForText, this.widthReservedForText) || realTextWidth != this.realTextWidth)) {
+            public void RebuildIfNecessary( Entry entry, float widthReservedForText )
+            {
+                var realTextWidth = entry.textStyle.CalcSize(entry.textContent).x;
+                if (Event.current.type == EventType.Repaint &&
+                    (!Mathf.Approximately(widthReservedForText, this.widthReservedForText) ||
+                     realTextWidth != this.realTextWidth))
+                {
                     this.realTextWidth = realTextWidth;
                     this.widthReservedForText = widthReservedForText;
                     Rebuild(entry);
                 }
             }
 
-            void Rebuild(Entry entry) {
+            private void Rebuild( Entry entry )
+            {
                 needsExpandToggle = NeedsExpandToggle(entry);
-                simpleText = needsExpandToggle? BuildSimpleText(entry):entry.data.text;
+                simpleText = needsExpandToggle ? BuildSimpleText(entry) : entry.data.text;
             }
 
-            bool NeedsExpandToggle(Entry entry) {
+            private bool NeedsExpandToggle( Entry entry )
+            {
                 //Size needs to be recalculated based on the whole data.text, not only textContent.text
                 content.text = entry.data.text;
-                Vector2 size = entry.textStyle.CalcSize(content);
+                var size = entry.textStyle.CalcSize(content);
                 return size.x > widthReservedForText || content.text.Contains("\n") || content.text.Contains("\r");
             }
 
-            string BuildSimpleText(Entry entry) {
+            private string BuildSimpleText( Entry entry )
+            {
                 Vector2 size;
                 content.text = toBeContinuedText;
-                string lastSimpleText = content.text;
-                
-                for(int i = 0; i < entry.data.text.Length; i++) {
+                var lastSimpleText = content.text;
+
+                for (var i = 0; i < entry.data.text.Length; i++)
+                {
                     content.text = string.Concat(entry.data.text.Substring(0, i), toBeContinuedText);
                     size = entry.textStyle.CalcSize(content);
-                    if(size.x > widthReservedForText)
+                    if (size.x > widthReservedForText)
+                    {
                         break;
+                    }
                     lastSimpleText = content.text;
-                    if(entry.data.text[i] == '\n' || entry.data.text[i] == '\r')
+                    if (entry.data.text[i] == '\n' || entry.data.text[i] == '\r')
+                    {
                         break;
+                    }
                 }
                 return lastSimpleText;
             }

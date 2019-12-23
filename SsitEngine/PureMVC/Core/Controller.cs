@@ -47,11 +47,15 @@ namespace SsitEngine.PureMVC.Core
             get
             {
                 if (instance == null)
+                {
                     lock (m_staticSyncRoot)
                     {
                         if (instance == null)
+                        {
                             instance = new Controller();
+                        }
                     }
+                }
                 return instance;
             }
         }
@@ -78,7 +82,9 @@ namespace SsitEngine.PureMVC.Core
             lock (m_syncRoot)
             {
                 if (!commandMap.ContainsKey(notificationName))
+                {
                     view.RegisterObserver(notificationName, new Observer(this, ExecuteCommand));
+                }
                 commandMap[notificationName] = commandFunc;
             }
         }
@@ -105,7 +111,9 @@ namespace SsitEngine.PureMVC.Core
             lock (m_syncRoot)
             {
                 if (!commandMap.ContainsKey(notificationName))
+                {
                     view.RegisterObserver(notificationName, new Observer(this, ExecuteCommand));
+                }
                 commandMap[notificationName] = () => { return Activator.CreateInstance(commandType) as ICommand; };
             }
         }

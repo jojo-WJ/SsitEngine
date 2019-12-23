@@ -31,19 +31,25 @@ namespace SsitEngine.Unity.Utility
         {
             if (material1.frictionCombine == PhysicMaterialCombine.Maximum ||
                 material2.frictionCombine == PhysicMaterialCombine.Maximum)
+            {
                 return dynamicFriction
                     ? Mathf.Max(material1.dynamicFriction, material2.dynamicFriction)
                     : Mathf.Max(material1.staticFriction, material2.staticFriction);
+            }
             if (material1.frictionCombine == PhysicMaterialCombine.Minimum ||
                 material2.frictionCombine == PhysicMaterialCombine.Minimum)
+            {
                 return dynamicFriction
                     ? Mathf.Min(material1.dynamicFriction, material2.dynamicFriction)
                     : Mathf.Min(material1.staticFriction, material2.staticFriction);
+            }
             if (material1.frictionCombine == PhysicMaterialCombine.Multiply ||
                 material2.frictionCombine == PhysicMaterialCombine.Multiply)
+            {
                 return dynamicFriction
                     ? material1.dynamicFriction * material2.dynamicFriction
                     : material1.staticFriction * material2.staticFriction;
+            }
             return dynamicFriction
                 ? (material1.dynamicFriction + material2.dynamicFriction) / 2
                 : (material1.staticFriction + material2.staticFriction) / 2; // Average combine.
@@ -59,13 +65,19 @@ namespace SsitEngine.Unity.Utility
         {
             if (material1.bounceCombine == PhysicMaterialCombine.Maximum ||
                 material2.bounceCombine == PhysicMaterialCombine.Maximum)
+            {
                 return Mathf.Max(material1.bounciness, material2.bounciness);
+            }
             if (material1.bounceCombine == PhysicMaterialCombine.Minimum ||
                 material2.bounceCombine == PhysicMaterialCombine.Minimum)
+            {
                 return Mathf.Min(material1.bounciness, material2.bounciness);
+            }
             if (material1.bounceCombine == PhysicMaterialCombine.Multiply ||
                 material2.bounceCombine == PhysicMaterialCombine.Multiply)
+            {
                 return material1.bounciness * material2.bounciness;
+            }
             return (material1.bounciness + material2.bounciness) / 2; // Average combine.
         }
 
@@ -191,13 +203,19 @@ namespace SsitEngine.Unity.Utility
             Vector3 direction;
             if (capsuleCollider.direction == 1)
                 // Y-Axis.
+            {
                 direction = Vector3.up;
+            }
             else if (capsuleCollider.direction == 2)
                 // Z-Axis.
+            {
                 direction = Vector3.forward;
+            }
             else
                 // X-Axis.
+            {
                 direction = Vector3.right;
+            }
             return direction;
         }
 
@@ -208,8 +226,14 @@ namespace SsitEngine.Unity.Utility
         /// <returns>An angle between -180 and 180 degrees.</returns>
         public static float ClampInnerAngle( float angle )
         {
-            if (angle < -180) angle += 360;
-            if (angle > 180) angle -= 360;
+            if (angle < -180)
+            {
+                angle += 360;
+            }
+            if (angle > 180)
+            {
+                angle -= 360;
+            }
             return angle;
         }
 
@@ -220,8 +244,14 @@ namespace SsitEngine.Unity.Utility
         /// <returns>An angle between 0 and 360 degrees.</returns>
         public static float ClampAngle( float angle )
         {
-            if (angle < 0) angle += 360;
-            if (angle > 360) angle -= 360;
+            if (angle < 0)
+            {
+                angle += 360;
+            }
+            if (angle > 360)
+            {
+                angle -= 360;
+            }
             return angle;
         }
 
@@ -247,8 +277,10 @@ namespace SsitEngine.Unity.Utility
             Quaternion deltaRotation )
         {
             if (current != root)
+            {
                 return ApplyRotationToChildMatrices(current.parent, root, deltaRotation) *
                        Matrix4x4.TRS(current.localPosition, current.localRotation, current.localScale);
+            }
             return Matrix4x4.TRS(current.localPosition, current.localRotation * deltaRotation, current.localScale);
         }
 
@@ -288,8 +320,10 @@ namespace SsitEngine.Unity.Utility
             Vector3 moveDirection, bool sphereCheck, bool lowerPoint )
         {
             if (collider is CapsuleCollider)
+            {
                 return ClosestPointOnCapsule(transform, collider as CapsuleCollider, point, moveDirection, sphereCheck,
                     lowerPoint);
+            }
             // SphereCollider.
             var sphereCollider = collider as SphereCollider;
             return ClosestPointOnSphere(transform, point, collider.transform.TransformPoint(sphereCollider.center),
@@ -315,13 +349,19 @@ namespace SsitEngine.Unity.Utility
             Vector3 capsuleDirection;
             if (capsuleCollider.direction == 1)
                 // Y-Axis.
+            {
                 capsuleDirection = capsuleCollider.transform.up;
+            }
             else if (capsuleCollider.direction == 2)
                 // Z-Axis.
+            {
                 capsuleDirection = capsuleCollider.transform.forward;
+            }
             else
                 // X-Axis.
+            {
                 capsuleDirection = capsuleCollider.transform.right;
+            }
             var heightMultiplier = CapsuleColliderHeightMultiplier(capsuleCollider);
             var radiusMultiplier = ColliderRadiusMultiplier(capsuleCollider);
 
@@ -411,9 +451,13 @@ namespace SsitEngine.Unity.Utility
                 localDirection.y = 0;
                 var magnitude = localDirection.magnitude;
                 if (magnitude < radius)
+                {
                     position = sphereCenter - transform.up * Mathf.Sqrt(radius * radius - magnitude * magnitude);
+                }
                 else
+                {
                     position = sphereCenter - transform.up * radius;
+                }
             }
 
             return position;
@@ -432,10 +476,14 @@ namespace SsitEngine.Unity.Utility
             var transform = capsuleCollider.transform;
             if (capsuleCollider.direction == 1)
                 // Y-axis.
+            {
                 return transform.lossyScale.y;
+            }
             if (capsuleCollider.direction == 2)
                 // Z-axis.
+            {
                 return transform.lossyScale.z;
+            }
             return transform.lossyScale.x;
         }
 
@@ -454,10 +502,14 @@ namespace SsitEngine.Unity.Utility
                 // 获取胶囊碰撞器的方向该值可以分别对应于X，Y和Z轴为0,1或2。
                 if (capsuleCollider.direction == 1)
                     // Y-axis.
+                {
                     return Mathf.Max(lossyScale.x, lossyScale.z);
+                }
                 if (capsuleCollider.direction == 2)
                     // Z-axis.
+                {
                     return Mathf.Max(lossyScale.x, lossyScale.y);
+                }
                 return Mathf.Max(lossyScale.y, lossyScale.z);
             }
             // SphereCollider.

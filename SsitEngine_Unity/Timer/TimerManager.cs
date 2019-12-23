@@ -68,7 +68,9 @@ namespace SsitEngine.Unity.Timer
                 task.TimerType == TimerEventType.TeveOnce && task.Duration == 0)
             {
                 if (task.Handler != null)
+                {
                     task.Handler(null, 0, task.Data);
+                }
                 return null;
             }
 
@@ -82,7 +84,10 @@ namespace SsitEngine.Unity.Timer
         /// <param name="task">计时器任务</param>
         public void AddTimerEventTask( TimerEventTask task )
         {
-            if (task == null) return;
+            if (task == null)
+            {
+                return;
+            }
 
 
             m_taskPool.AddTask(task);
@@ -116,7 +121,9 @@ namespace SsitEngine.Unity.Timer
         protected internal bool RemoveTimerEventTask( ulong serialId )
         {
             if (m_taskPool == null)
+            {
                 return false;
+            }
             return m_taskPool.RemoveTask(serialId) != null;
         }
 
@@ -128,7 +135,9 @@ namespace SsitEngine.Unity.Timer
         protected internal bool RemoveTimerEventTask( TimerEventTask task )
         {
             if (m_taskPool == null)
+            {
                 return false;
+            }
             return m_taskPool.RemoveTask(task);
         }
 
@@ -138,7 +147,9 @@ namespace SsitEngine.Unity.Timer
         public void RemoveAllWebRequests()
         {
             if (m_taskPool == null)
+            {
                 return;
+            }
             m_taskPool.RemoveAllTasks();
         }
 
@@ -168,11 +179,16 @@ namespace SsitEngine.Unity.Timer
         {
             if (elapsed < 1e-3f)
             {
-                if (elapsed < 0f) SsitDebug.Debug("Timer is error." + "Timer::update");
+                if (elapsed < 0f)
+                {
+                    SsitDebug.Debug("Timer is error." + "Timer::update");
+                }
                 return;
             }
             if (GameTime.IsPaused)
+            {
                 return;
+            }
             m_timeSinceStartup += elapsed;
             m_taskPool.Update(elapsed, m_timeSinceStartup);
         }

@@ -40,6 +40,9 @@ namespace SsitEngine.Unity.UI
     {
         private const string c_sUIPrefabPath = "UI/";
 
+        /// <summary>Info of layers and forms.</summary>
+        private readonly Dictionary<UIFormType, Transform> layerForms = new Dictionary<UIFormType, Transform>();
+
         /// <summary>
         ///     当前显示的UI窗体集合
         /// </summary>
@@ -54,9 +57,6 @@ namespace SsitEngine.Unity.UI
         ///     UI窗体Canvas根节点
         /// </summary>
         private Transform _TraCanvasTransform;
-
-        /// <summary>Info of layers and forms.</summary>
-        private readonly Dictionary<UIFormType, Transform> layerForms = new Dictionary<UIFormType, Transform>();
 
         /// <summary>
         ///     缓存所有UI窗体集合
@@ -94,7 +94,10 @@ namespace SsitEngine.Unity.UI
 
             ShowUIForms(loadParam, tempUIForm =>
             {
-                if (tempUIForm == null) return;
+                if (tempUIForm == null)
+                {
+                    return;
+                }
 
                 if (tempUIForm.CurrentUIType.UIForm_SHowMode == UIFormSHowMode.Single)
                 {
@@ -103,7 +106,9 @@ namespace SsitEngine.Unity.UI
                         var uiName = GetUINameByForm(m_CurSingleUIForm);
                         //var sameTypeUiForms = GetUIFormsByType(tempUIForm);
                         if (uiName > 0)
+                        {
                             CloseForm(uiName);
+                        }
                         //foreach (var form in sameTypeUiForms)
                         //{
                         //    CloseForm(form);
@@ -126,21 +131,31 @@ namespace SsitEngine.Unity.UI
             {
                 data = DataManager.Instance.GetData<IUIData>((int) EnDataType.DATA_UI, keyList[i]);
                 if (data.Id != formId && data.GroupId == formId)
+                {
                     if (IsShowForm(data.Id))
                     {
                         ForEachCloseSubUIForm(keyList, data.Id);
 
                         var temp = CloseUIForms(data.Id);
                         if (temp != null)
+                        {
                             if (temp.CurrentUIType.UIForm_SHowMode == UIFormSHowMode.Single)
+                            {
                                 m_CurSingleUIForm = null;
+                            }
+                        }
                     }
+                }
             }
 
             var tempUIForm = CloseUIForms(formId);
             if (tempUIForm != null)
+            {
                 if (tempUIForm.CurrentUIType.UIForm_SHowMode == UIFormSHowMode.Single)
+                {
                     m_CurSingleUIForm = null;
+                }
+            }
         }
 
         private void ForEachCloseSubUIForm( List<int> keyList, int formId )
@@ -150,15 +165,21 @@ namespace SsitEngine.Unity.UI
             {
                 data = DataManager.Instance.GetData<IUIData>((int) EnDataType.DATA_UI, keyList[i]);
                 if (data.Id != formId && data.GroupId == formId)
+                {
                     if (IsShowForm(data.Id))
                     {
                         ForEachCloseSubUIForm(keyList, data.Id);
 
                         var temp = CloseUIForms(data.Id);
                         if (temp != null)
+                        {
                             if (temp.CurrentUIType.UIForm_SHowMode == UIFormSHowMode.Single)
+                            {
                                 m_CurSingleUIForm = null;
+                            }
+                        }
                     }
+                }
             }
         }
 
@@ -198,14 +219,21 @@ namespace SsitEngine.Unity.UI
         private void ShowUIForms( UIParam loadParam, UnityAction<BaseUIForm> complete, params object[] nParam )
         {
             // 参数的检查
-            if (loadParam.formId < 1) complete.Invoke(null);
+            if (loadParam.formId < 1)
+            {
+                complete.Invoke(null);
+            }
             // 根据UI窗体名称，获取窗体go
 
             var baseUIForms = m_AllUIFormsCache.Get(loadParam.formId);
             if (baseUIForms == null)
+            {
                 LoadUIForm(loadParam, uiForms => { ShowUIFormCallBack(loadParam, uiForms, complete, nParam); });
+            }
             else
+            {
                 ShowUIFormCallBack(loadParam, baseUIForms, complete, nParam);
+            }
         }
 
         private void ShowUIFormCallBack( UIParam param, BaseUIForm baseUIForms, UnityAction<BaseUIForm> complete,
@@ -219,7 +247,10 @@ namespace SsitEngine.Unity.UI
             else
             {
                 //清空反向切换窗体栈集合
-                if (baseUIForms.CurrentUIType.IsClearStack) ClearStackArray();
+                if (baseUIForms.CurrentUIType.IsClearStack)
+                {
+                    ClearStackArray();
+                }
 
                 //   2.根据不同窗体的显示模式，分别做不同的加载处理
                 switch (baseUIForms.CurrentUIType.UIForm_SHowMode)
@@ -250,11 +281,17 @@ namespace SsitEngine.Unity.UI
         private BaseUIForm CloseUIForms( int uiFormId )
         {
             BaseUIForm baseUIForm = null;
-            if (uiFormId < 1) return baseUIForm;
+            if (uiFormId < 1)
+            {
+                return baseUIForm;
+            }
             //   所有UI窗体集合中是否存在，不存在直接返回
             baseUIForm = m_AllUIFormsCache.Get(uiFormId);
             //_DicAllUIForms.TryGetValue(UIFormName, out baseUIForm);
-            if (baseUIForm == null) return baseUIForm;
+            if (baseUIForm == null)
+            {
+                return baseUIForm;
+            }
 
             //   2.根据不同窗体的显示模式，分别做不同的关闭处理
             switch (baseUIForm.CurrentUIType.UIForm_SHowMode)
@@ -288,7 +325,9 @@ namespace SsitEngine.Unity.UI
             //根据“UI窗体名称”，加载“预设克隆体”
 
             if (loadParam.isAsync)
+            {
                 Engine.Instance.Platform.OpenLoadingForm();
+            }
 
             //TODO 资源加载
             ResourcesManager.Instance.LoadAsset<GameObject>(loadParam.formId, loadParam.isAsync, go =>
@@ -319,7 +358,9 @@ namespace SsitEngine.Unity.UI
                     baseUiForm.Init();
 
                     if (loadParam.isAsync)
+                    {
                         Engine.Instance.Platform.CloseLoadingForm();
+                    }
 
                     Transform node = null;
                     layerForms.TryGetValue(baseUiForm.CurrentUIType.UIForm_Type, out node);
@@ -407,7 +448,10 @@ namespace SsitEngine.Unity.UI
         {
             BaseUIForm baseUIForm;
             _DicCurrentShowUIForms.TryGetValue(uiFormId, out baseUIForm);
-            if (baseUIForm == null) return;
+            if (baseUIForm == null)
+            {
+                return;
+            }
             baseUIForm.Hiding();
             _DicCurrentShowUIForms.Remove(uiFormId);
         }
@@ -441,11 +485,23 @@ namespace SsitEngine.Unity.UI
         /// <param name="loadParam">目标UI面板的ID标识，参考于UITable 配置表中的ID</param>
         private void EnterUIFormAndHiderOthers( UIParam loadParam, params object[] nParam )
         {
-            if (loadParam.formId < 1) return;
+            if (loadParam.formId < 1)
+            {
+                return;
+            }
             _DicCurrentShowUIForms.TryGetValue(loadParam.formId, out var baseUIFormCurrent);
-            if (baseUIFormCurrent != null) return;
-            foreach (var baseUI in _DicCurrentShowUIForms.Values) baseUI.Hiding();
-            foreach (var baseUI in _StackCurrentUIForms) baseUI.Hiding();
+            if (baseUIFormCurrent != null)
+            {
+                return;
+            }
+            foreach (var baseUI in _DicCurrentShowUIForms.Values)
+            {
+                baseUI.Hiding();
+            }
+            foreach (var baseUI in _StackCurrentUIForms)
+            {
+                baseUI.Hiding();
+            }
 
             var baseUIFormFromAllCache = m_AllUIFormsCache.Get(loadParam.formId);
             if (baseUIFormFromAllCache != null)
@@ -463,16 +519,28 @@ namespace SsitEngine.Unity.UI
         /// <param name="uiFormId">目标UI面板的ID标识，参考于UITable 配置表中的ID</param>
         private void ExitUIFormAndDiplayOthers( int uiFormId )
         {
-            if (uiFormId < 1) return;
+            if (uiFormId < 1)
+            {
+                return;
+            }
             _DicCurrentShowUIForms.TryGetValue(uiFormId, out var baseUIForm);
-            if (baseUIForm == null) return;
+            if (baseUIForm == null)
+            {
+                return;
+            }
             //当前窗体隐藏，并在正在显示窗体集合中移除
             baseUIForm.Hiding();
             _DicCurrentShowUIForms.Remove(uiFormId);
 
             //当前显示窗体集合和栈集合中窗体全部显示
-            foreach (var baseUI in _DicCurrentShowUIForms.Values) baseUI.Redisplay();
-            foreach (var baseUI in _StackCurrentUIForms) baseUI.Redisplay();
+            foreach (var baseUI in _DicCurrentShowUIForms.Values)
+            {
+                baseUI.Redisplay();
+            }
+            foreach (var baseUI in _StackCurrentUIForms)
+            {
+                baseUI.Redisplay();
+            }
         }
 
         /// <summary>
@@ -480,7 +548,10 @@ namespace SsitEngine.Unity.UI
         /// </summary>
         private void ClearStackArray()
         {
-            if (_StackCurrentUIForms != null && _StackCurrentUIForms.Count >= 1) _StackCurrentUIForms.Clear();
+            if (_StackCurrentUIForms != null && _StackCurrentUIForms.Count >= 1)
+            {
+                _StackCurrentUIForms.Clear();
+            }
         }
 
         /// <summary>
@@ -492,11 +563,20 @@ namespace SsitEngine.Unity.UI
         {
             //当前显示窗体集合和栈集合中窗体全部显示
             //参数的检查
-            if (uiFormId < 1) return false;
+            if (uiFormId < 1)
+            {
+                return false;
+            }
             //   1.根据UI窗体名称，获取窗体go
             var baseUIForms = m_AllUIFormsCache.Get(uiFormId);
-            if (baseUIForms == null) return false;
-            if (baseUIForms.CurrentUIType.UIForm_Type == UIFormType.PopUp) ClearStackArray();
+            if (baseUIForms == null)
+            {
+                return false;
+            }
+            if (baseUIForms.CurrentUIType.UIForm_Type == UIFormType.PopUp)
+            {
+                ClearStackArray();
+            }
             //_DicAllUIForms.Remove(uiFormName);
             return true;
         }
@@ -547,8 +627,12 @@ namespace SsitEngine.Unity.UI
         {
             var ret = new List<int>();
             foreach (var item in _DicCurrentShowUIForms)
+            {
                 if (item.Value.CurrentUIType.UIForm_Type == uiform.CurrentUIType.UIForm_Type)
+                {
                     ret.Add(item.Key);
+                }
+            }
             return ret;
         }
 
@@ -682,7 +766,10 @@ namespace SsitEngine.Unity.UI
         /// </summary>
         public override void Shutdown()
         {
-            if (isShutdown) return;
+            if (isShutdown)
+            {
+                return;
+            }
             UnRegisterMsg(m_msgList);
 
             RemoveAllForm();
@@ -732,19 +819,29 @@ namespace SsitEngine.Unity.UI
                     }
 
                     if (_formId < 1)
+                    {
                         return;
+                    }
 
                     if (m_OpenUIFormCahce.Contains(_formId) || IsShowForm(_formId))
+                    {
                         return;
+                    }
                     ShowForm(loadParam, args.Values);
 
                     break;
                 case (ushort) UIMsg.CloseForm:
                     _formId = (int) notification.Body;
 
-                    if (_formId < 1) break;
+                    if (_formId < 1)
+                    {
+                        break;
+                    }
 
-                    if (!IsShowForm(_formId)) return;
+                    if (!IsShowForm(_formId))
+                    {
+                        return;
+                    }
                     CloseForm(_formId);
 
                     break;
@@ -754,7 +851,9 @@ namespace SsitEngine.Unity.UI
         private void OpenLoadingForm( int _formId )
         {
             if (m_OpenUIFormCahce.Contains(_formId) || IsShowForm(_formId))
+            {
                 return;
+            }
             ShowForm(new UIParam {formId = _formId, isAsync = false});
         }
 

@@ -30,7 +30,10 @@ namespace SsitEngine.Unity.UI
         public virtual void Init( BaseUIForm root )
         {
             RootPanel = root;
-            if (m_IsInit) return;
+            if (m_IsInit)
+            {
+                return;
+            }
             if (HasTitle)
             {
                 m_TitleElement = gameObject.GetChildNodeComponentScripts<UIListTitleElement>(TitleGOName);
@@ -41,9 +44,15 @@ namespace SsitEngine.Unity.UI
                 }
             }
             //mChildList = new List<GameObject>(10);
-            if (mElements == null) mElements = new List<UIListElement>();
+            if (mElements == null)
+            {
+                mElements = new List<UIListElement>();
+            }
 
-            if (mTitleElements == null) mTitleElements = new List<UIListTitleElement>();
+            if (mTitleElements == null)
+            {
+                mTitleElements = new List<UIListTitleElement>();
+            }
 
             var elementObj = gameObject.Child(ElemetnGOName);
             if (elementObj != null)
@@ -63,7 +72,9 @@ namespace SsitEngine.Unity.UI
         {
             for (var i = 0; i < mElements.Count; i++)
                 //TODO 对象池
+            {
                 Destroy(mElements[i].gameObject);
+            }
             //mElements[i].gameObject.SetActive(false);
 
             //if (m_UIListRoot && m_UIListRoot.gameObject)
@@ -73,7 +84,9 @@ namespace SsitEngine.Unity.UI
 
             for (var i = 0; i < mTitleElements.Count; i++)
                 //TODO 对象池
+            {
                 Destroy(mElements[i].gameObject);
+            }
             //mTitleElements[i].gameObject.SetActive(false);
 
 
@@ -151,7 +164,10 @@ namespace SsitEngine.Unity.UI
         public virtual void UpdateElement<T>( IList<T> dataList ) where T : IInfoData
         {
             ClearElement();
-            for (var i = 0; i < dataList.Count; i++) AddElement(dataList[i]);
+            for (var i = 0; i < dataList.Count; i++)
+            {
+                AddElement(dataList[i]);
+            }
         }
 
         public UIListElement GetElement( int num )
@@ -183,17 +199,29 @@ namespace SsitEngine.Unity.UI
         {
             for (var i = 0; i < m_UIListRoot.childCount; i++)
             {
-                if (HasTitle && i == 0) continue;
+                if (HasTitle && i == 0)
+                {
+                    continue;
+                }
                 var element = m_UIListRoot.GetChild(i).GetComponent<UIListElement>();
-                if (element) element.gameObject.SetActive(enable);
+                if (element)
+                {
+                    element.gameObject.SetActive(enable);
+                }
             }
         }
 
         private void Destroy()
         {
-            for (var i = 0; i < mElements.Count; i++) Destroy(mElements[i]);
+            for (var i = 0; i < mElements.Count; i++)
+            {
+                Destroy(mElements[i]);
+            }
 
-            for (var i = 0; i < mTitleElements.Count; i++) Destroy(mTitleElements[i]);
+            for (var i = 0; i < mTitleElements.Count; i++)
+            {
+                Destroy(mTitleElements[i]);
+            }
             mElements.Clear();
             mTitleElements.Clear();
         }

@@ -107,9 +107,13 @@ public static class SoundManagerTools
         var min = theFloat * (1f - variance);
 
         if (max > maximum)
+        {
             max = maximum;
+        }
         if (min < minimum)
+        {
             min = minimum;
+        }
 
         return UnityEngine.Random.Range(min, max);
     }
@@ -142,7 +146,9 @@ public static class SoundManagerTools
     public static FieldInfo[] GetAllFieldInfos( this Type type )
     {
         if (type == null)
+        {
             return new FieldInfo[0];
+        }
         /*
          BindingFlags.Public            可在搜索中包含公共成员
          BindingFlags.NonPublic         可在搜索中包含非公共成员（即私有成员和受保护的成员）

@@ -1,34 +1,27 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.IO;
+﻿using System.IO;
 using UnityEditor;
+using UnityEngine;
 
-public class EditorFileUtility  {
-
+public class EditorFileUtility
+{
     #region Members
-    public static string DataPathInEditor
-    {
-        get { return Application.dataPath; }
-    }
 
-    public static string DataPathInPlat
-    {
-        get { return Application.persistentDataPath; }
-    }
+    public static string DataPathInEditor => Application.dataPath;
 
-    public static string DataPathInStreaming
-    {
-        get { return Application.streamingAssetsPath; }
-    }
+    public static string DataPathInPlat => Application.persistentDataPath;
+
+    public static string DataPathInStreaming => Application.streamingAssetsPath;
+
     #endregion
 
     #region Search
+
     /// <summary>
     /// 检测文件存在
     /// </summary>
     /// <param name="fileName">相对于Assets文件下的目录</param>
     /// <returns></returns>
-    public static bool IsFileExists(string fileName)
+    public static bool IsFileExists( string fileName )
     {
         if (fileName.Equals(string.Empty))
         {
@@ -36,12 +29,13 @@ public class EditorFileUtility  {
         }
         return File.Exists(GetFullPath(fileName));
     }
+
     /// <summary>
     /// 检测是否存在文件夹
     /// </summary>
     /// <param name="folderPath">相对Assets下的文件夹</param>
     /// <returns></returns>
-    public static bool IsFolderExists(string folderPath)
+    public static bool IsFolderExists( string folderPath )
     {
         if (folderPath.Equals(string.Empty))
         {
@@ -49,11 +43,13 @@ public class EditorFileUtility  {
         }
         return Directory.Exists(GetFullPath(folderPath));
     }
+
     #endregion
 
     #region Add
+
     /// 在Application.dataPath目录下创建文件
-    public static void CreateFile(string fileName)
+    public static void CreateFile( string fileName )
     {
         if (!IsFileExists(fileName))
         {
@@ -63,13 +59,13 @@ public class EditorFileUtility  {
             FileStream stream = File.Create(GetFullPath(fileName));
             stream.Close();
 #else
-            File.Create (GetFullPath (fileName));
+            File.Create(GetFullPath(fileName));
 #endif
         }
-
     }
+
     /// 创建文件夹
-    public static void CreateFolder(string folderPath)
+    public static void CreateFolder( string folderPath )
     {
         if (!IsFolderExists(folderPath))
         {
@@ -80,18 +76,19 @@ public class EditorFileUtility  {
     }
 
     /// 在Assets下创建目录
-    public static void CreateAssetFolder(string assetFolderPath)
+    public static void CreateAssetFolder( string assetFolderPath )
     {
         if (!IsFolderExists(assetFolderPath))
         {
-            int index = assetFolderPath.IndexOf("/");
-            int offset = 0;
-            string parentFolder = "Assets";
+            var index = assetFolderPath.IndexOf("/");
+            var offset = 0;
+            var parentFolder = "Assets";
             while (index != -1)
             {
                 if (!Directory.Exists(GetFullPath(assetFolderPath.Substring(0, index))))
                 {
-                    string guid = AssetDatabase.CreateFolder(parentFolder, assetFolderPath.Substring(offset, index - offset));
+                    var guid = AssetDatabase.CreateFolder(parentFolder,
+                        assetFolderPath.Substring(offset, index - offset));
                     // 将GUID(全局唯一标识符)转换为对应的资源路径。
                     AssetDatabase.GUIDToAssetPath(guid);
                 }
@@ -103,17 +100,18 @@ public class EditorFileUtility  {
             AssetDatabase.Refresh();
         }
     }
+
     #endregion
 
     #region Copy
 
     /// 复制文件
-    public static void CopyFile(string srcFileName, string destFileName)
+    public static void CopyFile( string srcFileName, string destFileName )
     {
         if (IsFileExists(srcFileName) && !srcFileName.Equals(destFileName))
         {
-            int index = destFileName.LastIndexOf("/");
-            string filePath = string.Empty;
+            var index = destFileName.LastIndexOf("/");
+            var filePath = string.Empty;
 
             if (index != -1)
             {
@@ -132,9 +130,8 @@ public class EditorFileUtility  {
     }
 
     /// 复制文件夹
-    public static void CopyFolder(string srcFolderPath, string destFolderPath)
+    public static void CopyFolder( string srcFolderPath, string destFolderPath )
     {
-
 #if !UNITY_WEBPLAYER
         if (!IsFolderExists(srcFolderPath))
         {
@@ -148,15 +145,14 @@ public class EditorFileUtility  {
         destFolderPath = GetFullPath(destFolderPath);
 
         // 创建所有的对应目录
-        foreach (string dirPath in Directory.GetDirectories(srcFolderPath, "*", SearchOption.AllDirectories))
+        foreach (var dirPath in Directory.GetDirectories(srcFolderPath, "*", SearchOption.AllDirectories))
         {
             Directory.CreateDirectory(dirPath.Replace(srcFolderPath, destFolderPath));
         }
 
         // 复制原文件夹下所有内容到目标文件夹，直接覆盖
-        foreach (string newPath in Directory.GetFiles(srcFolderPath, "*.*", SearchOption.AllDirectories))
+        foreach (var newPath in Directory.GetFiles(srcFolderPath, "*.*", SearchOption.AllDirectories))
         {
-
             File.Copy(newPath, newPath.Replace(srcFolderPath, destFolderPath), true);
         }
 
@@ -169,12 +165,12 @@ public class EditorFileUtility  {
     }
 
     /// 复制Assets下内容
-    public static void CopyAsset(string srcAssetName, string destAssetName)
+    public static void CopyAsset( string srcAssetName, string destAssetName )
     {
         if (IsFileExists(srcAssetName) && !srcAssetName.Equals(destAssetName))
         {
-            int index = destAssetName.LastIndexOf("/");
-            string filePath = string.Empty;
+            var index = destAssetName.LastIndexOf("/");
+            var filePath = string.Empty;
 
             if (index != -1)
             {
@@ -188,11 +184,13 @@ public class EditorFileUtility  {
             AssetDatabase.Refresh();
         }
     }
+
     #endregion
 
     #region Delete
+
     /// 删除文件
-    public static void DeleteFile(string fileName)
+    public static void DeleteFile( string fileName )
     {
         if (IsFileExists(fileName))
         {
@@ -201,13 +199,13 @@ public class EditorFileUtility  {
             AssetDatabase.Refresh();
         }
     }
+
     /// 删除文件夹
-    public static void DeleteFolder(string folderPath)
+    public static void DeleteFolder( string folderPath )
     {
 #if !UNITY_WEBPLAYER
         if (IsFolderExists(folderPath))
         {
-
             Directory.Delete(GetFullPath(folderPath), true);
 
             AssetDatabase.Refresh();
@@ -218,8 +216,9 @@ public class EditorFileUtility  {
         Debug.LogWarning("FileStaticAPI::DeleteFolder is innored under wep player platfrom");
 #endif
     }
+
     /// 删除Assets下内容
-    public static void DeleteAsset(string assetName)
+    public static void DeleteAsset( string assetName )
     {
         if (IsFileExists(assetName))
         {
@@ -227,13 +226,13 @@ public class EditorFileUtility  {
             AssetDatabase.Refresh();
         }
     }
+
     #endregion
 
     #region Read And Write
 
-
     /// 写入数据到对应文件
-    public static void Write(string fileName, string contents)
+    public static void Write( string fileName, string contents )
     {
         CreateFolder(fileName.Substring(0, fileName.LastIndexOf('/')));
 
@@ -244,32 +243,31 @@ public class EditorFileUtility  {
     }
 
     /// 从对应文件读取数据
-    public static string Read(string fileName)
+    public static string Read( string fileName )
     {
 #if !UNITY_WEBPLAYER
         if (IsFileExists(fileName))
         {
             return File.ReadAllText(GetFullPath(fileName));
         }
-        else
-        {
-            return "";
-        }
+        return "";
 #endif
 
 #if UNITY_WEBPLAYER
         Debug.LogWarning("FileStaticAPI::CopyFolder is innored under wep player platfrom");
 #endif
     }
+
     #endregion
 
     #region interval helper
+
     /// <summary>
     /// 返回Application.dataPath下完整目录
     /// </summary>
     /// <param name="srcName"></param>
     /// <returns></returns>
-    public static string GetFullPath(string srcName)
+    public static string GetFullPath( string srcName )
     {
         if (srcName.Equals(string.Empty))
         {
@@ -283,12 +281,13 @@ public class EditorFileUtility  {
 
         return Application.dataPath + "/" + srcName;
     }
+
     /// <summary>
     /// 获取Assets下完整路径
     /// </summary>
     /// <param name="assetName">相对于Assets文件的目录</param>
     /// <returns></returns>
-    public static string GetFullAssetPath(string assetName)
+    public static string GetFullAssetPath( string assetName )
     {
         if (assetName.Equals(string.Empty))
         {
@@ -302,7 +301,6 @@ public class EditorFileUtility  {
 
         return "Assets/" + assetName;
     }
+
     #endregion
-
-
 }

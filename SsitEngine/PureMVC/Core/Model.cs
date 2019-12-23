@@ -46,11 +46,15 @@ namespace SsitEngine.PureMVC.Core
             get
             {
                 if (m_instance == null)
+                {
                     lock (m_staticSyncRoot)
                     {
                         if (m_instance == null)
+                        {
                             m_instance = new Model();
+                        }
                     }
+                }
                 return m_instance;
             }
         }
@@ -78,7 +82,9 @@ namespace SsitEngine.PureMVC.Core
             lock (m_syncRoot)
             {
                 if (!m_proxyMap.ContainsKey(proxyName))
+                {
                     return null;
+                }
                 return m_proxyMap[proxyName];
             }
         }
@@ -113,7 +119,9 @@ namespace SsitEngine.PureMVC.Core
                 }
             }
             if (proxy != null)
+            {
                 proxy.OnRemove();
+            }
             return proxy;
         }
 

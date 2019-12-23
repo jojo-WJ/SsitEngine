@@ -48,7 +48,10 @@ namespace SsitEngine.Unity.UI
         public virtual void Init( BaseUIForm root )
         {
             RootPanel = root;
-            if (m_IsInit) return;
+            if (m_IsInit)
+            {
+                return;
+            }
             if (HasTitle)
             {
                 m_TitleElement = gameObject.GetChildNodeComponentScripts<UIListTitleElement>(TitleGOName);
@@ -59,9 +62,15 @@ namespace SsitEngine.Unity.UI
                 }
             }
 
-            if (mElements == null) mElements = new List<RecycleListElement>();
+            if (mElements == null)
+            {
+                mElements = new List<RecycleListElement>();
+            }
 
-            if (mTitleElements == null) mTitleElements = new List<UIListTitleElement>();
+            if (mTitleElements == null)
+            {
+                mTitleElements = new List<UIListTitleElement>();
+            }
 
             UIListRoot = transform.Find<Transform>(RootGOName);
 
@@ -112,7 +121,9 @@ namespace SsitEngine.Unity.UI
 
             for (var i = 0; i < mTitleElements.Count; i++)
                 //TODO 对象池
+            {
                 Destroy(mElements[i].gameObject);
+            }
             mElements.Clear();
             mTitleElements.Clear();
             AddTitleElement();
@@ -186,7 +197,10 @@ namespace SsitEngine.Unity.UI
         public virtual void UpdateElement<T>( IList<T> dataList ) where T : IInfoData
         {
             ClearElement();
-            for (var i = 0; i < dataList.Count; i++) AddElement(dataList[i]);
+            for (var i = 0; i < dataList.Count; i++)
+            {
+                AddElement(dataList[i]);
+            }
         }
 
         /// <summary>
@@ -223,9 +237,15 @@ namespace SsitEngine.Unity.UI
         {
             for (var i = 0; i < UIListRoot.childCount; i++)
             {
-                if (HasTitle && i == 0) continue;
+                if (HasTitle && i == 0)
+                {
+                    continue;
+                }
                 var element = UIListRoot.GetChild(i).GetComponent<RecycleListElement>();
-                if (element) element.gameObject.SetActive(enable);
+                if (element)
+                {
+                    element.gameObject.SetActive(enable);
+                }
             }
         }
 
@@ -233,7 +253,10 @@ namespace SsitEngine.Unity.UI
         {
             ClearElement();
 
-            for (var i = 0; i < mTitleElements.Count; i++) Destroy(mTitleElements[i]);
+            for (var i = 0; i < mTitleElements.Count; i++)
+            {
+                Destroy(mTitleElements[i]);
+            }
             mElements.Clear();
             mTitleElements.Clear();
         }

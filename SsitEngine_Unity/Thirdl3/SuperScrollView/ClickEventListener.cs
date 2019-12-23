@@ -17,11 +17,17 @@ namespace SuperScrollView
         {
             if (eventData.clickCount == 2)
             {
-                if (mDoubleClickedHandler != null) mDoubleClickedHandler(gameObject);
+                if (mDoubleClickedHandler != null)
+                {
+                    mDoubleClickedHandler(gameObject);
+                }
             }
             else
             {
-                if (mClickedHandler != null) mClickedHandler(gameObject);
+                if (mClickedHandler != null)
+                {
+                    mClickedHandler(gameObject);
+                }
             }
         }
 
@@ -29,19 +35,28 @@ namespace SuperScrollView
         public void OnPointerDown( PointerEventData eventData )
         {
             IsPressd = true;
-            if (mOnPointerDownHandler != null) mOnPointerDownHandler(gameObject);
+            if (mOnPointerDownHandler != null)
+            {
+                mOnPointerDownHandler(gameObject);
+            }
         }
 
         public void OnPointerUp( PointerEventData eventData )
         {
             IsPressd = false;
-            if (mOnPointerUpHandler != null) mOnPointerUpHandler(gameObject);
+            if (mOnPointerUpHandler != null)
+            {
+                mOnPointerUpHandler(gameObject);
+            }
         }
 
         public static ClickEventListener Get( GameObject obj )
         {
             var listener = obj.GetComponent<ClickEventListener>();
-            if (listener == null) listener = obj.AddComponent<ClickEventListener>();
+            if (listener == null)
+            {
+                listener = obj.AddComponent<ClickEventListener>();
+            }
             return listener;
         }
 

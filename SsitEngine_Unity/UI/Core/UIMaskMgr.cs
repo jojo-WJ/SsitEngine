@@ -58,7 +58,10 @@ namespace SsitEngine.Unity.UI
         /// <returns></returns>
         public static UIMaskMgr GetInstance()
         {
-            if (_Instance == null) _Instance = new GameObject("_UIMaskMgr").AddComponent<UIMaskMgr>();
+            if (_Instance == null)
+            {
+                _Instance = new GameObject("_UIMaskMgr").AddComponent<UIMaskMgr>();
+            }
             return _Instance;
         }
 
@@ -80,9 +83,13 @@ namespace SsitEngine.Unity.UI
             _UICamera = _GoCanvasRoot.GetChildNodeComponentScripts<Camera>("UICamera");
             if (_UICamera != null)
                 //得到UICamer原始层深
+            {
                 _OriginalUICameraDepth = _UICamera.depth;
+            }
             else
+            {
                 Debug.Log(GetType() + "Start()/UI_Camera is NUll,Please Check!");
+            }
         }
 
         /// <summary>
@@ -119,14 +126,20 @@ namespace SsitEngine.Unity.UI
                     break;
                 case UIFormLucencyType.Penetrate:
                     //LogManager.Info("允许穿透");
-                    if (_GoMaskPanel.activeInHierarchy) _GoMaskPanel.SetActive(false);
+                    if (_GoMaskPanel.activeInHierarchy)
+                    {
+                        _GoMaskPanel.SetActive(false);
+                    }
                     break;
             }
             //遮罩体下移
             _GoMaskPanel.transform.SetAsLastSibling();
             //显示窗体下移
             goDisplayUIForms.transform.SetAsLastSibling();
-            if (_UICamera != null) _UICamera.depth = _UICamera.depth + 100; //增加层深
+            if (_UICamera != null)
+            {
+                _UICamera.depth = _UICamera.depth + 100; //增加层深
+            }
         }
 
         /// <summary>
@@ -137,8 +150,14 @@ namespace SsitEngine.Unity.UI
             //顶层窗体上移
             _GoTopPanel.transform.SetAsFirstSibling();
             //禁用遮罩窗体
-            if (_GoMaskPanel.activeInHierarchy) _GoMaskPanel.SetActive(false);
-            if (_UICamera != null) _UICamera.depth = _OriginalUICameraDepth;
+            if (_GoMaskPanel.activeInHierarchy)
+            {
+                _GoMaskPanel.SetActive(false);
+            }
+            if (_UICamera != null)
+            {
+                _UICamera.depth = _OriginalUICameraDepth;
+            }
         }
     }
 }

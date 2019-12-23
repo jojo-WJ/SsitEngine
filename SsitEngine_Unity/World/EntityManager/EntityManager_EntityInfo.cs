@@ -24,7 +24,10 @@ namespace SsitEngine.Unity.Entity
 
             public EntityInfo( IEntity entity )
             {
-                if (entity == null) throw new SsitEngineException("Entity is invalid.");
+                if (entity == null)
+                {
+                    throw new SsitEngineException("Entity is invalid.");
+                }
 
                 Entity = entity;
                 Status = EntityStatus.WillInit;
@@ -40,27 +43,44 @@ namespace SsitEngine.Unity.Entity
 
             public IEntity[] GetChildEntities()
             {
-                if (m_ChildEntities == null) return EmptyArray;
+                if (m_ChildEntities == null)
+                {
+                    return EmptyArray;
+                }
 
                 return m_ChildEntities.ToArray();
             }
 
             public void GetChildEntities( List<IEntity> results )
             {
-                if (results == null) throw new SsitEngineException("Results is invalid.");
+                if (results == null)
+                {
+                    throw new SsitEngineException("Results is invalid.");
+                }
 
                 results.Clear();
-                if (m_ChildEntities == null) return;
+                if (m_ChildEntities == null)
+                {
+                    return;
+                }
 
-                foreach (var childEntity in m_ChildEntities) results.Add(childEntity);
+                foreach (var childEntity in m_ChildEntities)
+                {
+                    results.Add(childEntity);
+                }
             }
 
             public void AddChildEntity( IEntity childEntity )
             {
-                if (m_ChildEntities == null) m_ChildEntities = new List<IEntity>();
+                if (m_ChildEntities == null)
+                {
+                    m_ChildEntities = new List<IEntity>();
+                }
 
                 if (m_ChildEntities.Contains(childEntity))
+                {
                     throw new SsitEngineException("Can not add child entity which is already exist.");
+                }
 
                 m_ChildEntities.Add(childEntity);
             }
@@ -68,7 +88,9 @@ namespace SsitEngine.Unity.Entity
             public void RemoveChildEntity( IEntity childEntity )
             {
                 if (m_ChildEntities == null || !m_ChildEntities.Remove(childEntity))
+                {
                     throw new SsitEngineException("Can not remove child entity which is not exist.");
+                }
             }
         }
     }

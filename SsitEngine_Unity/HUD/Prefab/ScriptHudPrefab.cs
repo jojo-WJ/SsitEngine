@@ -46,7 +46,9 @@ namespace SsitEngine.Unity.HUD
         {
             var custom = CustomTransforms.FirstOrDefault(ct => ct.name.Equals(name));
             if (custom != null)
+            {
                 return custom.transform;
+            }
 
             return null;
         }

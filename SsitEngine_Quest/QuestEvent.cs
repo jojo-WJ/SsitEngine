@@ -13,7 +13,6 @@ namespace SsitEngine.QuestManager
 {
     public enum EnQuestEvent
     {
-
         /// <summary>
         /// 任务状态改变事件
         /// </summary>
@@ -23,6 +22,7 @@ namespace SsitEngine.QuestManager
         /// 设置任务计数器
         /// </summary>
         SetQuestCounter,
+
         /// <summary>
         /// 递增任务计数器
         /// </summary>
@@ -37,10 +37,12 @@ namespace SsitEngine.QuestManager
         /// 设置任务指示状态事件
         /// </summary>
         SetIndicatorStateMessage,
+
         /// <summary>
         /// 刷新任务指示
         /// </summary>
         RefreshIndicatorMessage,
+
         /// <summary>
         /// 任务追踪事件
         /// </summary>
@@ -79,6 +81,4 @@ namespace SsitEngine.QuestManager
         //...
         MaxValue
     }
-
-
 }

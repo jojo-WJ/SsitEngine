@@ -1,6 +1,5 @@
 ﻿namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// 条件模式（串并连）
     /// </summary>
@@ -21,5 +20,4 @@
         /// </summary>
         Min
     }
-
 }

@@ -35,7 +35,10 @@ namespace SsitEngine.DebugLog
         [Conditional("DEBUG")]
         public static void Debug( object message )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Debug, message);
         }
@@ -48,7 +51,10 @@ namespace SsitEngine.DebugLog
         [Conditional("DEBUG")]
         public static void Debug( string message )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Debug, message);
         }
@@ -62,7 +68,10 @@ namespace SsitEngine.DebugLog
         [Conditional("DEBUG")]
         public static void Debug( string format, object arg0 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Debug, TextUtils.Format(format, arg0));
         }
@@ -77,7 +86,10 @@ namespace SsitEngine.DebugLog
         [Conditional("DEBUG")]
         public static void Debug( string format, object arg0, object arg1 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Debug, TextUtils.Format(format, arg0, arg1));
         }
@@ -93,7 +105,10 @@ namespace SsitEngine.DebugLog
         [Conditional("DEBUG")]
         public static void Debug( string format, object arg0, object arg1, object arg2 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Debug, TextUtils.Format(format, arg0, arg1, arg2));
         }
@@ -107,7 +122,10 @@ namespace SsitEngine.DebugLog
         [Conditional("DEBUG")]
         public static void Debug( string format, params object[] args )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Debug, TextUtils.Format(format, args));
         }
@@ -118,7 +136,10 @@ namespace SsitEngine.DebugLog
         /// <param name="message">日志内容</param>
         public static void Info( object message )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Info, message);
         }
@@ -129,7 +150,10 @@ namespace SsitEngine.DebugLog
         /// <param name="message">日志内容</param>
         public static void Info( string message )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Info, message);
         }
@@ -141,7 +165,10 @@ namespace SsitEngine.DebugLog
         /// <param name="arg0">日志参数 0。</param>
         public static void Info( string format, object arg0 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Info, TextUtils.Format(format, arg0));
         }
@@ -154,7 +181,10 @@ namespace SsitEngine.DebugLog
         /// <param name="arg1">日志参数 1。</param>
         public static void Info( string format, object arg0, object arg1 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Info, TextUtils.Format(format, arg0, arg1));
         }
@@ -168,7 +198,10 @@ namespace SsitEngine.DebugLog
         /// <param name="arg2">日志参数 2。</param>
         public static void Info( string format, object arg0, object arg1, object arg2 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Info, TextUtils.Format(format, arg0, arg1, arg2));
         }
@@ -180,7 +213,10 @@ namespace SsitEngine.DebugLog
         /// <param name="args">日志参数。</param>
         public static void Info( string format, params object[] args )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Info, TextUtils.Format(format, args));
         }
@@ -191,7 +227,10 @@ namespace SsitEngine.DebugLog
         /// <param name="message">日志内容。</param>
         public static void Warning( object message )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Warning, message);
         }
@@ -202,7 +241,10 @@ namespace SsitEngine.DebugLog
         /// <param name="message">日志内容。</param>
         public static void Warning( string message )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Warning, message);
         }
@@ -214,7 +256,10 @@ namespace SsitEngine.DebugLog
         /// <param name="arg0">日志参数 0。</param>
         public static void Warning( string format, object arg0 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Warning, TextUtils.Format(format, arg0));
         }
@@ -227,7 +272,10 @@ namespace SsitEngine.DebugLog
         /// <param name="arg1">日志参数 1。</param>
         public static void Warning( string format, object arg0, object arg1 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Warning, TextUtils.Format(format, arg0, arg1));
         }
@@ -241,7 +289,10 @@ namespace SsitEngine.DebugLog
         /// <param name="arg2">日志参数 2。</param>
         public static void Warning( string format, object arg0, object arg1, object arg2 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Warning, TextUtils.Format(format, arg0, arg1, arg2));
         }
@@ -253,7 +304,10 @@ namespace SsitEngine.DebugLog
         /// <param name="args">日志参数。</param>
         public static void Warning( string format, params object[] args )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Warning, TextUtils.Format(format, args));
         }
@@ -264,7 +318,10 @@ namespace SsitEngine.DebugLog
         /// <param name="message">日志内容。</param>
         public static void Error( object message )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Error, message);
         }
@@ -275,7 +332,10 @@ namespace SsitEngine.DebugLog
         /// <param name="message">日志内容。</param>
         public static void Error( string message )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Error, message);
         }
@@ -287,7 +347,10 @@ namespace SsitEngine.DebugLog
         /// <param name="arg0">日志参数 0。</param>
         public static void Error( string format, object arg0 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Error, TextUtils.Format(format, arg0));
         }
@@ -300,7 +363,10 @@ namespace SsitEngine.DebugLog
         /// <param name="arg1">日志参数 1。</param>
         public static void Error( string format, object arg0, object arg1 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Error, TextUtils.Format(format, arg0, arg1));
         }
@@ -314,7 +380,10 @@ namespace SsitEngine.DebugLog
         /// <param name="arg2">日志参数 2。</param>
         public static void Error( string format, object arg0, object arg1, object arg2 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Error, TextUtils.Format(format, arg0, arg1, arg2));
         }
@@ -326,7 +395,10 @@ namespace SsitEngine.DebugLog
         /// <param name="args">日志参数。</param>
         public static void Error( string format, params object[] args )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Error, TextUtils.Format(format, args));
         }
@@ -337,7 +409,10 @@ namespace SsitEngine.DebugLog
         /// <param name="message">日志内容。</param>
         public static void Fatal( object message )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Fatal, message);
         }
@@ -348,7 +423,10 @@ namespace SsitEngine.DebugLog
         /// <param name="message">日志内容。</param>
         public static void Fatal( string message )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Fatal, message);
         }
@@ -360,7 +438,10 @@ namespace SsitEngine.DebugLog
         /// <param name="arg0">日志参数 0。</param>
         public static void Fatal( string format, object arg0 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Fatal, TextUtils.Format(format, arg0));
         }
@@ -373,7 +454,10 @@ namespace SsitEngine.DebugLog
         /// <param name="arg1">日志参数 1。</param>
         public static void Fatal( string format, object arg0, object arg1 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Fatal, TextUtils.Format(format, arg0, arg1));
         }
@@ -387,7 +471,10 @@ namespace SsitEngine.DebugLog
         /// <param name="arg2">日志参数 2。</param>
         public static void Fatal( string format, object arg0, object arg1, object arg2 )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Fatal, TextUtils.Format(format, arg0, arg1, arg2));
         }
@@ -399,7 +486,10 @@ namespace SsitEngine.DebugLog
         /// <param name="args">日志参数。</param>
         public static void Fatal( string format, params object[] args )
         {
-            if (s_logHelper == null) return;
+            if (s_logHelper == null)
+            {
+                return;
+            }
 
             s_logHelper.Log(DebugLogLevel.Fatal, TextUtils.Format(format, args));
         }

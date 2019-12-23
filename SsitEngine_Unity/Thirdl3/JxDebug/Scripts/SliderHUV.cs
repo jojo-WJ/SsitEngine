@@ -6,20 +6,34 @@ namespace JxDebug
     public class SliderHUV
     {
         public delegate float SliderGetter();
+
         public delegate void SliderSetter( float value );
+
+        public bool delayed;
+        private float delayedValue;
+        private readonly SliderGetter getter;
+        private bool hasFocus;
 
         //static GUIStyle style;
         //static GUIStyle thumbStyle;
 
-        GUIContent label;
-        SliderGetter getter;
-        SliderSetter setter;
-        bool hasFocus;
-        bool lastHasFocus;
-        float delayedValue;
+        private readonly GUIContent label;
+        private bool lastHasFocus;
+        private readonly SliderSetter setter;
+
+        public SliderHUV( string label, SliderGetter getter, SliderSetter setter ) : this(new GUIContent(label), getter,
+            setter)
+        {
+        }
+
+        public SliderHUV( GUIContent label, SliderGetter getter, SliderSetter setter )
+        {
+            this.label = label;
+            this.getter = getter;
+            this.setter = setter;
+        }
 
         public int decimalsToShow { get; set; }
-        public bool delayed;
 
         public static void Initialize()
         {
@@ -33,31 +47,20 @@ namespace JxDebug
             //thumbStyle.fixedHeight = thumbStyle.fixedWidth = 10;
         }
 
-        public SliderHUV( string label, SliderGetter getter, SliderSetter setter ) : this(new GUIContent(label), getter, setter)
-        {
-
-        }
-        public SliderHUV( GUIContent label, SliderGetter getter, SliderSetter setter )
-        {
-            this.label = label;
-            this.getter = getter;
-            this.setter = setter;
-        }
-
         public void Draw( Rect rect, float min, float max )
         {
             //ChangeSkinStylesIfNecessary();
-            float originalValue = getter();
-            float value = hasFocus && delayed ? delayedValue : originalValue;
+            var originalValue = getter();
+            var value = hasFocus && delayed ? delayedValue : originalValue;
             if (setter == null)
             {
                 GUI.enabled = false;
             }
-            float widthFraction = rect.width / 10;
+            var widthFraction = rect.width / 10;
             rect.y += rect.height / 2;
             DrawLabel(ref rect, widthFraction);
             DrawSlider(ref rect, widthFraction, ref value, min, max);
-            DrawValue(ref rect, widthFraction, value,max);
+            DrawValue(ref rect, widthFraction, value, max);
             CallSetterIfAppropriate(originalValue, value);
             //RestoreSkinStylesIfNecessary();
 
@@ -77,24 +80,24 @@ namespace JxDebug
         {
             GUI.skin = JxDebug.Singleton.MGuiBackSkin;
             rect.width = 5 * widthFraction;
-            int id = GUIUtility.GetControlID(label.text.GetHashCode(), FocusType.Passive, rect);
+            var id = GUIUtility.GetControlID(label.text.GetHashCode(), FocusType.Passive, rect);
             value = GUI.HorizontalSlider(rect, value, min, max);
             GUI.color = Color.cyan;
-            Rect slideRect = new Rect(rect.x, rect.y, rect.width * value / max, rect.height);
+            var slideRect = new Rect(rect.x, rect.y, rect.width * value / max, rect.height);
             GUI.HorizontalSlider(slideRect, value, min, max);
             rect.x += rect.width;
             hasFocus = GUIUtility.hotControl == id + 1;
             GUI.skin = JxDebug.Singleton.MGuiSkin;
             GUI.color = Color.white;
-
         }
 
-        private void DrawValue( ref Rect rect, float widthFraction, float value ,float max)
+        private void DrawValue( ref Rect rect, float widthFraction, float value, float max )
         {
             rect.width = 2 * widthFraction;
-            string total = TextUtils.Format("Current:<color=#FFFFFF>{0}</color>MB\nTotal: <color=#FFFFFF>{1}</color>MB", value, max);
+            var total = TextUtils.Format("Current:<color=#FFFFFF>{0}</color>MB\nTotal: <color=#FFFFFF>{1}</color>MB",
+                value, max);
 
-          
+
             //string valueToShow = CutDecimals(value).ToString();
             GUI.Label(rect, total, GUIUtils.RightTextStyle);
         }
@@ -107,12 +110,16 @@ namespace JxDebug
         private void CallSetterIfAppropriate( float originalValue, float value )
         {
             if (hasFocus)
+            {
                 delayedValue = value;
+            }
 
             if (originalValue != value)
             {
                 if (!delayed || lastHasFocus && !hasFocus)
+                {
                     setter(value);
+                }
             }
             lastHasFocus = hasFocus;
         }
@@ -125,10 +132,12 @@ namespace JxDebug
         /// <returns></returns>
         private float CutDecimals( float value )
         {
-            int factor = 1;
-            for (int i = 0; i < decimalsToShow; i++)
+            var factor = 1;
+            for (var i = 0; i < decimalsToShow; i++)
+            {
                 factor *= 10;
-            value = (int)(factor * value);
+            }
+            value = (int) (factor * value);
             value /= factor;
             return value;
         }

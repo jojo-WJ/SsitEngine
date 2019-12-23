@@ -13,7 +13,9 @@ namespace SsitEngine.Unity
         public static T CreateMonoSingleton<T>() where T : MonoBase, ISingleton
         {
             if (IsApplicationQuit)
+            {
                 return null;
+            }
             T instance = null;
             var managers = FindObjectsOfType(typeof(T)) as T[];
             if (managers != null && managers.Length != 0)
@@ -27,7 +29,10 @@ namespace SsitEngine.Unity
                 }
                 Debug.LogError("You have more than one " + typeof(T).Name +
                                " in the scene. You only need 1, it's a singleton!");
-                foreach (var manager in managers) Destroy(manager.gameObject);
+                foreach (var manager in managers)
+                {
+                    Destroy(manager.gameObject);
+                }
             }
             var gO = new GameObject(typeof(T).Name, typeof(T));
             instance = gO.GetComponent<T>();

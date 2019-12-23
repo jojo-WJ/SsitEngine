@@ -16,13 +16,24 @@ namespace SsitEngine.Unity.Sound
         /// </summary>
         public static float duckEndSpeed = .5f;
 
+        private readonly Dictionary<string, AudioClip> allClips = new Dictionary<string, AudioClip>();
+        private readonly Dictionary<string, float> baseVolumes = new Dictionary<string, float>();
+
+        private readonly Dictionary<string, string> clipsInGroups = new Dictionary<string, string>();
+
+        private readonly Dictionary<string, SFXGroup> groups = new Dictionary<string, SFXGroup>();
+
+        private readonly Dictionary<AudioClip, SFXPoolInfo> ownedPools = new Dictionary<AudioClip, SFXPoolInfo>();
+        private readonly Dictionary<string, float> pitchVariations = new Dictionary<string, float>();
+        private readonly Dictionary<string, int> prepools = new Dictionary<string, int>();
+
+        private readonly Dictionary<string, float> volumeVariations = new Dictionary<string, float>();
+
         private bool _mutedSFX;
 
         private float _pitchSFX = 1f;
 
         private float _volumeSFX = 1f;
-        private readonly Dictionary<string, AudioClip> allClips = new Dictionary<string, AudioClip>();
-        private readonly Dictionary<string, float> baseVolumes = new Dictionary<string, float>();
 
         /// <summary>
         ///     默认的封盖大小
@@ -33,8 +44,6 @@ namespace SsitEngine.Unity.Sound
         ///     音效封盖Map
         /// </summary>
         public Dictionary<int, string> cappedSFXObjects = new Dictionary<int, string>();
-
-        private readonly Dictionary<string, string> clipsInGroups = new Dictionary<string, string>();
 
         // Map of clip names to group names (dictionaries and hashtables are not supported for serialization)
 
@@ -58,8 +67,6 @@ namespace SsitEngine.Unity.Sound
         private int duckNumber;
 
         private AudioSource duckSource;
-
-        private readonly Dictionary<string, SFXGroup> groups = new Dictionary<string, SFXGroup>();
         private bool isDucking;
 
         /// <summary>
@@ -67,15 +74,12 @@ namespace SsitEngine.Unity.Sound
         /// </summary>
         public bool offTheSFX;
 
-        private readonly Dictionary<AudioClip, SFXPoolInfo> ownedPools = new Dictionary<AudioClip, SFXPoolInfo>();
-        private readonly Dictionary<string, float> pitchVariations = new Dictionary<string, float>();
         private float preDuckPitch = 1f;
         private float preDuckPitchMusic = 1f;
         private float preDuckPitchSFX = 1f;
         private float preDuckVolume = 1f;
         private float preDuckVolumeMusic = 1f;
         private float preDuckVolumeSFX = 1f;
-        private readonly Dictionary<string, int> prepools = new Dictionary<string, int>();
 
         /// <summary>
         ///     音效加载路径
@@ -115,8 +119,6 @@ namespace SsitEngine.Unity.Sound
         /// </summary>
         public List<GameObject> unOwnedSFXObjects = new List<GameObject>();
 
-        private readonly Dictionary<string, float> volumeVariations = new Dictionary<string, float>();
-
         /// <summary>
         ///     音效音量
         /// </summary>
@@ -127,15 +129,27 @@ namespace SsitEngine.Unity.Sound
             {
                 foreach (var pair in Instance.ownedPools)
                 foreach (var ownedSFXObject in pair.Value.ownedAudioClipPool)
+                {
                     if (ownedSFXObject != null)
+                    {
                         if (ownedSFXObject.GetComponent<AudioSource>() != null &&
                             (!isDucking || ownedSFXObject.GetComponent<AudioSource>() != duckSource))
+                        {
                             ownedSFXObject.GetComponent<AudioSource>().volume = value;
+                        }
+                    }
+                }
                 foreach (var unOwnedSFXObject in Instance.unOwnedSFXObjects)
+                {
                     if (unOwnedSFXObject != null)
+                    {
                         if (unOwnedSFXObject.GetComponent<AudioSource>() != null &&
                             (!isDucking || unOwnedSFXObject.GetComponent<AudioSource>() != duckSource))
+                        {
                             unOwnedSFXObject.GetComponent<AudioSource>().volume = value;
+                        }
+                    }
+                }
                 _volumeSFX = value;
             }
         }
@@ -150,15 +164,27 @@ namespace SsitEngine.Unity.Sound
             {
                 foreach (var pair in Instance.ownedPools)
                 foreach (var ownedSFXObject in pair.Value.ownedAudioClipPool)
+                {
                     if (ownedSFXObject != null)
+                    {
                         if (ownedSFXObject.GetComponent<AudioSource>() != null &&
                             (!isDucking || ownedSFXObject.GetComponent<AudioSource>() != duckSource))
+                        {
                             ownedSFXObject.GetComponent<AudioSource>().pitch = value;
+                        }
+                    }
+                }
                 foreach (var unOwnedSFXObject in Instance.unOwnedSFXObjects)
+                {
                     if (unOwnedSFXObject != null)
+                    {
                         if (unOwnedSFXObject.GetComponent<AudioSource>() != null &&
                             (!isDucking || unOwnedSFXObject.GetComponent<AudioSource>() != duckSource))
+                        {
                             unOwnedSFXObject.GetComponent<AudioSource>().pitch = value;
+                        }
+                    }
+                }
                 _pitchSFX = value;
             }
         }
@@ -175,19 +201,39 @@ namespace SsitEngine.Unity.Sound
             {
                 foreach (var pair in Instance.ownedPools)
                 foreach (var ownedSFXObject in pair.Value.ownedAudioClipPool)
+                {
                     if (ownedSFXObject != null)
+                    {
                         if (ownedSFXObject.GetComponent<AudioSource>() != null)
+                        {
                             if (value)
+                            {
                                 ownedSFXObject.GetComponent<AudioSource>().mute = value;
+                            }
                             else if (!Instance.offTheSFX)
+                            {
                                 ownedSFXObject.GetComponent<AudioSource>().mute = value;
+                            }
+                        }
+                    }
+                }
                 foreach (var unOwnedSFXObject in Instance.unOwnedSFXObjects)
+                {
                     if (unOwnedSFXObject != null)
+                    {
                         if (unOwnedSFXObject.GetComponent<AudioSource>() != null)
+                        {
                             if (value)
+                            {
                                 unOwnedSFXObject.GetComponent<AudioSource>().mute = value;
+                            }
                             else if (!Instance.offTheSFX)
+                            {
                                 unOwnedSFXObject.GetComponent<AudioSource>().mute = value;
+                            }
+                        }
+                    }
+                }
                 _mutedSFX = value;
             }
         }

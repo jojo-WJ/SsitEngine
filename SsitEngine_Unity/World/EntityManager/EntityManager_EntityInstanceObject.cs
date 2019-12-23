@@ -32,9 +32,15 @@ namespace SsitEngine.Unity.Entity
                 IEntityHelper entityHelper )
                 : base(entityInstance)
             {
-                if (entityAsset == null) throw new SsitEngineException("Entity asset is invalid.");
+                if (entityAsset == null)
+                {
+                    throw new SsitEngineException("Entity asset is invalid.");
+                }
 
-                if (entityHelper == null) throw new SsitEngineException("Entity helper is invalid.");
+                if (entityHelper == null)
+                {
+                    throw new SsitEngineException("Entity helper is invalid.");
+                }
 
                 m_EntityAsset = entityAsset;
                 m_EntityHelper = entityHelper;

@@ -1,57 +1,40 @@
-﻿using SsitEngine.DebugLog;
-using SsitEngine.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// 任务节点是任务中的任务或阶段
     /// </summary>
     [Serializable]
     public class QuestNode
     {
-
         #region Serialized Fields
 
-        [SerializeField]
-        private string m_id;
+        [SerializeField] private string m_id;
 
-        [Tooltip("节点名称")]
-        [SerializeField]
-        private string m_internalName;
+        [Tooltip("节点名称")] [SerializeField] private string m_internalName;
 
         //[SerializeField]
         //private string m_description;
 
-        [Tooltip("节点类型，根据类型执行相应行为")]
-        [SerializeField]
+        [Tooltip("节点类型，根据类型执行相应行为")] [SerializeField]
         private QuestNodeType m_nodeType;
 
-        [Tooltip("可选执行项")]
-        [SerializeField]
-        private bool m_isOptional;
+        [Tooltip("可选执行项")] [SerializeField] private bool m_isOptional;
 
-        [Tooltip("节点状态")]
-        [SerializeField]
-        private QuestNodeState m_state = QuestNodeState.Inactive;
+        [Tooltip("节点状态")] [SerializeField] private QuestNodeState m_state = QuestNodeState.Inactive;
 
-        [Tooltip("任务的会话对象默认时发任务的人")]
-        [SerializeField]
+        [Tooltip("任务的会话对象默认时发任务的人")] [SerializeField]
         private string m_speaker;
 
-        [Tooltip("任务状态信息")]
-        [SerializeField]
-        private List<QuestStateInfo> m_stateInfoList = new List<QuestStateInfo>();
+        [Tooltip("任务状态信息")] [SerializeField] private List<QuestStateInfo> m_stateInfoList = new List<QuestStateInfo>();
 
-        [Tooltip("节点成功的需求条件")]
-        [SerializeField]
+        [Tooltip("节点成功的需求条件")] [SerializeField]
         private QuestConditionSet m_conditionSet = new QuestConditionSet();
 
-        [HideInInspector]
-        [SerializeField]
+        [HideInInspector] [SerializeField]
         private List<int> m_childIndexList = new List<int>(); // Indices into Quest.nodes.
 
         #endregion
@@ -63,8 +46,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string Id
         {
-            get { return m_id; }
-            set { m_id = value; }
+            get => m_id;
+            set => m_id = value;
         }
 
         /// <summary>
@@ -72,8 +55,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string InternalName
         {
-            get { return m_internalName; }
-            set { m_internalName = value; }
+            get => m_internalName;
+            set => m_internalName = value;
         }
 
         ///// <summary>
@@ -94,33 +77,27 @@ namespace SsitEngine.QuestManager
 
         public QuestNodeType NodeType
         {
-            get { return m_nodeType; }
-            set { m_nodeType = value; }
+            get => m_nodeType;
+            set => m_nodeType = value;
         }
 
         /// <summary>
         /// 是否是终止任务树的节点类型
         /// </summary>
-        public bool IsEndNodeType
-        {
-            get { return NodeType == QuestNodeType.Success || NodeType == QuestNodeType.Failure; }
-        }
+        public bool IsEndNodeType => NodeType == QuestNodeType.Success || NodeType == QuestNodeType.Failure;
 
         /// <summary>
         /// 是否有连接其他节点.
         /// </summary>
-        public bool IsConnectionNodeType
-        {
-            get { return !IsEndNodeType; }
-        }
+        public bool IsConnectionNodeType => !IsEndNodeType;
 
         /// <summary>
         /// 此任务是可选的（比如一个任务隐藏的加分项）.
         /// </summary>
         public bool IsOptional
         {
-            get { return m_isOptional; }
-            set { m_isOptional = value; }
+            get => m_isOptional;
+            set => m_isOptional = value;
         }
 
         /// <summary>
@@ -128,8 +105,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public string Speaker
         {
-            get { return m_speaker; }
-            set { m_speaker = value; }
+            get => m_speaker;
+            set => m_speaker = value;
         }
 
         /// <summary>
@@ -137,8 +114,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public List<QuestStateInfo> StateInfoList
         {
-            get { return m_stateInfoList; }
-            set { m_stateInfoList = value; }
+            get => m_stateInfoList;
+            set => m_stateInfoList = value;
         }
 
         /// <summary>
@@ -146,8 +123,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public QuestConditionSet ConditionSet
         {
-            get { return m_conditionSet; }
-            set { m_conditionSet = value; }
+            get => m_conditionSet;
+            set => m_conditionSet = value;
         }
 
         /// <summary>
@@ -156,35 +133,35 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public List<int> ChildIndexList
         {
-            get { return m_childIndexList; }
-            set { m_childIndexList = value; }
+            get => m_childIndexList;
+            set => m_childIndexList = value;
         }
 
         #endregion
 
         #region Runtime References
 
-        [NonSerialized]
-        private TagDictionary m_tagDictionary = new TagDictionary();
-        [NonSerialized]
-        private Quest m_quest;
-        [NonSerialized]
-        private List<QuestNode> m_childList;
-        [NonSerialized]
-        private List<QuestNode> m_parentList;
-        [NonSerialized]
-        private List<QuestNode> m_optionalParentList;
-        [NonSerialized]
-        private List<QuestNode> m_nonoptionalParentList;
-        private bool m_isCheckingConditions = false;
+        [NonSerialized] private TagDictionary m_tagDictionary = new TagDictionary();
+
+        [NonSerialized] private Quest m_quest;
+
+        [NonSerialized] private List<QuestNode> m_childList;
+
+        [NonSerialized] private List<QuestNode> m_parentList;
+
+        [NonSerialized] private List<QuestNode> m_optionalParentList;
+
+        [NonSerialized] private List<QuestNode> m_nonoptionalParentList;
+
+        private bool m_isCheckingConditions;
 
         /// <summary>
         /// 此任务节点中定义的标记及其值的字典
         /// </summary>
         public TagDictionary TagDictionary
         {
-            get { return m_tagDictionary; }
-            set { m_tagDictionary = value; }
+            get => m_tagDictionary;
+            set => m_tagDictionary = value;
         }
 
         /// <summary>
@@ -192,8 +169,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public Quest Quest
         {
-            get { return m_quest; }
-            set { m_quest = value; }
+            get => m_quest;
+            set => m_quest = value;
         }
 
         /// <summary>
@@ -201,8 +178,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public List<QuestNode> ChildList
         {
-            get { return m_childList; }
-            set { m_childList = value; }
+            get => m_childList;
+            set => m_childList = value;
         }
 
         /// <summary>
@@ -210,8 +187,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public List<QuestNode> ParentList
         {
-            get { return m_parentList; }
-            set { m_parentList = value; }
+            get => m_parentList;
+            set => m_parentList = value;
         }
 
         /// <summary>
@@ -219,8 +196,8 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public List<QuestNode> OptionalParentList
         {
-            get { return m_optionalParentList; }
-            set { m_optionalParentList = value; }
+            get => m_optionalParentList;
+            set => m_optionalParentList = value;
         }
 
         /// <summary>
@@ -228,15 +205,14 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public List<QuestNode> NonoptionalParentList
         {
-            get { return m_nonoptionalParentList; }
-            set { m_nonoptionalParentList = value; }
+            get => m_nonoptionalParentList;
+            set => m_nonoptionalParentList = value;
         }
 
         /// <summary>
         /// Invoked when the node changes state.
         /// </summary>
         public event QuestNodeParameterDelegate OnStateChanged = delegate { };
-
 
         #endregion
 
@@ -249,24 +225,28 @@ namespace SsitEngine.QuestManager
         public const float DefaultStartNodeX = 200;
         public const float DefaultStartNodeY = 20;
 
-        [HideInInspector]
-        [SerializeField]
-        private Rect m_canvasRect; // Position in editor canvas.
+        [HideInInspector] [SerializeField] private Rect m_canvasRect; // Position in editor canvas.
 
         /// <summary>
         /// Position of the quest node in the Quest Editor window.
         /// </summary>
         public Rect CanvasRect
         {
-            get { return m_canvasRect; }
-            set { m_canvasRect = value; }
+            get => m_canvasRect;
+            set => m_canvasRect = value;
         }
 
 
         public string GetEditorName()
         {
-            if (!string.IsNullOrEmpty(InternalName)) return InternalName;
-            if (!string.IsNullOrEmpty(Id)) return Id;
+            if (!string.IsNullOrEmpty(InternalName))
+            {
+                return InternalName;
+            }
+            if (!string.IsNullOrEmpty(Id))
+            {
+                return Id;
+            }
             return "Node";
         }
 
@@ -274,7 +254,9 @@ namespace SsitEngine.QuestManager
 
         #region Initialization & DeConstructor
 
-        public QuestNode() { }
+        public QuestNode()
+        {
+        }
 
         public QuestNode( string id, string internalName, QuestNodeType nodeType, bool isOptional = false )
         {
@@ -299,7 +281,9 @@ namespace SsitEngine.QuestManager
         {
             // Assumes lists are identical except subassets haven't been copied.
             if (copy == null)
+            {
                 return;
+            }
             ConditionSet.CloneSubassetsInto(copy.ConditionSet);
             QuestStateInfo.CloneSubassets(StateInfoList, copy.StateInfoList);
             TagDictionary.CopyInto(copy.TagDictionary);
@@ -311,41 +295,54 @@ namespace SsitEngine.QuestManager
             if (original == null || copy == null || copy.Count != original.Count)
             {
                 if (Debug.isDebugBuild)
-                    Debug.LogWarning("Quest Machine: QuestNode.CloneSubassets() failed because copy or original is invalid.");
+                {
+                    Debug.LogWarning(
+                        "Quest Machine: QuestNode.CloneSubassets() failed because copy or original is invalid.");
+                }
                 return;
             }
-            for (int i = 0; i < original.Count; i++)
+            for (var i = 0; i < original.Count; i++)
             {
                 if (original[i] != null)
+                {
                     original[i].CloneSubassetsInto(copy[i]);
+                }
             }
         }
 
         public void DestroySubassets()
         {
             if (ConditionSet != null)
+            {
                 ConditionSet.DestroySubassets();
+            }
             QuestStateInfo.DestroyListSubassets(StateInfoList);
         }
 
         public static void DestroyListSubassets( List<QuestNode> nodes )
         {
             if (nodes == null)
+            {
                 return;
-            for (int i = 0; i < nodes.Count; i++)
+            }
+            for (var i = 0; i < nodes.Count; i++)
             {
                 if (nodes[i] != null)
+                {
                     nodes[i].DestroySubassets();
+                }
             }
         }
 
         public void InitializeRuntimeReferences( Quest quest )
         {
-            this.Quest = quest;
+            Quest = quest;
 
             // Set references in condition set:
             if (ConditionSet != null)
+            {
                 ConditionSet.SetRuntimeReferences(quest, this);
+            }
 
             // Build children list:
             if (quest.NodeList != null)
@@ -355,7 +352,9 @@ namespace SsitEngine.QuestManager
                 {
                     var index = ChildIndexList[i];
                     if (0 <= index && index < quest.NodeList.Count)
+                    {
                         ChildList.Add(quest.NodeList[index]);
+                    }
                 }
             }
 
@@ -367,29 +366,43 @@ namespace SsitEngine.QuestManager
         public void ConnectRuntimeNodeReferences()
         {
             if (ChildList == null)
+            {
                 return;
-            for (int i = 0; i < ChildList.Count; i++)
+            }
+            for (var i = 0; i < ChildList.Count; i++)
             {
                 if (ChildList[i] != null)
+                {
                     ChildList[i].SetParent(this);
+                }
             }
         }
 
         private void SetParent( QuestNode parent )
         {
             if (parent == null)
+            {
                 return;
+            }
             if (ParentList == null)
+            {
                 ParentList = new List<QuestNode>();
+            }
             ParentList.Add(parent);
             if (parent.IsOptional)
             {
-                if (OptionalParentList == null) OptionalParentList = new List<QuestNode>();
+                if (OptionalParentList == null)
+                {
+                    OptionalParentList = new List<QuestNode>();
+                }
                 OptionalParentList.Add(parent);
             }
             else
             {
-                if (NonoptionalParentList == null) NonoptionalParentList = new List<QuestNode>();
+                if (NonoptionalParentList == null)
+                {
+                    NonoptionalParentList = new List<QuestNode>();
+                }
                 NonoptionalParentList.Add(parent);
             }
             parent.OnStateChanged -= OnParentOnStateChange;
@@ -399,11 +412,13 @@ namespace SsitEngine.QuestManager
         public void SetRuntimeNodeReferences()
         {
             var stateCount = Enum.GetNames(typeof(QuestNodeState)).Length;
-            for (int i = 0; i < stateCount; i++)
+            for (var i = 0; i < stateCount; i++)
             {
-                var stateInfo = QuestStateInfo.GetStateInfo(StateInfoList, (QuestNodeState)i);
+                var stateInfo = QuestStateInfo.GetStateInfo(StateInfoList, (QuestNodeState) i);
                 if (stateInfo != null)
+                {
                     stateInfo.SetRuntimeReferences(Quest, this);
+                }
             }
         }
 
@@ -426,7 +441,9 @@ namespace SsitEngine.QuestManager
         public void SetState( QuestNodeState newState, bool informListeners = true )
         {
             if (ConditionSet != null && ConditionSet.IsPassing)
+            {
                 return;
+            }
 
             //if (Engine.Debug)
             //    SsitDebug.Debug("Quest Machine: " + ((Quest != null) ? Quest.GetEditorName() : "Quest") + "." + GetEditorName() + ".SetState(" + newState + ")", Quest);
@@ -436,22 +453,26 @@ namespace SsitEngine.QuestManager
             SetConditionChecking(newState == QuestNodeState.Active);
 
             if (!informListeners)
+            {
                 return;
+            }
 
             // Execute state actions:
             var stateInfo = GetStateInfo(m_state);
             if (stateInfo != null && stateInfo.actionList != null)
             {
-                for (int i = 0; i < stateInfo.actionList.Count; i++)
+                for (var i = 0; i < stateInfo.actionList.Count; i++)
                 {
                     if (stateInfo.actionList[i] == null)
+                    {
                         continue;
+                    }
                     stateInfo.actionList[i].Execute(this);
                 }
             }
 
             // Notify that state changed:
-            QuestUtility.SendNotification((ushort)EnQuestEvent.QuestStateChangedMessage, this, Quest.Id, Id, m_state);
+            QuestUtility.SendNotification((ushort) EnQuestEvent.QuestStateChangedMessage, this, Quest.Id, Id, m_state);
 
             try
             {
@@ -460,7 +481,9 @@ namespace SsitEngine.QuestManager
             catch (Exception e) // Don't let exceptions in user-added events break our code.
             {
                 if (Debug.isDebugBuild)
+                {
                     Debug.LogException(e);
+                }
             }
 
             // Handle special node types:
@@ -479,11 +502,15 @@ namespace SsitEngine.QuestManager
                     {
                         case QuestNodeType.Success:
                             if (Quest != null)
+                            {
                                 Quest.SetState(QuestState.Successful);
+                            }
                             break;
                         case QuestNodeType.Failure:
                             if (Quest != null)
+                            {
                                 Quest.SetState(QuestState.Failed);
+                            }
                             break;
                     }
                     break;
@@ -503,7 +530,7 @@ namespace SsitEngine.QuestManager
         /// </summary>
         public QuestStateInfo GetStateInfo( QuestNodeState state )
         {
-            return (StateInfoList != null) ? QuestStateInfo.GetStateInfo(StateInfoList, state) : null;
+            return StateInfoList != null ? QuestStateInfo.GetStateInfo(StateInfoList, state) : null;
         }
 
         /// <summary>
@@ -513,24 +540,30 @@ namespace SsitEngine.QuestManager
         public void SetConditionChecking( bool enable )
         {
             if (!Application.isPlaying)
+            {
                 return;
-            if ((enable && m_isCheckingConditions) || (!enable && !m_isCheckingConditions))
+            }
+            if (enable && m_isCheckingConditions || !enable && !m_isCheckingConditions)
+            {
                 return;
+            }
             if (!IsConnectionNodeType || ConditionSet == null)
+            {
                 return;
-            if (enable == true)
+            }
+            if (enable)
             {
                 ConditionSet.StartChecking(OnConditionsTrue);
             }
             else
             {
                 //ConditionSet.StopChecking();
-                for (int i = 0; i < ParentList.Count; i++)
+                for (var i = 0; i < ParentList.Count; i++)
                 {
-                    QuestNode parentNode = ParentList[i];
-                    for (int j = 0; j < parentNode.ChildList.Count; j++)
+                    var parentNode = ParentList[i];
+                    for (var j = 0; j < parentNode.ChildList.Count; j++)
                     {
-                        QuestNode parallelNode = parentNode.ChildList[j];
+                        var parallelNode = parentNode.ChildList[j];
                         if (parallelNode.ConditionSet != null)
                         {
                             parallelNode.ConditionSet.StopChecking();
@@ -553,7 +586,9 @@ namespace SsitEngine.QuestManager
         private void OnParentOnStateChange( QuestNode parent )
         {
             if (parent != null && parent.GetState() == QuestNodeState.True)
+            {
                 SetState(QuestNodeState.Active);
+            }
         }
 
         #endregion
@@ -568,7 +603,9 @@ namespace SsitEngine.QuestManager
         public bool HasContent( QuestContentCategory category )
         {
             if (!IsContentValidForCurrentSpeaker(category))
+            {
                 return false;
+            }
             var stateInfo = QuestStateInfo.GetStateInfo(StateInfoList, m_state);
             return stateInfo != null && stateInfo.GetContentList(category).Count > 0;
         }
@@ -581,18 +618,24 @@ namespace SsitEngine.QuestManager
         public List<QuestContent> GetContentList( QuestContentCategory category )
         {
             if (!IsContentValidForCurrentSpeaker(category))
+            {
                 return null;
+            }
             var stateInfo = QuestStateInfo.GetStateInfo(StateInfoList, m_state);
-            return (stateInfo != null) ? stateInfo.GetContentList(category) : null;
+            return stateInfo != null ? stateInfo.GetContentList(category) : null;
         }
 
         private bool IsContentValidForCurrentSpeaker( QuestContentCategory category )
         {
             // Non-dialogue content is always valid:
             if (category != QuestContentCategory.Dialogue)
+            {
                 return true;
+            }
             if (Quest == null)
+            {
                 return true;
+            }
 
             // Are quest's current speaker and this node's speaker both the quest giver?
             if (Quest.CurrentSpeaker == null)
@@ -605,7 +648,5 @@ namespace SsitEngine.QuestManager
         }
 
         #endregion
-
     }
-
 }

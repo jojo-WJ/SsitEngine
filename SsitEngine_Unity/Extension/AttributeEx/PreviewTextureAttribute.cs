@@ -1,26 +1,29 @@
-﻿using UnityEngine;
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
+using System;
 using UnityEditor;
 using System.IO;
-#endif 
+using UnityEngine;
+
+#endif
 public class PreviewTextureAttribute : PropertyAttribute
 {
-    public Rect lastPosition = new Rect(0, 0, 0, 0);
+    public Texture2D cached;
+
     /// <summary>
     /// 加载等待时长
     /// </summary>
     public long expire = 6000000000; // 10min
+
+    public Rect lastPosition = new Rect(0, 0, 0, 0);
 #pragma warning disable 618
     public WWW www;
 #pragma warning restore 618
-    public Texture2D cached;
 
     public PreviewTextureAttribute()
     {
-
     }
 
-    public PreviewTextureAttribute(int expire)
+    public PreviewTextureAttribute( int expire )
     {
         this.expire = expire * 1000 * 10000;
     }
@@ -32,8 +35,11 @@ public class PreviewTextureAttribute : PropertyAttribute
 [CustomPropertyDrawer(typeof(PreviewTextureAttribute))]
 public class PreviewTextureDrawer : PropertyDrawer
 {
+    private GUIStyle style;
 
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    private PreviewTextureAttribute previewTextureAttribute => (PreviewTextureAttribute) attribute;
+
+    public override void OnGUI( Rect position, SerializedProperty property, GUIContent label )
     {
         position.height = 16;
         if (property.propertyType == SerializedPropertyType.String)
@@ -46,25 +52,23 @@ public class PreviewTextureDrawer : PropertyDrawer
         }
     }
 
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+    public override float GetPropertyHeight( SerializedProperty property, GUIContent label )
     {
         return base.GetPropertyHeight(property, label) + previewTextureAttribute.lastPosition.height;
     }
 
-    PreviewTextureAttribute previewTextureAttribute
+    private void DrawTextureValue( Rect position, SerializedProperty property, GUIContent label )
     {
-        get { return (PreviewTextureAttribute)attribute; }
-    }
-
-    void DrawTextureValue(Rect position, SerializedProperty property, GUIContent label)
-    {
-        property.objectReferenceValue = (Texture2D)EditorGUI.ObjectField(position, label, property.objectReferenceValue, typeof(Texture2D), false);
+        property.objectReferenceValue = (Texture2D) EditorGUI.ObjectField(position, label,
+            property.objectReferenceValue, typeof(Texture2D), false);
 
         if (property.objectReferenceValue != null)
-            DrawTexture(position, (Texture2D)property.objectReferenceValue);
+        {
+            DrawTexture(position, (Texture2D) property.objectReferenceValue);
+        }
     }
 
-    void DrawStringValue(Rect position, SerializedProperty property, GUIContent label)
+    private void DrawStringValue( Rect position, SerializedProperty property, GUIContent label )
     {
         EditorGUI.BeginChangeCheck();
         property.stringValue = EditorGUI.TextField(position, label, property.stringValue);
@@ -73,7 +77,7 @@ public class PreviewTextureDrawer : PropertyDrawer
             previewTextureAttribute.www = null;
             previewTextureAttribute.cached = null;
         }
-        string path = GetCachedTexturePath(property.stringValue);
+        var path = GetCachedTexturePath(property.stringValue);
 
         if (!string.IsNullOrEmpty(path))
         {
@@ -96,20 +100,22 @@ public class PreviewTextureDrawer : PropertyDrawer
             previewTextureAttribute.cached = GetTextureFromWWW(position, property);
         }
         else
+        {
             DrawTexture(position, previewTextureAttribute.cached);
+        }
     }
 
-    bool IsExpired(string path)
+    private bool IsExpired( string path )
     {
-        string fileName = Path.GetFileNameWithoutExtension(path);
-        string[] split = fileName.Split('_');
-        return System.DateTime.Now.Ticks >= long.Parse(split[1]);
+        var fileName = Path.GetFileNameWithoutExtension(path);
+        var split = fileName.Split('_');
+        return DateTime.Now.Ticks >= long.Parse(split[1]);
     }
 
-    string GetCachedTexturePath(string stringValue)
+    private string GetCachedTexturePath( string stringValue )
     {
-        int hash = stringValue.GetHashCode();
-        foreach (string path in Directory.GetFiles("Temp"))
+        var hash = stringValue.GetHashCode();
+        foreach (var path in Directory.GetFiles("Temp"))
         {
             if (Path.GetFileNameWithoutExtension(path).StartsWith(hash.ToString()))
             {
@@ -119,7 +125,7 @@ public class PreviewTextureDrawer : PropertyDrawer
         return string.Empty;
     }
 
-    Texture2D GetTextureFromWWW(Rect position, SerializedProperty property)
+    private Texture2D GetTextureFromWWW( Rect position, SerializedProperty property )
     {
         if (previewTextureAttribute.www == null)
         {
@@ -130,17 +136,19 @@ public class PreviewTextureDrawer : PropertyDrawer
         else if (!previewTextureAttribute.www.isDone)
         {
             previewTextureAttribute.lastPosition = new Rect(position.x, position.y + 16, position.width, 16);
-            EditorGUI.ProgressBar(previewTextureAttribute.lastPosition, previewTextureAttribute.www.progress, "Downloading... " + (previewTextureAttribute.www.progress * 100) + "%");
+            EditorGUI.ProgressBar(previewTextureAttribute.lastPosition, previewTextureAttribute.www.progress,
+                "Downloading... " + previewTextureAttribute.www.progress * 100 + "%");
         }
         else if (previewTextureAttribute.www.isDone)
         {
-
             if (previewTextureAttribute.www.error != null)
+            {
                 return null;
+            }
 
-            int hash = property.stringValue.GetHashCode();
-            long expire = (System.DateTime.Now.Ticks + previewTextureAttribute.expire);
-            string path = string.Format("Temp/{0}_{1}_{2}_{3}", hash, expire, previewTextureAttribute.www.texture.width,
+            var hash = property.stringValue.GetHashCode();
+            var expire = DateTime.Now.Ticks + previewTextureAttribute.expire;
+            var path = string.Format("Temp/{0}_{1}_{2}_{3}", hash, expire, previewTextureAttribute.www.texture.width,
                 previewTextureAttribute.www.texture.height);
             File.WriteAllBytes(path, previewTextureAttribute.www.bytes);
             EditorUtility.DisplayDialog("", "加载完成", "ok");
@@ -149,22 +157,21 @@ public class PreviewTextureDrawer : PropertyDrawer
         return null;
     }
 
-    Texture2D GetTextureFromCached(string path)
+    private Texture2D GetTextureFromCached( string path )
     {
-        string[] split = Path.GetFileNameWithoutExtension(path).Split('_');
-        int width = int.Parse(split[2]);
-        int height = int.Parse(split[3]);
-        Texture2D t = new Texture2D(width, height);
+        var split = Path.GetFileNameWithoutExtension(path).Split('_');
+        var width = int.Parse(split[2]);
+        var height = int.Parse(split[3]);
+        var t = new Texture2D(width, height);
 
         return t.LoadImage(File.ReadAllBytes(path)) ? t : null;
     }
 
-    private GUIStyle style;
-
-    void DrawTexture(Rect position, Texture2D texture)
+    private void DrawTexture( Rect position, Texture2D texture )
     {
-        float width = Mathf.Clamp(texture.width, position.width * 0.7f, position.width * 0.7f);
-        previewTextureAttribute.lastPosition = new Rect(position.width * 0.15f, position.y + 16, width, texture.height * (width / texture.width));
+        var width = Mathf.Clamp(texture.width, position.width * 0.7f, position.width * 0.7f);
+        previewTextureAttribute.lastPosition = new Rect(position.width * 0.15f, position.y + 16, width,
+            texture.height * (width / texture.width));
 
         if (style == null)
         {
@@ -175,7 +182,7 @@ public class PreviewTextureDrawer : PropertyDrawer
         GUI.Label(previewTextureAttribute.lastPosition, "", style);
     }
 
-    void Delete(string path)
+    private void Delete( string path )
     {
         File.Delete(path);
         previewTextureAttribute.cached = null;

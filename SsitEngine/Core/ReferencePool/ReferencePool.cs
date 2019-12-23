@@ -71,7 +71,10 @@ namespace SsitEngine.Core.ReferencePool
         /// <param name="reference">引用。</param>
         public static void Release<T>( T reference ) where T : class, IReference
         {
-            if (reference == null) throw new SsitEngineException("Reference is invalid.");
+            if (reference == null)
+            {
+                throw new SsitEngineException("Reference is invalid.");
+            }
 
             GetReferenceCollection(typeof(T)).Release(reference);
         }
@@ -82,7 +85,10 @@ namespace SsitEngine.Core.ReferencePool
         /// <param name="reference">引用。</param>
         public static void Release( IReference reference )
         {
-            if (reference == null) throw new SsitEngineException("Reference is invalid.");
+            if (reference == null)
+            {
+                throw new SsitEngineException("Reference is invalid.");
+            }
 
             var referenceType = reference.GetType();
             InternalCheckReferenceType(referenceType);
@@ -175,11 +181,13 @@ namespace SsitEngine.Core.ReferencePool
             {
                 results = new ReferencePoolInfo[ReferenceCollectionMaps.Count];
                 foreach (var referenceCollection in ReferenceCollectionMaps)
+                {
                     results[index++] = new ReferencePoolInfo(referenceCollection.Key,
                         referenceCollection.Value.UnusedReferenceCount, referenceCollection.Value.UsingReferenceCount,
                         referenceCollection.Value.AcquireReferenceCount,
                         referenceCollection.Value.ReleaseReferenceCount, referenceCollection.Value.AddReferenceCount,
                         referenceCollection.Value.RemoveReferenceCount);
+                }
             }
 
             return results;
@@ -191,14 +199,21 @@ namespace SsitEngine.Core.ReferencePool
         /// <param name="referenceType"></param>
         private static void InternalCheckReferenceType( Type referenceType )
         {
-            if (referenceType == null) throw new SsitEngineException("Reference type is invalid.");
+            if (referenceType == null)
+            {
+                throw new SsitEngineException("Reference type is invalid.");
+            }
 
             if (!referenceType.IsClass || referenceType.IsAbstract)
+            {
                 throw new SsitEngineException("Reference type is not a non-abstract class type.");
+            }
 
             if (!typeof(IReference).IsAssignableFrom(referenceType))
+            {
                 throw new SsitEngineException(TextUtils.Format("Reference type '{0}' is invalid.",
                     referenceType.FullName));
+            }
         }
 
         /// <summary>
@@ -208,7 +223,10 @@ namespace SsitEngine.Core.ReferencePool
         /// <returns></returns>
         private static ReferenceCollection GetReferenceCollection( Type referenceType )
         {
-            if (referenceType == null) throw new SsitEngineException("ReferenceType is invalid.");
+            if (referenceType == null)
+            {
+                throw new SsitEngineException("ReferenceType is invalid.");
+            }
 
             var fullName = referenceType.FullName;
             ReferenceCollection referenceCollection = null;
@@ -231,7 +249,10 @@ namespace SsitEngine.Core.ReferencePool
         {
             lock (ReferenceCollectionMaps)
             {
-                foreach (var referenceCollection in ReferenceCollectionMaps) referenceCollection.Value.RemoveAll();
+                foreach (var referenceCollection in ReferenceCollectionMaps)
+                {
+                    referenceCollection.Value.RemoveAll();
+                }
 
                 ReferenceCollectionMaps.Clear();
             }

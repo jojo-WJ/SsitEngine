@@ -10,7 +10,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using SsitEngine.DebugLog;
-using SsitEngine.Unity.Timer;
 using UnityEngine;
 
 namespace SsitEngine.Unity
@@ -140,17 +139,27 @@ namespace SsitEngine.Unity
         /// <returns>要创建的游戏框架模块。</returns>
         public T CreateModule<T>( T module ) where T : MonoBase, IModule
         {
-            if (module == null) throw new SsitEngineException(TextUtils.Format("Can not create module param isnull"));
+            if (module == null)
+            {
+                throw new SsitEngineException(TextUtils.Format("Can not create module param isnull"));
+            }
             var curModule = m_moduleMap.First;
             while (curModule != null)
             {
-                if (module.Priority > curModule.Value.Priority) break;
+                if (module.Priority > curModule.Value.Priority)
+                {
+                    break;
+                }
                 curModule = curModule.Next;
             }
             if (curModule != null)
+            {
                 m_moduleMap.AddBefore(curModule, module);
+            }
             else
+            {
                 m_moduleMap.AddLast(module);
+            }
             module.transform.SetParent(Platform.PlatformEntity.transform);
 
             return module;
@@ -164,10 +173,15 @@ namespace SsitEngine.Unity
         /// <returns></returns>
         public T AddModule<T>( T module ) where T : MonoBase, IModule
         {
-            if (module == null) throw new SsitEngineException(TextUtils.Format("Can not create module param isnull"));
+            if (module == null)
+            {
+                throw new SsitEngineException(TextUtils.Format("Can not create module param isnull"));
+            }
 
             if (HasModule(module.ModuleName))
+            {
                 return null;
+            }
 
             m_waitLoadModuleMap.Add(module);
             module.transform.SetParent(Platform.PlatformEntity.transform);
@@ -181,9 +195,15 @@ namespace SsitEngine.Unity
         /// <returns></returns>
         public bool RemoveMoudle( string moduleName )
         {
-            if (m_moduleMap == null) return false;
+            if (m_moduleMap == null)
+            {
+                return false;
+            }
             var module = m_moduleMap.First(x => x.ModuleName == moduleName);
-            if (null == module) return false;
+            if (null == module)
+            {
+                return false;
+            }
             m_waitUnloadModuleMap.Add(module);
             return true;
         }
@@ -196,8 +216,12 @@ namespace SsitEngine.Unity
         public bool HasModule( string moduleName )
         {
             foreach (var module in m_moduleMap)
+            {
                 if (module.ModuleName.Equals(moduleName))
+                {
                     return true;
+                }
+            }
             return false;
         }
 
@@ -210,8 +234,12 @@ namespace SsitEngine.Unity
         public T GetModule<T>( string moduleName ) where T : class, IModule
         {
             foreach (var module in m_moduleMap)
+            {
                 if (module.ModuleName.Equals(moduleName))
+                {
                     return module as T;
+                }
+            }
             throw new SsitEngineException(TextUtils.Format("Can not get module {0}", moduleName));
         }
 
@@ -228,12 +256,19 @@ namespace SsitEngine.Unity
             }
             m_waitUnloadModuleMap.Clear();
 
-            foreach (var module in m_waitLoadModuleMap) AddModule(module);
+            foreach (var module in m_waitLoadModuleMap)
+            {
+                AddModule(module);
+            }
             m_waitLoadModuleMap.Clear();
 
             foreach (var module in m_moduleMap)
+            {
                 if (module != null)
+                {
                     module.OnUpdate(elapsed);
+                }
+            }
         }
 
         /// <summary>
@@ -241,11 +276,20 @@ namespace SsitEngine.Unity
         /// </summary>
         public void Shutdown()
         {
-            if (m_moduleMap == null) return;
+            if (m_moduleMap == null)
+            {
+                return;
+            }
             if (m_moduleMap.Count > 0)
+            {
                 for (var current = m_moduleMap.Last; current != null; current = current.Previous)
+                {
                     if (current.Value != null)
+                    {
                         current.Value.Shutdown();
+                    }
+                }
+            }
 
             m_moduleMap.Clear();
         }
@@ -259,18 +303,27 @@ namespace SsitEngine.Unity
         private void AddModule( IModule module )
         {
             if (HasModule(module.ModuleName))
+            {
                 return;
+            }
 
             var curModule = m_moduleMap.First;
             while (curModule != null)
             {
-                if (module.Priority > curModule.Value.Priority) break;
+                if (module.Priority > curModule.Value.Priority)
+                {
+                    break;
+                }
                 curModule = curModule.Next;
             }
             if (curModule != null)
+            {
                 m_moduleMap.AddBefore(curModule, module);
+            }
             else
+            {
                 m_moduleMap.AddLast(module);
+            }
         }
 
         #endregion

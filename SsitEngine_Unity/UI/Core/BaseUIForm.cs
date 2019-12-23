@@ -74,7 +74,9 @@ namespace SsitEngine.Unity.UI
             RegisterMsg(m_msgList);
 
             if (_CurrentUIType.UIForm_Type == UIFormType.PopUp)
+            {
                 UIMaskMgr.GetInstance().SetMaskWindow(gameObject, CurrentUIType.UIForm_LucencyType);
+            }
         }
 
         /// <summary>
@@ -117,7 +119,9 @@ namespace SsitEngine.Unity.UI
 
             RegisterMsg(m_msgList);
             if (_CurrentUIType.UIForm_Type == UIFormType.PopUp)
+            {
                 UIMaskMgr.GetInstance().SetMaskWindow(gameObject, CurrentUIType.UIForm_LucencyType);
+            }
 
             OnOpenCallBack?.Invoke(this);
         }
@@ -128,7 +132,10 @@ namespace SsitEngine.Unity.UI
         public virtual void Hiding()
         {
             UnRegisterMsg(m_msgList);
-            if (_CurrentUIType.UIForm_Type == UIFormType.PopUp) UIMaskMgr.GetInstance().CancelMaskWindow();
+            if (_CurrentUIType.UIForm_Type == UIFormType.PopUp)
+            {
+                UIMaskMgr.GetInstance().CancelMaskWindow();
+            }
             OnCloseCallBack?.Invoke(this);
         }
 

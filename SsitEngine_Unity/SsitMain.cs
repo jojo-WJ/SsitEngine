@@ -1,7 +1,6 @@
 ﻿using SsitEngine.PureMVC.Patterns;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 namespace SsitEngine.Unity
 {
@@ -11,11 +10,6 @@ namespace SsitEngine.Unity
     public class SsitMain : MonoBehaviour
     {
         /// <summary>
-        /// 调试开关
-        /// </summary>
-        public bool mDebug;
-
-        /// <summary>
         /// 程序初始化加载
         /// </summary>
         private static bool mIsInit;
@@ -24,7 +18,12 @@ namespace SsitEngine.Unity
         /// 程序加载完成回调
         /// </summary>
         private static UnityAction onInitFinished;
-        
+
+        /// <summary>
+        /// 调试开关
+        /// </summary>
+        public bool mDebug;
+
         private void Awake()
         {
             if (mIsInit)

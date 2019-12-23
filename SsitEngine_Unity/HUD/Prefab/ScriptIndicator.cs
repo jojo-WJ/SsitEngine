@@ -26,7 +26,9 @@ namespace SsitEngine.Unity.HUD
         public void ChangeOffscreenIconColor( Color color )
         {
             if (OffscreenIcon != null)
+            {
                 OffscreenIcon.color = color;
+            }
         }
 
         #endregion
@@ -42,7 +44,9 @@ namespace SsitEngine.Unity.HUD
         {
             base.ChangeIconColor(color);
             if (OnscreenIcon != null)
+            {
                 OnscreenIcon.color = color;
+            }
         }
 
         #endregion

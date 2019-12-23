@@ -1,8 +1,5 @@
-﻿
-
-namespace SsitEngine.QuestManager
+﻿namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// These categories of content may be shown in UIs.
     /// 任务内容类别
@@ -39,5 +36,4 @@ namespace SsitEngine.QuestManager
         /// </summary>
         OfferConditionsUnmet
     }
-
 }

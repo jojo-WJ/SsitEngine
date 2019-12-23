@@ -1,36 +1,40 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using UnityEngine;
 
-namespace JxDebug {
+namespace JxDebug
+{
     [Serializable]
-    public class ScrollBar {
-        const float padding = 3;
-        static GUISkin lastSkin;
+    public class ScrollBar
+    {
+        private const float padding = 3;
+        private static GUISkin lastSkin;
 
-        static GUIStyle originalStyle;
-        static GUIStyle originalThumbStyle;
-        static GUIStyle style;
-        static GUIStyle thumbStyle;
-        static GUIContent scrollUpContent;
-        static GUIContent scrollDownContent;
+        private static GUIStyle originalStyle;
+        private static GUIStyle originalThumbStyle;
+        private static GUIStyle style;
+        private static GUIStyle thumbStyle;
+        private static GUIContent scrollUpContent;
+        private static GUIContent scrollDownContent;
 
-        [SerializeField]
-        protected float minHeight;
-        [SerializeField]
-        protected bool invert;
-        public float width;
+        [SerializeField] protected bool invert;
+
+        [SerializeField] protected float minHeight;
+
         public float sensitivity;
+        public float width;
 
-        public static void Initialize() {
+        public static void Initialize()
+        {
             style = new GUIStyle();
             thumbStyle = new GUIStyle();
-            thumbStyle.normal = new GUIStyleState() { background = GUIUtils.grayTexture };
+            thumbStyle.normal = new GUIStyleState {background = GUIUtils.grayTexture};
             scrollUpContent = new GUIContent(JxDebug.Setting.scrollUpIcon);
             scrollDownContent = new GUIContent(JxDebug.Setting.scrollDownIcon);
         }
 
-        public float Draw(Rect rect, float position, float maxValue) {
-            Rect originalRect = new Rect(rect);
+        public float Draw( Rect rect, float position, float maxValue )
+        {
+            var originalRect = new Rect(rect);
             DrawScrollUpButton(ref rect, ref position);
             rect.height = originalRect.height;
             DrawScrollDownButton(ref rect, ref position);
@@ -39,56 +43,75 @@ namespace JxDebug {
             return position;
         }
 
-        void DrawScrollUpButton(ref Rect rect, ref float position) {
+        private void DrawScrollUpButton( ref Rect rect, ref float position )
+        {
             rect.height = GetButtonWidth(rect.width);
-            if(GUIUtils.DrawRepeatButton(rect, scrollUpContent, Color.clear))
+            if (GUIUtils.DrawRepeatButton(rect, scrollUpContent, Color.clear))
+            {
                 position -= sensitivity;
+            }
         }
 
-        void DrawScrollDownButton(ref Rect rect, ref float position) {
+        private void DrawScrollDownButton( ref Rect rect, ref float position )
+        {
             rect.y += rect.height - GetButtonWidth(rect.width);
             rect.height = GetButtonWidth(rect.width);
-            if(GUIUtils.DrawRepeatButton(rect, scrollDownContent, Color.clear))
+            if (GUIUtils.DrawRepeatButton(rect, scrollDownContent, Color.clear))
+            {
                 position += sensitivity;
+            }
         }
 
-        void CalculateScrollBarRect(ref Rect rect, Rect originalRect) {
+        private void CalculateScrollBarRect( ref Rect rect, Rect originalRect )
+        {
             rect.x += padding;
             rect.y = originalRect.y + rect.height;
-            rect.width -= padding*2;
-            rect.height = originalRect.height - rect.height*2;
+            rect.width -= padding * 2;
+            rect.height = originalRect.height - rect.height * 2;
         }
 
-        void DrawScrollBar(Rect rect, ref float position, float maxValue) {
+        private void DrawScrollBar( Rect rect, ref float position, float maxValue )
+        {
             ChangeSkinStylesIfNecessary();
             thumbStyle.fixedHeight = Mathf.Max(rect.height * rect.height / maxValue, minHeight) / JxDebug.Setting.scale;
-            maxValue -= rect.height + Mathf.Min(rect.width+padding*2, scrollUpContent.image.height) * 2;
-            position = GUI.VerticalScrollbar(rect, position, 0, invert? maxValue : 0, invert?0: maxValue);
+            maxValue -= rect.height + Mathf.Min(rect.width + padding * 2, scrollUpContent.image.height) * 2;
+            position = GUI.VerticalScrollbar(rect, position, 0, invert ? maxValue : 0, invert ? 0 : maxValue);
             RestoreSkinStylesIfNecessary();
         }
 
-        float GetButtonWidth(float rectWidth) {
+        private float GetButtonWidth( float rectWidth )
+        {
             return Mathf.Min(rectWidth, scrollUpContent.image.height);
         }
 
-        void ChangeSkinStylesIfNecessary() {
-            if(GUI.skin.verticalScrollbar != style) {
+        private void ChangeSkinStylesIfNecessary()
+        {
+            if (GUI.skin.verticalScrollbar != style)
+            {
                 originalStyle = GUI.skin.verticalScrollbar;
                 GUI.skin.verticalScrollbar = style;
             }
-            if(GUI.skin.verticalScrollbarThumb != thumbStyle) {
+            if (GUI.skin.verticalScrollbarThumb != thumbStyle)
+            {
                 originalThumbStyle = GUI.skin.verticalScrollbarThumb;
                 GUI.skin.verticalScrollbarThumb = thumbStyle;
             }
         }
 
-        void RestoreSkinStylesIfNecessary() {
-            if(JxDebug.Setting.optimizeForOnGUI)
+        private void RestoreSkinStylesIfNecessary()
+        {
+            if (JxDebug.Setting.optimizeForOnGUI)
+            {
                 return;
+            }
             if (originalStyle != null)
+            {
                 GUI.skin.verticalScrollbar = originalStyle;
+            }
             if (originalThumbStyle != null)
+            {
                 GUI.skin.verticalScrollbarThumb = originalThumbStyle;
+            }
         }
     }
 }

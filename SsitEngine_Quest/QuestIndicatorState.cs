@@ -1,5 +1,4 @@
-﻿
-namespace SsitEngine.QuestManager
+﻿namespace SsitEngine.QuestManager
 {
     /// <summary>
     /// The states that a quest indicator can be in.

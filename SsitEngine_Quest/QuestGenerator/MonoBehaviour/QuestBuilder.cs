@@ -1,17 +1,41 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace SsitEngine.QuestManager
 {
-
     /// <summary>
     /// Utility class for procedurally building quests.
     /// </summary>
     public class QuestBuilder
     {
-
         public Quest quest { get; set; }
+
+        #region Rewards
+
+        public void AssignRewards( RewardSystem[] rewardSystems, int points )
+        {
+            if (rewardSystems == null)
+            {
+                return;
+            }
+            var pointsRemaining = points;
+            for (var i = 0; i < rewardSystems.Length; i++)
+            {
+                var rewardSystem = rewardSystems[i];
+                if (rewardSystem == null)
+                {
+                    continue;
+                }
+                pointsRemaining = rewardSystem.DetermineReward(pointsRemaining, quest);
+                if (pointsRemaining <= 0)
+                {
+                    break;
+                }
+            }
+        }
+
+        #endregion
 
         #region Constructors
 
@@ -21,7 +45,7 @@ namespace SsitEngine.QuestManager
         /// <param name="name">Name to use for quest name, ID, and title.</param>
         public QuestBuilder( string name )
         {
-            CreateQuest(  name , name, name );
+            CreateQuest(name, name, name);
         }
 
         /// <summary>
@@ -32,7 +56,7 @@ namespace SsitEngine.QuestManager
         /// <param name="title">Quest title (visible in UIs).</param>
         public QuestBuilder( string name, string id, string title )
         {
-            CreateQuest( name, id, title );
+            CreateQuest(name, id, title);
         }
 
 
@@ -45,14 +69,16 @@ namespace SsitEngine.QuestManager
             quest.name = name;
             quest.Id = id;
             quest.Title = title;
-            GetStartNode().Id =  id + ".start" ;
+            GetStartNode().Id = id + ".start";
         }
 
 
         public Quest ToQuest()
         {
             if (quest == null)
+            {
                 return null;
+            }
             ValidateListSizes();
             quest.SetRuntimeReferences();
             return quest;
@@ -60,11 +86,11 @@ namespace SsitEngine.QuestManager
 
         private void ValidateListSizes()
         {
-            var numStates = Enum.GetNames( typeof( QuestState ) ).Length;
-            QuestStateInfo.ValidateStateInfoListCount( quest.StateInfoList, numStates );
-            for (int i = 0; i < numStates; i++)
+            var numStates = Enum.GetNames(typeof(QuestState)).Length;
+            QuestStateInfo.ValidateStateInfoListCount(quest.StateInfoList, numStates);
+            for (var i = 0; i < numStates; i++)
             {
-                QuestStateInfo.ValidateCategorizedContentListCount( quest.StateInfoList[i].categorizedContentList );
+                QuestStateInfo.ValidateCategorizedContentListCount(quest.StateInfoList[i].categorizedContentList);
             }
         }
 
@@ -72,15 +98,19 @@ namespace SsitEngine.QuestManager
 
         #region Counters
 
-        public QuestCounter AddCounter( string counterName, int initialValue, int minValue, int maxValue, bool randomizeInitialValue, QuestCounterUpdateMode updateMode )
+        public QuestCounter AddCounter( string counterName, int initialValue, int minValue, int maxValue,
+            bool randomizeInitialValue, QuestCounterUpdateMode updateMode )
         {
-            if (quest.CounterList.Find( x => string.Equals( x.name, counterName ) ) != null)
+            if (quest.CounterList.Find(x => string.Equals(x.name, counterName)) != null)
             {
-                if (Debug.isDebugBuild) Debug.LogWarning( "Quest Machine: Counter '" + counterName + "' already exists in QuestBuilder." );
+                if (Debug.isDebugBuild)
+                {
+                    Debug.LogWarning("Quest Machine: Counter '" + counterName + "' already exists in QuestBuilder.");
+                }
                 return null;
             }
-            var counter = new QuestCounter( counterName, initialValue, minValue, maxValue, updateMode );
-            quest.CounterList.Add( counter );
+            var counter = new QuestCounter(counterName, initialValue, minValue, maxValue, updateMode);
+            quest.CounterList.Add(counter);
             return counter;
         }
 
@@ -88,36 +118,18 @@ namespace SsitEngine.QuestManager
         public void AddCounterMessageEvent( string counterName, string targetID, string message, string parameter,
             QuestCounterMessageEvent.Operation operation, int literalValue = 0 )
         {
-            var counter = quest.GetCounter( counterName );
+            var counter = quest.GetCounter(counterName);
             if (counter == null)
             {
-                if (Debug.isDebugBuild) Debug.LogWarning( "Quest Machine: Counter '" + counterName + "' isn't present in QuestBuilder." );
+                if (Debug.isDebugBuild)
+                {
+                    Debug.LogWarning("Quest Machine: Counter '" + counterName + "' isn't present in QuestBuilder.");
+                }
                 return;
             }
             counter.updateMode = QuestCounterUpdateMode.Messages;
-            counter.messageEventList.Add( new QuestCounterMessageEvent( targetID, message, parameter, operation, literalValue ) );
-        }
-
-
-
-        #endregion
-
-        #region Rewards
-
-        public void AssignRewards( RewardSystem[] rewardSystems, int points )
-        {
-            if (rewardSystems == null)
-                return;
-            var pointsRemaining = points;
-            for (int i = 0; i < rewardSystems.Length; i++)
-            {
-                var rewardSystem = rewardSystems[i];
-                if (rewardSystem == null)
-                    continue;
-                pointsRemaining = rewardSystem.DetermineReward( pointsRemaining, quest );
-                if (pointsRemaining <= 0)
-                    break;
-            }
+            counter.messageEventList.Add(new QuestCounterMessageEvent(targetID, message, parameter, operation,
+                literalValue));
         }
 
         #endregion
@@ -126,12 +138,12 @@ namespace SsitEngine.QuestManager
 
         public void AddOfferContents( params QuestContent[] contents )
         {
-            AddContents( quest.OfferContentList, contents );
+            AddContents(quest.OfferContentList, contents);
         }
 
         public void AddOfferUnmetContents( params QuestContent[] contents )
         {
-            AddContents( quest.OfferConditionsUnmetContentList, contents );
+            AddContents(quest.OfferConditionsUnmetContentList, contents);
         }
 
         #endregion
@@ -142,14 +154,20 @@ namespace SsitEngine.QuestManager
 
         public void AddContents( QuestContentSet contentSet, params QuestContent[] contents )
         {
-            if (contentSet == null) return;
-            AddContents( contentSet.contentList, contents );
+            if (contentSet == null)
+            {
+                return;
+            }
+            AddContents(contentSet.contentList, contents);
         }
 
         public void AddContents( List<QuestContent> contentList, params QuestContent[] contents )
         {
-            if (contentList == null || contents == null) return;
-            contentList.AddRange( contents );
+            if (contentList == null || contents == null)
+            {
+                return;
+            }
+            contentList.AddRange(contents);
         }
 
         public QuestContent CreateTitleContent()
@@ -175,7 +193,7 @@ namespace SsitEngine.QuestManager
         {
             var content = BodyTextQuestContent.CreateInstance<BodyTextQuestContent>();
             content.name = "text";
-            content.BodyText = text.Replace( "{DOMAIN}", "Forest" ); //[TODO] Example. Replace text.
+            content.BodyText = text.Replace("{DOMAIN}", "Forest"); //[TODO] Example. Replace text.
             return content;
         }
 
@@ -192,56 +210,72 @@ namespace SsitEngine.QuestManager
         }
 
 
-        public QuestNode AddNode( QuestNode parent, string id, string internalName, QuestNodeType nodeType, bool isOptional = false )
+        public QuestNode AddNode( QuestNode parent, string id, string internalName, QuestNodeType nodeType,
+            bool isOptional = false )
         {
-
             if (parent == null)
             {
-                if (Debug.isDebugBuild) Debug.LogWarning( "Quest Machine: QuestBuilder.AddNode must be provided a valid parent node." );
+                if (Debug.isDebugBuild)
+                {
+                    Debug.LogWarning("Quest Machine: QuestBuilder.AddNode must be provided a valid parent node.");
+                }
                 return null;
             }
-            if (parent.ChildIndexList == null) return null;
-            parent.ChildIndexList.Add( quest.NodeList.Count );
-            var node = new QuestNode( id, internalName, nodeType, isOptional );
-            node.CanvasRect = new Rect( parent.CanvasRect.x, parent.CanvasRect.y + 20 + QuestNode.DefaultNodeHeight, QuestNode.DefaultNodeWidth, QuestNode.DefaultNodeHeight );
-            quest.NodeList.Add( node );
-            QuestStateInfo.ValidateStateInfoListCount( node.StateInfoList );
-            QuestStateInfo.ValidateCategorizedContentListCount( node.StateInfoList[(int)QuestNodeState.Active].categorizedContentList );
-            QuestStateInfo.ValidateCategorizedContentListCount( node.StateInfoList[(int)QuestNodeState.Inactive].categorizedContentList );
-            QuestStateInfo.ValidateCategorizedContentListCount( node.StateInfoList[(int)QuestNodeState.True].categorizedContentList );
+            if (parent.ChildIndexList == null)
+            {
+                return null;
+            }
+            parent.ChildIndexList.Add(quest.NodeList.Count);
+            var node = new QuestNode(id, internalName, nodeType, isOptional);
+            node.CanvasRect = new Rect(parent.CanvasRect.x, parent.CanvasRect.y + 20 + QuestNode.DefaultNodeHeight,
+                QuestNode.DefaultNodeWidth, QuestNode.DefaultNodeHeight);
+            quest.NodeList.Add(node);
+            QuestStateInfo.ValidateStateInfoListCount(node.StateInfoList);
+            QuestStateInfo.ValidateCategorizedContentListCount(node.StateInfoList[(int) QuestNodeState.Active]
+                .categorizedContentList);
+            QuestStateInfo.ValidateCategorizedContentListCount(node.StateInfoList[(int) QuestNodeState.Inactive]
+                .categorizedContentList);
+            QuestStateInfo.ValidateCategorizedContentListCount(node.StateInfoList[(int) QuestNodeState.True]
+                .categorizedContentList);
             return node;
         }
 
         public QuestNode AddSuccessNode( QuestNode parent )
         {
-            return AddNode( parent, "success", "Success", QuestNodeType.Success );
+            return AddNode(parent, "success", "Success", QuestNodeType.Success);
         }
 
         public QuestNode AddFailureNode( QuestNode parent )
         {
-            return AddNode( parent, "failure", "Failure", QuestNodeType.Failure );
+            return AddNode(parent, "failure", "Failure", QuestNodeType.Failure);
         }
 
         public QuestNode AddPassthroughNode( QuestNode parent, string id, string internalName )
         {
-            return AddNode( parent, id, internalName, QuestNodeType.Passthrough );
+            return AddNode(parent, id, internalName, QuestNodeType.Passthrough);
         }
 
 
-        public QuestNode AddConditionNode( QuestNode parent, string id, string internalName, ConditionCountMode conditionCountMode = ConditionCountMode.All, bool isOptional = false )
+        public QuestNode AddConditionNode( QuestNode parent, string id, string internalName,
+            ConditionCountMode conditionCountMode = ConditionCountMode.All, bool isOptional = false )
         {
-            var node = AddNode( parent, id, internalName, QuestNodeType.Condition, isOptional );
+            var node = AddNode(parent, id, internalName, QuestNodeType.Condition, isOptional);
             if (node == null)
+            {
                 return null;
+            }
             node.ConditionSet.ConditionCountMode = conditionCountMode;
             return node;
         }
 
 
-        public QuestNode AddDiscussQuestNode( QuestNode parent, QuestMessageParticipant targetSpecifier, string targetID, bool isOptional = false )
+        public QuestNode AddDiscussQuestNode( QuestNode parent, QuestMessageParticipant targetSpecifier,
+            string targetID, bool isOptional = false )
         {
-            var node = AddConditionNode( parent, "talkTo" + targetID, "Talk to " + targetID, ConditionCountMode.All, isOptional );
-            AddMessageCondition( node, QuestMessageParticipant.Quester, String.Empty, targetSpecifier, targetID, EnQuestEvent.DiscussedQuestMessage.ToString(), quest.Id );
+            var node = AddConditionNode(parent, "talkTo" + targetID, "Talk to " + targetID, ConditionCountMode.All,
+                isOptional);
+            AddMessageCondition(node, QuestMessageParticipant.Quester, string.Empty, targetSpecifier, targetID,
+                EnQuestEvent.DiscussedQuestMessage.ToString(), quest.Id);
             return node;
         }
 
@@ -249,34 +283,39 @@ namespace SsitEngine.QuestManager
 
         #region Conditions
 
-        public CounterQuestCondition AddCounterCondition( QuestNode node, string counterName, CounterValueConditionMode conditionMode, QuestNumber requiredValue )
+        public CounterQuestCondition AddCounterCondition( QuestNode node, string counterName,
+            CounterValueConditionMode conditionMode, QuestNumber requiredValue )
         {
             var condition = CounterQuestCondition.CreateInstance<CounterQuestCondition>();
             condition.name = "counterCondition";
-            condition.counterIndex = quest.GetCounterIndex( counterName );
+            condition.counterIndex = quest.GetCounterIndex(counterName);
             condition.counterValueMode = conditionMode;
             condition.requiredCounterValue = requiredValue;
-            node.ConditionSet.ConditionList.Add( condition );
+            node.ConditionSet.ConditionList.Add(condition);
             return condition;
         }
 
-        public TimerQuestConditionPro AddTimerCounterCondition( QuestNode node, string counterName, CounterValueConditionMode conditionMode, QuestNumber requiredValue )
+        public TimerQuestConditionPro AddTimerCounterCondition( QuestNode node, string counterName,
+            CounterValueConditionMode conditionMode, QuestNumber requiredValue )
         {
             var condition = TimerQuestConditionPro.CreateInstance<TimerQuestConditionPro>();
             condition.name = "timerCountCondition";
-            condition.counterIndex = quest.GetCounterIndex( counterName );
+            condition.counterIndex = quest.GetCounterIndex(counterName);
             condition.requiredCounterValue = requiredValue;
-            node.ConditionSet.ConditionList.Add( condition );
+            node.ConditionSet.ConditionList.Add(condition);
             return condition;
         }
 
-        public CounterQuestCondition AddCounterCondition( QuestNode node, string counterName, CounterValueConditionMode conditionMode, int requiredValue )
+        public CounterQuestCondition AddCounterCondition( QuestNode node, string counterName,
+            CounterValueConditionMode conditionMode, int requiredValue )
         {
-            return AddCounterCondition( node, counterName, conditionMode, new QuestNumber( requiredValue ) );
+            return AddCounterCondition(node, counterName, conditionMode, new QuestNumber(requiredValue));
         }
-        public TimerQuestConditionPro AddTimerCounterCondition( QuestNode node, string counterName, CounterValueConditionMode conditionMode, int requiredValue )
+
+        public TimerQuestConditionPro AddTimerCounterCondition( QuestNode node, string counterName,
+            CounterValueConditionMode conditionMode, int requiredValue )
         {
-            return AddTimerCounterCondition( node, counterName, conditionMode, new QuestNumber( requiredValue ) );
+            return AddTimerCounterCondition(node, counterName, conditionMode, new QuestNumber(requiredValue));
         }
 
         public MessageQuestCondition AddMessageCondition( QuestNode node,
@@ -292,12 +331,14 @@ namespace SsitEngine.QuestManager
             condition.TargetId = targetID;
             condition.Message = message;
             condition.Parameter = parameter;
-            condition.Value = (value != null) ? value : new MessageValue();
-            node.ConditionSet.ConditionList.Add( condition );
+            condition.Value = value != null ? value : new MessageValue();
+            node.ConditionSet.ConditionList.Add(condition);
             return condition;
         }
-        public MessageQuestCondition AddTimerCondition( QuestNode node,QuestMessageParticipant senderSpecifier, string senderID,QuestMessageParticipant targetSpecifier, string targetID,
-         string message, string parameter, MessageValue value = null )
+
+        public MessageQuestCondition AddTimerCondition( QuestNode node, QuestMessageParticipant senderSpecifier,
+            string senderID, QuestMessageParticipant targetSpecifier, string targetID,
+            string message, string parameter, MessageValue value = null )
         {
             var condition = MessageQuestCondition.CreateInstance<MessageQuestCondition>();
             condition.name = "messageCondition";
@@ -307,10 +348,11 @@ namespace SsitEngine.QuestManager
             condition.TargetId = targetID;
             condition.Message = message;
             condition.Parameter = parameter;
-            condition.Value = (value != null) ? value : new MessageValue();
-            node.ConditionSet.ConditionList.Add( condition );
+            condition.Value = value != null ? value : new MessageValue();
+            node.ConditionSet.ConditionList.Add(condition);
             return condition;
         }
+
         #endregion
 
         #region Actions
@@ -333,18 +375,16 @@ namespace SsitEngine.QuestManager
 
         public QuestAction CreateMessageAction( string text )
         {
-            if (text.Contains( ":" )) // Parameter?
+            if (text.Contains(":")) // Parameter?
             {
-                var colonPos = text.IndexOf( ':' );
-                return CreateMessageAction( text.Substring( colonPos + 1 ), text.Substring( 0, colonPos ) );
+                var colonPos = text.IndexOf(':');
+                return CreateMessageAction(text.Substring(colonPos + 1), text.Substring(0, colonPos));
             }
-            else
-            {
-                return CreateMessageAction( text, string.Empty );
-            }
+            return CreateMessageAction(text, string.Empty);
         }
 
-        public QuestAction CreateSetIndicatorAction( string questID, string entityID, QuestIndicatorState indicatorState )
+        public QuestAction CreateSetIndicatorAction( string questID, string entityID,
+            QuestIndicatorState indicatorState )
         {
             var indicatorAction = SetIndicatorQuestAction.CreateInstance<SetIndicatorQuestAction>();
             indicatorAction.questID = questID;
@@ -355,7 +395,5 @@ namespace SsitEngine.QuestManager
         //[TODO] Other action types in QuestBuilder.
 
         #endregion
-
     }
-
 }

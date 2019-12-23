@@ -68,7 +68,10 @@ namespace SsitEngine.Core.ObjectPool
         /// <param name="priority">对象的优先级。</param>
         public ObjectBase( string name, object target, bool locked, int priority )
         {
-            if (target == null) throw new SsitEngineException(TextUtils.Format("Target '{0}' is invalid.", name));
+            if (target == null)
+            {
+                throw new SsitEngineException(TextUtils.Format("Target '{0}' is invalid.", name));
+            }
 
             m_name = name ?? string.Empty;
             m_target = target;

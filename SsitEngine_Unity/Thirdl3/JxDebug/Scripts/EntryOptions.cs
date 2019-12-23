@@ -1,22 +1,30 @@
 ﻿using System;
 using UnityEngine;
 
-namespace JxDebug{
+namespace JxDebug
+{
     [Serializable]
-    public struct EntryOptions {
+    public struct EntryOptions
+    {
         public FontStyle style;
         public int size;
 
-        bool hasColorBeenAssigned;
+        private bool hasColorBeenAssigned;
 
-        Color _color;
-        public Color color {
-            get {
-                if(!hasColorBeenAssigned)
+        private Color _color;
+
+        public Color color
+        {
+            get
+            {
+                if (!hasColorBeenAssigned)
+                {
                     color = JxDebug.Setting.entryDefaultColor;
+                }
                 return _color;
             }
-            set {
+            set
+            {
                 _color = value;
                 hasColorBeenAssigned = true;
             }

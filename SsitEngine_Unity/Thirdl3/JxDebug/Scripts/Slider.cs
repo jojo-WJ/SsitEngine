@@ -5,37 +5,27 @@ namespace JxDebug
     public class Slider
     {
         public delegate float SliderGetter();
+
         public delegate void SliderSetter( float value );
 
-        static GUIStyle originalStyle;
-        static GUIStyle originalThumbStyle;
-        static GUIStyle style;
-        static GUIStyle thumbStyle;
-
-        GUIContent label;
-        SliderGetter getter;
-        SliderSetter setter;
-        bool hasFocus;
-        bool lastHasFocus;
-        float delayedValue;
-
-        public int decimalsToShow { get; set; }
+        private static GUIStyle originalStyle;
+        private static GUIStyle originalThumbStyle;
+        private static GUIStyle style;
+        private static GUIStyle thumbStyle;
         public bool delayed;
+        private float delayedValue;
+        private readonly SliderGetter getter;
+        private bool hasFocus;
 
-        public static void Initialize()
+        private readonly GUIContent label;
+        private bool lastHasFocus;
+        private readonly SliderSetter setter;
+
+        public Slider( string label, SliderGetter getter, SliderSetter setter ) : this(new GUIContent(label), getter,
+            setter)
         {
-            style = new GUIStyle(GUI.skin.horizontalSlider);
-            style.normal = new GUIStyleState() { background = JxDebug.Setting.sliderIcon };
-            thumbStyle = new GUIStyle();
-            thumbStyle.normal = thumbStyle.active = thumbStyle.focused = thumbStyle.hover = new GUIStyleState() { background = JxDebug.Setting.sliderThumbIcon };
-            thumbStyle.overflow = new RectOffset(8, 8, 0, 0);
-            /*thumbStyle.fixedHeight = */thumbStyle.fixedWidth = 16;
         }
 
-        public Slider(string label, SliderGetter getter, SliderSetter setter) : this(new GUIContent(label), getter,setter)
-        {
-
-        }
         public Slider( GUIContent label, SliderGetter getter, SliderSetter setter )
         {
             this.label = label;
@@ -43,16 +33,30 @@ namespace JxDebug
             this.setter = setter;
         }
 
+        public int decimalsToShow { get; set; }
+
+        public static void Initialize()
+        {
+            style = new GUIStyle(GUI.skin.horizontalSlider);
+            style.normal = new GUIStyleState {background = JxDebug.Setting.sliderIcon};
+            thumbStyle = new GUIStyle();
+            thumbStyle.normal = thumbStyle.active = thumbStyle.focused =
+                thumbStyle.hover = new GUIStyleState {background = JxDebug.Setting.sliderThumbIcon};
+            thumbStyle.overflow = new RectOffset(8, 8, 0, 0);
+            /*thumbStyle.fixedHeight = */
+            thumbStyle.fixedWidth = 16;
+        }
+
         public void Draw( Rect rect, float min, float max )
         {
             ChangeSkinStylesIfNecessary();
-            float originalValue = getter();
-            float value = hasFocus && delayed ? delayedValue : originalValue;
+            var originalValue = getter();
+            var value = hasFocus && delayed ? delayedValue : originalValue;
             if (setter == null)
             {
                 GUI.enabled = false;
             }
-            float widthFraction = rect.width / 10;
+            var widthFraction = rect.width / 10;
             rect.y += rect.height / 2;
             DrawLabel(ref rect, widthFraction);
             DrawSlider(ref rect, widthFraction, ref value, min, max);
@@ -75,7 +79,7 @@ namespace JxDebug
         private void DrawSlider( ref Rect rect, float widthFraction, ref float value, float min, float max )
         {
             rect.width = 5 * widthFraction;
-            int id = GUIUtility.GetControlID(label.text.GetHashCode(), FocusType.Passive, rect);
+            var id = GUIUtility.GetControlID(label.text.GetHashCode(), FocusType.Passive, rect);
             value = GUI.HorizontalSlider(rect, value, min, max);
             rect.x += rect.width;
             hasFocus = GUIUtility.hotControl == id + 1;
@@ -84,7 +88,7 @@ namespace JxDebug
         private void DrawValue( ref Rect rect, float widthFraction, float value )
         {
             rect.width = 2 * widthFraction;
-            string valueToShow = CutDecimals(value).ToString();
+            var valueToShow = CutDecimals(value).ToString();
             GUI.Label(rect, hasFocus && delayed ? "*" + valueToShow + "*" : valueToShow, GUIUtils.RightTextStyle);
         }
 
@@ -96,12 +100,16 @@ namespace JxDebug
         private void CallSetterIfAppropriate( float originalValue, float value )
         {
             if (hasFocus)
+            {
                 delayedValue = value;
+            }
 
             if (originalValue != value)
             {
                 if (!delayed || lastHasFocus && !hasFocus)
+                {
                     setter(value);
+                }
             }
             lastHasFocus = hasFocus;
         }
@@ -127,10 +135,12 @@ namespace JxDebug
         /// <returns></returns>
         private float CutDecimals( float value )
         {
-            int factor = 1;
-            for (int i = 0; i < decimalsToShow; i++)
+            var factor = 1;
+            for (var i = 0; i < decimalsToShow; i++)
+            {
                 factor *= 10;
-            value = (int)(factor * value);
+            }
+            value = (int) (factor * value);
             value /= factor;
             return value;
         }
@@ -141,11 +151,17 @@ namespace JxDebug
         private void RestoreSkinStylesIfNecessary()
         {
             if (JxDebug.Setting.optimizeForOnGUI)
+            {
                 return;
+            }
             if (originalStyle != null)
+            {
                 GUI.skin.horizontalSlider = originalStyle;
+            }
             if (originalThumbStyle != null)
+            {
                 GUI.skin.horizontalSliderThumb = originalThumbStyle;
+            }
         }
     }
 }
