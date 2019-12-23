@@ -1,0 +1,68 @@
+﻿using SsitEngine.PureMVC.Interfaces;
+using SsitEngine.Unity.UI;
+using UnityEngine;
+using UnityEngine.UI;
+using SsitEngine.PureMVC.Patterns;
+using System.Collections.Generic;
+
+namespace Framework.Logic
+{
+    public class UIFormClass : BaseUIForm
+    {
+        /*
+                public override void HandleNotification(INotification notification)
+                {
+                    switch (notification.Id)
+                    {
+                        case (ushort) 1:
+                        {
+        
+                        }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+        */
+
+
+		#region Serialize Variable Generator
+
+		#endregion
+
+		#region Override Members
+
+		public override void Init()
+        {
+            /*
+            	        m_msgList = new[]
+                        {
+                            (ushort) 1,
+            
+                        };
+            */
+
+        }
+
+        public override void Display(params object[] nParam)
+        {
+            base.Display();
+
+        }
+
+        public override void Hiding()
+        {
+
+
+            base.Hiding();
+        }
+
+
+        public override void Destroy()
+        {
+        }
+
+		#endregion
+       
+    }
+}

@@ -1,0 +1,97 @@
+﻿using SsitEngine.PureMVC.Interfaces;
+using SsitEngine.PureMVC.Patterns;
+using System.Collections.Generic;
+using SsitEngine.Data;
+using Table;
+
+namespace SSIT.Framework
+{
+    /// <summary>
+    /// 数据代理（可以处理多个数据模型）
+    /// </summary>
+	public class DataProxyClass : DataProxy
+	{
+		//todo:1写入自己代理的源数据模型列表（因其数据模型有多企业性质所以是个列表）
+            
+		private List<ContentTableModel> m_contentModel;
+            
+        //...
+
+        //todo:2写入自己代理的源数据模型属性
+        public ContentTableModel ContentTableModel
+		{
+			get
+			{
+				//int index = VersionManager.Instance.DataIndex;
+				//if (index >= m_contentModel.Count)
+				//{
+				//    return m_contentModel[0];
+				//}
+				//return m_contentModel[index];
+				return m_contentModel[0];
+			}
+		}
+
+        /// <summary>
+        /// 构造方法
+        /// </summary>
+        /// <param name="dataManager"></param>
+        /// <remarks>不想写静态的代理名称可以使用表名作为代理名称</remarks>
+		public DataProxyClass(IDataManager dataManager) : base(dataManager/*,todo: EnTableType.Content.ToString()*/)
+		{
+			m_contentModel = null;
+		}
+
+		#region 子类继承
+
+        /// <summary>
+        /// 更新数据（一般用于服务器的动态数据绑定）
+        /// </summary>
+        /// <param name="dataList"></param>
+		public override void UpdateData(List<DataBase> dataList)
+		{
+
+		}
+
+        /// <summary>
+        /// 代理注册
+        /// </summary>
+		public override void OnRegister()
+		{
+			base.OnRegister();
+            //todo:写入自己代理的源数据模型对象和表名--枚举名
+            m_contentModel = LoadAndInitModel<ContentTableModel>(EnTableType.ContentTable.ToString());
+		}
+
+        /// <summary>
+        /// 代理移除
+        /// </summary>
+		public override void OnRemove()
+		{
+			base.OnRemove();
+            //todo:清除自己代理的源数据模型对象和表名--枚举名
+            m_contentModel.Clear();
+			m_contentModel = null;
+		}
+
+		#endregion
+
+		#region Internal Members
+
+	    //todo:写自身代理的处理的数据逻辑
+
+        /*
+         public override T GetData<T>(int id)
+        {
+            return ContentModel.GetContentTableByindex(id) as T;
+        }
+
+        public string GetContext(int index)
+		{
+			return ContentModel.GetContentTableByindex(index).Content;
+		}
+        */
+
+		#endregion
+	}
+}

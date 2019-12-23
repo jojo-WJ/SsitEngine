@@ -1,0 +1,81 @@
+﻿using System.Collections;
+using SsitEngine.PureMVC.Patterns;
+using SsitEngine.Unity.Procedure;
+using SsitEngine.Unity.UI;
+
+namespace Framework.Logic.Procedure
+{
+    /// <summary>
+    /// 进程模板
+    /// </summary>
+    public class ProcedureClass : ProcedureBase
+    {
+        /// <summary>
+        /// 构造进程对象
+        /// </summary>
+        /// <param name="stateId"></param>
+        public ProcedureClass( int stateId ) : base(stateId)
+        {
+
+        }
+
+        /// <summary>
+        /// 场景加载
+        /// </summary>
+        /// <returns></returns>
+        protected override IEnumerator StartLoading()
+        {
+            IsLoaded = true;
+
+            yield break;
+        }
+
+        /// <summary>
+        /// 进程预加载
+        /// </summary>
+        protected override void OnPrestrain()
+        {
+
+        }
+
+        /// <summary>
+        /// 进程进入
+        /// </summary>
+        /// <param name="procedureManager"></param>
+        protected override void OnEnter( IProcedureManager procedureManager )
+        {
+            base.OnEnter(procedureManager);
+        }
+        
+        /// <summary>
+        /// 进程退出
+        /// </summary>
+        /// <param name="procedureManager"></param>
+        /// <param name="isShutdown"></param>
+        protected override void OnExit( IProcedureManager procedureManager, bool isShutdown )
+        {
+            base.OnExit(procedureManager,isShutdown);
+        }
+
+        /// <summary>
+        /// 进程轮询
+        /// </summary>
+        /// <param name="procedureManager"></param>
+        /// <param name="elapseSeconds"></param>
+         protected override void OnUpdate( IProcedureManager procedureManager, float elapseSeconds )
+        {
+
+        }
+
+
+        /// <summary>
+        /// 场景加载进度回调
+        /// </summary>
+        /// <param name="value"></param>
+        public override void RefreshLoadProcess(float value)
+        {
+
+        }
+
+    }
+}

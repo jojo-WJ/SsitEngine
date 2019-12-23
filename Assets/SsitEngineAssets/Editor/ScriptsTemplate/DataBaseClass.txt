@@ -1,0 +1,31 @@
+﻿using SsitEngine.Data;
+
+namespace Table
+{
+    public partial class DataBaseClass : DataBase/*,todo:若存在自定义接口实现 ICustom*/
+    {
+        //todo:返回数据代理的唯一索引
+        public override int Id => throw new System.NotImplementedException();
+
+        /// <summary>
+        /// 元数据信息转属性信息
+        /// </summary>
+        /// <typeparam name="T">属性信息</typeparam>
+        /// <param name="dataId"></param>
+        /// <returns>IInfoData属性信息</returns>
+        public override T Create<T>( int dataId )
+        {
+            return default(T);
+        }
+
+        /// <summary>
+        /// 服务器数据的应用接口
+        /// </summary>
+        /// <param name="obj">应用对象</param>
+        public override void Apply( object obj )
+        {
+            
+        }
+
+    }
+}
