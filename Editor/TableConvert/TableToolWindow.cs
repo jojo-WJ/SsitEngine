@@ -19,7 +19,6 @@ namespace SsitEngine.Editor
 {
     public class TableToolWindow : EditorWindow
     {
-        private static readonly string CONGFIGASSETNAME = "TableFile.asset";
         private int animIdx;
 
 
@@ -114,7 +113,7 @@ namespace SsitEngine.Editor
 
         private void OnEnable()
         {
-            var tempPath = Path.Combine(EditorFileUtility.CONFIGPATH, CONGFIGASSETNAME);
+            var tempPath = Path.Combine(EditorFileUtility.CONFIGPATH, EditorFileUtility.CONGFIGASSETNAME);
 
             if (!File.Exists(tempPath))
             {

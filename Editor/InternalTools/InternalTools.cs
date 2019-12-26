@@ -26,19 +26,61 @@ namespace SsitEngine.Editor.InternalTools
             //todo:清除数据库
         }
 
-        [MenuItem("Tools/SsitEngine/Import SsitEngineAssets", false, 2051)]
+        [MenuItem("Tools/SsitEngine/1-Import SsitEngineAssets Tools", false, 2051)]
+        public static void ImportSsitEngineAssetsToolsContentMenu()
+        {
+            ImportExtraToolsContent();
+        }
+        
+        [MenuItem("Tools/SsitEngine/2-UnZip SsitEngineAssets Tools And Run it", false, 2051)]
+        public static void UnZipSsitEngineAssetsToolsContentMenu()
+        {
+            UnZipExtraToolsContent();
+        }
+
+        [MenuItem("Tools/SsitEngine/3-Import SsitEngineAssets General Package", false, 2051)]
         public static void ImportExamplesContentMenu()
         {
-            ImportExtraContent();
+            ImportExtraGeneralPackageContent();
+        }
+        
+        [MenuItem("Tools/SsitEngine/4-Copy Streaming Assets", false, 2051)]
+        public static void CopyStreamingContentMenu()
+        {
+            CopyStreamingContent();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        private static void ImportExtraContent()
+        private static void ImportExtraToolsContent()
         {
             var packageFullPath = GUIUtility.packageFullPath;
             AssetDatabase.ImportPackage(packageFullPath + "/Package Resources/SsitEngineAssets.unitypackage", true);
+        }
+
+        private static void UnZipExtraToolsContent()
+        {
+            string resourcePath = EditorFileUtility.ASSETOOLSFILTPATH;
+            if (!File.Exists(resourcePath))
+            {
+                Debug.Log("请先导入资源 - SsitEngineAssets Tools");
+                return;
+            }
+            string targetPath = EditorFileUtility.GetAseetSiblingPath(EditorFileUtility.TOOLSPATH);
+            ZipUtil.Unzip(resourcePath, targetPath);
+        }
+        
+        private static void ImportExtraGeneralPackageContent()
+        {
+            var packageFullPath = GUIUtility.packageFullPath;
+            AssetDatabase.ImportPackage(packageFullPath + "/Package Resources/SsitEngineGeneralAssets.unitypackage", true);
+        }
+        
+        
+        private static void CopyStreamingContent()
+        {
+            EditorFileUtility.CopyAssetsFolder(GUIUtility.ToStreamingAssets,GUIUtility.StreamingAssets);
         }
     }
 }

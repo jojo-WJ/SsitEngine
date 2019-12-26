@@ -17,7 +17,7 @@ namespace SsitEngine.Editor
                 ScriptableObject.CreateInstance<CreateUIFormScriptAsset>(),
                 GetSelectedPathOrFallback() + "/New Script.cs",
                 null,
-                $"{EditorFileUtility.AutoScriptPATH}UIFormClass.txt");
+                $"{EditorFileUtility.AUTOSCRIPTPATH}UIFormClass.txt");
         }
 
         [MenuItem("Assets/Create/SsitScripts/Ssit DataBase", false, 80)]
@@ -27,7 +27,7 @@ namespace SsitEngine.Editor
                 ScriptableObject.CreateInstance<CreateDataBaseScriptAsset>(),
                 GetSelectedPathOrFallback() + "/New Script.cs",
                 null,
-                $"{EditorFileUtility.AutoScriptPATH}DataBaseClass.txt");
+                $"{EditorFileUtility.AUTOSCRIPTPATH}DataBaseClass.txt");
         }
 
         [MenuItem("Assets/Create/SsitScripts/Ssit DataProxy", false, 90)]
@@ -37,7 +37,7 @@ namespace SsitEngine.Editor
                 ScriptableObject.CreateInstance<CreateDataProxyScriptAsset>(),
                 GetSelectedPathOrFallback() + "/New Script.cs",
                 null,
-                $"{EditorFileUtility.AutoScriptPATH}DataProxyClass.txt");
+                $"{EditorFileUtility.AUTOSCRIPTPATH}DataProxyClass.txt");
         }
 
         [MenuItem("Assets/Create/SsitScripts/Ssit Procedure", false, 90)]
@@ -47,7 +47,7 @@ namespace SsitEngine.Editor
                 ScriptableObject.CreateInstance<CreateProcedureScriptAsset>(),
                 GetSelectedPathOrFallback() + "/New Script.cs",
                 null,
-                $"{EditorFileUtility.AutoScriptPATH}ProcedureClass.txt");
+                $"{EditorFileUtility.AUTOSCRIPTPATH}ProcedureClass.txt");
         }
 
         public static string GetSelectedPathOrFallback()

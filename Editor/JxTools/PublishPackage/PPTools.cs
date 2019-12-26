@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
@@ -518,7 +518,7 @@ public class PPTools : EditorWindow
         AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
     }
 
-    [MenuItem("Tools/Pulish package/Reset Package")]
+    //[MenuItem("Tools/Pulish package/Reset Package")]
     private static void ResetPackageFolder()
     {
         if (Directory.Exists(EditorFileUtility.DataPathInEditor + TARGETFOLDERPATH))
@@ -530,7 +530,7 @@ public class PPTools : EditorWindow
 
             //文件位置还原
             /*FileUtil.MoveFileOrDirectory(EditorFileUtility.DataPathInEditor + TARGETFOLDERPATH,
-                EditorFileUtility.DataPathInEditor + COPYFILEPATH);*/
+                EditorFileUtility.DataPathInEditor + COPYFILEPATH);#1#
             AssetDatabase.MoveAsset("Assets" + TARGETFOLDERPATH,
                 "Assets" + COPYFILEPATH);
         }
@@ -711,7 +711,7 @@ public class PPTools : EditorWindow
             //反序列化，并将反序列化结果值赋给变量i
             int i = (int)serializer.Deserialize(rdr);
             //输出反序列化结果
-        }*/
+        }#1#
     }
 
     private static void SaveConfigInfo()
@@ -772,7 +772,7 @@ public class PPTools : EditorWindow
         GUILayout.Label(message, "label" /*, new GUILayoutOption[]
         {
             GUILayout.ExpandWidth(true)
-        }*/);
+        }#1#);
         GUI.color = Color.white;
     }
 
@@ -817,4 +817,4 @@ public class AndriodConfig
 {
     [XmlAttribute("outPath")]
     public string OutPath { get; set; }
-}*/
+}#1#*/

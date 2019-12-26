@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using UnityEngine;
 
 [Serializable]
@@ -57,4 +57,4 @@ public class AndriodConfig
 public class IosConfig
 {
     public string OutPath;
-}
+}*/

@@ -76,7 +76,7 @@ public static class FindUnUnUsedUITexture
     }
 
     // Use this for initialization
-    [MenuItem("Tools/UI冗余图片扫描")]
+    [MenuItem("Tools/Extension Tools/UI冗余图片扫描")]
     public static void Scan()
     {
         var uiPrefabRootDir = EditorUtility.OpenFolderPanel("选择UIPrefab目录", "Assets", "");

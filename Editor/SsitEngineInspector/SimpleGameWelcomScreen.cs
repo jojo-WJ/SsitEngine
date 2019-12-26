@@ -23,7 +23,7 @@ namespace SimpleGameEditor
         private Rect mToggleButtonRect = new Rect(220f, 385f, 125f, 20f);
         private Texture mWelcomeScreenImage;
         
-        [MenuItem("Tools/SsitEngine/Welcome Screen", false, 3)]
+        [MenuItem("Tools/SsitEngine/Welcome Screen", false, 0)]
         public static void ShowWindow()
         {
             SimpleGameWelcomScreen window = GetWindow<SimpleGameWelcomScreen>(true, "Welcome to SsitEngine");

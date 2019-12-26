@@ -31,7 +31,7 @@ namespace SsitEngine
         }
 
         /// <summary>
-        ///     获取文件所在文件夹路径.
+        /// 获取文件所在文件夹路径.
         /// </summary>
         /// <returns>文件夹名称.</returns>
         /// <param name="filename">文件的完整路径.</param>
@@ -53,7 +53,7 @@ namespace SsitEngine
         }
 
         /// <summary>
-        ///     获取不带扩展的文件名称
+        /// 获取不带扩展的文件名称
         /// </summary>
         /// <returns>The filename without extension.</returns>
         /// <param name="filename">Full filename.</param>

@@ -13,7 +13,7 @@ internal class SimpleAutoSave : EditorWindow
 
     private readonly double saveTime = 20;
 
-    [MenuItem("Tools/MyWindow/Simple autoSave")]
+    [MenuItem("Tools/Internal Tools/Simple autoSave")]
     private static void Init()
     {
         var window = GetWindowWithRect(typeof(SimpleAutoSave), new Rect(0, 0, 200, 40));
