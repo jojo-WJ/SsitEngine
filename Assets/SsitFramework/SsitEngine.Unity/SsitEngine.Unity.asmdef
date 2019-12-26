@@ -1,0 +1,20 @@
+{
+    "name": "SsitEngine_Unity",
+    "references": [
+        "GUID:a4ac24983e00535469fe9404d1a78ab9"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.addressables",
+            "expression": "",
+            "define": "1.5.0"
+        }
+    ]
+}

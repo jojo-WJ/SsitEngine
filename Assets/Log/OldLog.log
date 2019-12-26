@@ -1,6 +1,24 @@
-[2019/12/13][21:32:52]  :Exception : DirectoryNotFoundException: Destination directory not found: C:\Users\SSIT\AppData\LocalLow\Ssit\SsitEngine\Config
-System.IO.File.Copy (System.String sourceFileName, System.String destFileName, System.Boolean overwrite) (at <599589bf4ce248909b8a14cbe4a2034e>:0)
-SsitEngine.Unity.FileUtils.CopyFolderFormStreamToPersitentPath (System.String streamPath, System.Action onFinishedAction) (at Assets/SsitFramework/SsitEngine_Unity/Utility/FileUtils.cs:188)
-SsitEngine.Unity.FileUtils.CopyFolderFormStreamToPersitentPath (System.Collections.Generic.List`1[T] streamPaths, System.Action onFinishedAction) (at Assets/SsitFramework/SsitEngine_Unity/Utility/FileUtils.cs:217)
-SsitEngine.Unity.SsitMain.InitInternalAsset () (at Assets/SsitFramework/SsitEngine_Unity/SsitMain.cs:57)
+[2019/12/23][20:08:49]  :Log : Thank you for using Mirror! https://mirror-networking.com
+[2019/12/23][20:08:49]  :Log : TelepathyTransport initialized!
+[2019/12/23][20:08:49]  :Log : CopyFolderFormStreamToPersitentPath is Finished
+[2019/12/23][20:08:57]  :Log : Server: Start port=7777
+[2019/12/23][20:08:57]  :Log : Loading Scenes
+[2019/12/23][20:08:57]  :Error : Scene 'SubScene' couldn't be loaded because it has not been added to the build settings or the AssetBundle has not been loaded.
+To add a scene to the build settings use the menu File->Build Settings...
+UnityEngine.SceneManagement.SceneManager:LoadSceneAsync(String, LoadSceneMode)
+Mirror.Examples.Additive.AdditiveNetworkManager:OnStartServer() (at Assets/SsitEngineAssets/Third3/Mirror/Examples/AdditiveScenes/Scripts/AdditiveNetworkManager.cs:22)
+Mirror.NetworkManager:StartServer() (at Assets/SsitEngineAssets/Third3/Mirror/Runtime/NetworkManager.cs:302)
+Mirror.NetworkManager:StartHost() (at Assets/SsitEngineAssets/Third3/Mirror/Runtime/NetworkManager.cs:394)
+Mirror.NetworkManagerHUD:OnGUI() (at Assets/SsitEngineAssets/Third3/Mirror/Runtime/NetworkManagerHUD.cs:55)
 
+[2019/12/23][20:08:57]  :Log : Loaded SubScene
+[2019/12/23][20:09:00]  :Log : Loading SubScene
+[2019/12/23][20:09:02]  :Log : Unloading SubScene
+[2019/12/23][20:09:43]  :Log : Stopping Client
+[2019/12/23][20:09:43]  :Log : Unloading Scenes
+[2019/12/23][20:09:43]  :Log : OnApplicationQuit: stopped client
+[2019/12/23][20:09:43]  :Log : Stopping Server
+[2019/12/23][20:09:43]  :Log : Unloading Scenes
+[2019/12/23][20:09:43]  :Log : Server: stopping...
+[2019/12/23][20:09:43]  :Log : OnApplicationQuit: stopped server
+[2019/12/23][20:09:43]  :Log : TelepathyTransport Shutdown()

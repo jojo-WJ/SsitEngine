@@ -1,0 +1,24 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"Player":[
+		{ "ID": 60001, "MapId": 6503, "Name": "小倩", "Profession": "护士", "Desc": "精英护士", "AttachedSkillList":[ 82003, 82004 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60002, "MapId": 6503, "Name": "宁采臣", "Profession": "医生", "Desc": "医生", "AttachedSkillList":[ 82003, 82004 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60003, "MapId": 6502, "Name": "张三", "Profession": "担架工", "Desc": "担架工", "AttachedSkillList":[ 90000, 100000, 82000, 82001, 82002 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60004, "MapId": 6502, "Name": "李四", "Profession": "担架工", "Desc": "担架工", "AttachedSkillList":[ 90000, 100000, 82000, 82001, 82002 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60011, "MapId": 6503, "Name": "石吉敏", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000, 50001 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60012, "MapId": 6503, "Name": "赖轩秀", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000, 50001 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60021, "MapId": 6503, "Name": "廖彩燕", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000, 82001, 82002, 60000, 60002 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60022, "MapId": 6503, "Name": "籍斯乔", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000, 82001, 82002, 60000, 60002 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60023, "MapId": 6503, "Name": "牧宜然", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000, 82001, 82002, 60000, 60002 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60024, "MapId": 6503, "Name": "蔚芹悦", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000, 82001, 82002, 60000, 60002 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60031, "MapId": 6503, "Name": "池语兰", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60032, "MapId": 6503, "Name": "池语菊", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60033, "MapId": 6503, "Name": "池语芳", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60034, "MapId": 6503, "Name": "池语梅", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60041, "MapId": 6503, "Name": "强子", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000, 20002, 20000, 20001, 20003, 20005, 50003, 50004, 50006 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60042, "MapId": 6503, "Name": "喜娃", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000, 20002, 20000, 20001, 20003, 20005 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 60043, "MapId": 6503, "Name": "老炮", "Profession": "解放军", "Desc": "中国人民解放军", "AttachedSkillList":[ 90000, 100000, 20002, 20000, 20001, 20003, 20005 ], "AttachedItemList":[  ], "AttachedEquipList":[  ] },
+		{ "ID": 70003, "MapId": 6503, "Name": "工人", "IconId": 1042, "BackShowModelId": 20077, "AttachedSkillList":[  ], "AttachedItemList":[  ], "AttachedEquipList":[ 10001, 33333, 77777, 44444 ] },
+		{ "ID": 79999, "MapId": 6999, "Name": "大厅客户端虚拟AI", "Profession": "大厅客户端虚拟AI", "Desc": "电脑终端", "AttachedSkillList":[  ], "AttachedItemList":[  ], "AttachedEquipList":[  ] }
+	]}

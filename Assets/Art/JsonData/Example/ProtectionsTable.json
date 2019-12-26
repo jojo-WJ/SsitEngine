@@ -1,0 +1,13 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"Protections":[
+		{ "ProtectionsBaseID": 1001, "ProtectionsBaseName": "头部", "ProtectionsList":[ 10001, 10002, 10003, 10004, 10007 ] },
+		{ "ProtectionsBaseID": 1002, "ProtectionsBaseName": "耳部", "ProtectionsList":[ 20001 ] },
+		{ "ProtectionsBaseID": 1003, "ProtectionsBaseName": "手部", "ProtectionsList":[ 30004, 30005, 30006, 30007, 30010 ] },
+		{ "ProtectionsBaseID": 1004, "ProtectionsBaseName": "足部", "ProtectionsList":[ 40001, 40002, 40003, 40005 ] },
+		{ "ProtectionsBaseID": 1005, "ProtectionsBaseName": "面部眼部", "ProtectionsList":[ 50001, 50002, 50003, 60001, 60002, 60003, 60006 ] },
+		{ "ProtectionsBaseID": 1006, "ProtectionsBaseName": "呼吸器具", "ProtectionsList":[ 60007 ] },
+		{ "ProtectionsBaseID": 1007, "ProtectionsBaseName": "躯体防护", "ProtectionsList":[ 77001 ] },
+		{ "ProtectionsBaseID": 1008, "ProtectionsBaseName": "坠落防护", "ProtectionsList":[  ] }
+	]}

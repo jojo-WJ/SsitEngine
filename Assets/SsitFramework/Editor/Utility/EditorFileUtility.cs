@@ -11,7 +11,11 @@ namespace SsitEngine.Editor
     {
         public static readonly string CONFIGPATH = "Assets/SsitEngineAssets/Editor/Config/";
         public static readonly string RESPATH = "Assets/SsitEngineAssets/Editor/Res/";
-        public static readonly string AutoScriptPATH = "Assets/SsitEngineAssets/Editor/ScriptsTemplate/";
+        public static readonly string AUTOSCRIPTPATH = "Assets/SsitEngineAssets/Editor/ScriptsTemplate/";
+        public static readonly string ASSETOOLSFILTPATH = "Assets/SsitEngineAssets/Editor/Tools.zip";
+        public static readonly string TOOLSPATH = "Tools";
+        public static readonly string CONGFIGASSETNAME = "TableFile.asset";
+
         #region Members
 
         public static string DataPathInEditor => Application.dataPath;
@@ -497,6 +501,23 @@ namespace SsitEngine.Editor
 
             var matchStr = @"StreamingAssets\";
             return assetName.Substring(assetName.LastIndexOf(matchStr, StringComparison.Ordinal) + matchStr.Length);
+        }
+        
+        public static string GetAseetSiblingPath(string rootPath = "")
+        {
+            string tempPath = Application.dataPath;
+
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+            tempPath = tempPath.Substring( 0, tempPath.LastIndexOf( "/" ) ) + "/"+ rootPath;
+            if (!Directory.Exists( tempPath ))
+            {
+                Directory.CreateDirectory( tempPath );
+            }
+#else
+            tempPath = Application.dataPath+ "/"+ rootPath;
+#endif
+
+            return tempPath;
         }
 
         #endregion

@@ -1,0 +1,13 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"BackgroundItem":[
+		{ "ItemID": 1, "ItemName": "辅助模型", "ItemType": "辅助模型", "ItemTypeSub": "辅助模型", "RelationID": 2208 },
+		{ "ItemID": 2, "ItemName": "长方体触发器", "ItemType": "触发器", "ItemTypeSub": "距离触发器", "RelationID": 2206 },
+		{ "ItemID": 3, "ItemName": "圆柱体触发器", "ItemType": "触发器", "ItemTypeSub": "距离触发器", "RelationID": 2207 },
+		{ "ItemID": 4, "ItemName": "标签1", "ItemType": "标签", "ItemTypeSub": "标签", "RelationID": 2205 },
+		{ "ItemID": 5, "ItemName": "消防手报", "ItemType": "应急资源", "ItemTypeSub": "应急设备", "RelationID": 2213 },
+		{ "ItemID": 6, "ItemName": "洗眼器", "ItemType": "应急资源", "ItemTypeSub": "应急设备", "RelationID": 2209 },
+		{ "ItemID": 7, "ItemName": "手推式灭火器", "ItemType": "应急资源", "ItemTypeSub": "应急设备", "RelationID": 2211 },
+		{ "ItemID": 8, "ItemName": "声光报警器", "ItemType": "应急资源", "ItemTypeSub": "报警设备", "RelationID": 2212 }
+	]}

@@ -20,7 +20,7 @@ namespace SsitEngine.Editor.SsitEngineInspector
     {
         protected UIFormSettings Target => target as UIFormSettings;
 
-        [MenuItem("Tools/UI Form Settings &F")]
+        [MenuItem("Tools/Beta/Generate UI Form Settings &F ")]
         protected static void FocusSettings()
         {
             var str = string.Format("Assets/Resources/{0}.asset", "UI/Settings/UIFormSettings");

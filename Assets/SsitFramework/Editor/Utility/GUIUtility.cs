@@ -10,10 +10,13 @@ namespace SsitEngine.Editor
 {
     public static class GUIUtility
     {
+        // Static readonly Fields
+        public static readonly string ToStreamingAssets = "SsitEngineAssets/Editor/ToStreamingAssets";
+        public static readonly string StreamingAssets = "StreamingAssets";
         // Static Fields Related to locating the TextMesh Pro Asset
         private static string folderPath = "Not Found";
         private static string m_PackageFullPath;
-
+        
         private static GUIStyle welcomeScreenTextHeaderGUIStyle;
         private static GUIStyle welcomeScreenTextDescriptionGUIStyle;
         private static GUIStyle preferencesPaneGUIStyle;

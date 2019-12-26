@@ -1,0 +1,6 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"ForceUint":[
+		{ "ID": 50000, "MapId": 5000, "Name": "救护车", "IconId": 1030, "Profession": "救护车", "PlayerCount": 4, "PlayerList":[ 60001, 60002, 60003, 60004 ], "AttachedSkillList":[ 81000, 81001, 81002, 81003 ], "AttachedItemList":[ 1500, 2200 ] }
+	]}

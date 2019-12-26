@@ -1,0 +1,7 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"Scene":[
+		{ "SceneID": 1100, "SceneName": "通用场景", "SceneFileName": "EditorScene", "SceneGroupList":[  ], "MiniMapTexturePath": "UI/Texture/BigMap/HBSH_LXCZ", "MiniMapPos": "-236.4|0", "MiniMapRect": "512|512", "MiniMapStartPos": "-537.7|309.2", "MiniMapEndPos": "172.7|1019.2" },
+		{ "SceneID": 1101, "SceneName": "测试场景1", "SceneFileName": "CLSH_CPYTTQG", "SceneGroupList":[  ], "MiniMapTexturePath": "UI/Texture/BigMap/HBSH_LXCZ", "MiniMapPos": "-236.4|0", "MiniMapRect": "512|512", "MiniMapStartPos": "-537.7|309.2", "MiniMapEndPos": "172.7|1019.2" }
+	]}

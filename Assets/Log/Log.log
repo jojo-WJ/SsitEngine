@@ -1,1 +1,8 @@
-[2019/12/13][21:33:56]  :Log : CopyFolderFormStreamToPersitentPath is Finished
+[2019/12/23][20:10:00]  :Log : Thank you for using Mirror! https://mirror-networking.com
+[2019/12/23][20:10:00]  :Log : TelepathyTransport initialized!
+[2019/12/23][20:10:00]  :Log : CopyFolderFormStreamToPersitentPath is Finished
+[2019/12/23][20:10:02]  :Log : Server: Start port=7777
+[2019/12/23][20:10:07]  :Log : OnApplicationQuit: stopped client
+[2019/12/23][20:10:07]  :Log : Server: stopping...
+[2019/12/23][20:10:07]  :Log : OnApplicationQuit: stopped server
+[2019/12/23][20:10:08]  :Log : TelepathyTransport Shutdown()

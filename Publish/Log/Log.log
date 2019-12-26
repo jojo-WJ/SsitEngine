@@ -1,0 +1,16 @@
+[2019/12/24][10:26:01]  :Log : CopyFolderFormStreamToPersitentPath is Finished
+[2019/12/24][10:26:08]  :Log : Thank you for using Mirror! https://mirror-networking.com
+[2019/12/24][10:26:08]  :Log : TelepathyTransport initialized!
+[2019/12/24][10:26:13]  :Log : Server: Start port=7780
+[2019/12/24][10:26:18]  :Log : Thank you for using Mirror! https://mirror-networking.com
+[2019/12/24][10:26:18]  :Log : TelepathyTransport initialized!
+[2019/12/24][10:27:03]  :Log : Thank you for using Mirror! https://mirror-networking.com
+[2019/12/24][10:27:03]  :Warning : Multiple NetworkManagers detected in the scene. Only one NetworkManager can exist at a time. The duplicate NetworkManager will be destroyed.
+[2019/12/24][10:27:03]  :Log : TelepathyTransport initialized!
+[2019/12/24][10:27:39]  :Log : Thank you for using Mirror! https://mirror-networking.com
+[2019/12/24][10:27:39]  :Warning : Multiple NetworkManagers detected in the scene. Only one NetworkManager can exist at a time. The duplicate NetworkManager will be destroyed.
+[2019/12/24][10:27:39]  :Log : TelepathyTransport initialized!
+[2019/12/24][10:29:25]  :Log : OnApplicationQuit: stopped client
+[2019/12/24][10:29:25]  :Log : Server: stopping...
+[2019/12/24][10:29:25]  :Log : OnApplicationQuit: stopped server
+[2019/12/24][10:29:25]  :Log : TelepathyTransport Shutdown()

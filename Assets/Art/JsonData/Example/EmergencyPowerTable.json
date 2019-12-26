@@ -1,0 +1,9 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"EmergencyPower":[
+		{ "id": 1001, "ModelName": "工人", "ModelType": "值班人员", "ModelTypeID": 0, "ModelItemID": 70003 },
+		{ "id": 2001, "ModelName": "救护车", "ModelType": "支援力量", "ModelTypeID": 1, "ModelItemID": 50000 },
+		{ "id": 3001, "ModelName": "无关人员1", "ModelType": "无关人员", "ModelTypeID": 2, "ModelItemID": 40000 },
+		{ "id": 3002, "ModelName": "无关人员2", "ModelType": "无关人员", "ModelTypeID": 2, "ModelItemID": 40001 }
+	]}

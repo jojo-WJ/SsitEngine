@@ -1,0 +1,17 @@
+{
+    "name": "Mirror.Examples",
+    "references": [
+        "Mirror",
+        "Mirror.Components",
+        "SsitEngine",
+        "SsitEngine_Unity"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

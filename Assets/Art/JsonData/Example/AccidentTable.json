@@ -1,0 +1,25 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"Accident":[
+		{ "AccidentID": 1001, "AccidentName": "普通立体火", "AccidentType": "火灾事故", "AccidentItemID": 1000 },
+		{ "AccidentID": 1002, "AccidentName": "小型烟雾火", "AccidentType": "火灾事故", "AccidentItemID": 1001 },
+		{ "AccidentID": 1003, "AccidentName": "大型烟雾火", "AccidentType": "火灾事故", "AccidentItemID": 1002 },
+		{ "AccidentID": 2001, "AccidentName": "气体泄漏", "AccidentType": "泄漏事故", "AccidentItemID": 1100 },
+		{ "AccidentID": 3001, "AccidentName": "工人伤员", "AccidentType": "伤员模型", "AccidentItemID": 6100 },
+		{ "AccidentID": 3002, "AccidentName": "工人伤员", "AccidentType": "伤员模型", "AccidentItemID": 6101 },
+		{ "AccidentID": 3003, "AccidentName": "无关人员伤员", "AccidentType": "伤员模型", "AccidentItemID": 6102 },
+		{ "AccidentID": 3004, "AccidentName": "无关人员伤员", "AccidentType": "伤员模型", "AccidentItemID": 6103 },
+		{ "AccidentID": 3005, "AccidentName": "外来人员伤员", "AccidentType": "伤员模型", "AccidentItemID": 6104 },
+		{ "AccidentID": 3006, "AccidentName": "外来人员伤员", "AccidentType": "伤员模型", "AccidentItemID": 6105 },
+		{ "AccidentID": 3007, "AccidentName": "无关人员伤员", "AccidentType": "伤员模型", "AccidentItemID": 6106 },
+		{ "AccidentID": 3008, "AccidentName": "无关人员伤员", "AccidentType": "伤员模型", "AccidentItemID": 6107 },
+		{ "AccidentID": 4001, "AccidentName": "障碍物01", "AccidentType": "障碍物模型", "AccidentItemID": 1300 },
+		{ "AccidentID": 4002, "AccidentName": "障碍物02", "AccidentType": "障碍物模型", "AccidentItemID": 1301 },
+		{ "AccidentID": 4003, "AccidentName": "障碍物03", "AccidentType": "障碍物模型", "AccidentItemID": 1302 },
+		{ "AccidentID": 4004, "AccidentName": "障碍物04", "AccidentType": "障碍物模型", "AccidentItemID": 1303 },
+		{ "AccidentID": 4005, "AccidentName": "障碍物05", "AccidentType": "障碍物模型", "AccidentItemID": 1304 },
+		{ "AccidentID": 4006, "AccidentName": "交通事故障碍", "AccidentType": "障碍物模型", "AccidentItemID": 1305 },
+		{ "AccidentID": 4007, "AccidentName": "长方体触发器", "AccidentType": "触发器模型", "AccidentItemID": 2206 },
+		{ "AccidentID": 4008, "AccidentName": "圆柱体触发器", "AccidentType": "触发器模型", "AccidentItemID": 2207 }
+	]}

@@ -1,0 +1,11 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"ToolBox":[
+		{ "ToolTypeID": 1001, "ToolTypeName": "检测仪器", "SkillList":[ 100100, 100101, 100102 ] },
+		{ "ToolTypeID": 1002, "ToolTypeName": "常规器材工具", "SkillList":[ 100301 ] },
+		{ "ToolTypeID": 1003, "ToolTypeName": "通讯工具", "SkillList":[ 100300 ] },
+		{ "ToolTypeID": 1004, "ToolTypeName": "堵漏工具", "SkillList":[ 100400 ] },
+		{ "ToolTypeID": 1005, "ToolTypeName": "输转工具", "SkillList":[  ] },
+		{ "ToolTypeID": 1006, "ToolTypeName": "急救物品", "SkillList":[  ] }
+	]}

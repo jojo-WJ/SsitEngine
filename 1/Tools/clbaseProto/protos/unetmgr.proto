@@ -1,0 +1,517 @@
+package SSIT.proto;
+
+//------------
+//@Lobby 36000+
+//------------
+
+// 客户端请求交换座位消息
+message CSSWarpMembersRequest				// 36000 
+{
+    optional SwarpMemberInfo swarpInfo = 1;
+}
+
+// 服务端返回的交换座位消息
+message SCSWarpMembersResult			    // 36001 
+{
+    optional SwarpMemberInfo swarpInfo = 1;
+}
+
+// 服务端返回的房间座位列表
+message SCMembersResult						// 36003 
+{
+	repeated MemberInfo memberList = 1;
+}
+
+//------------
+//@emergency 36020+
+//------------
+
+// 客户端请求卵生物体消息
+message CSSpawnSceneObjectRequest				    // 36020 
+{
+    optional SpawnSceneObjectInfo spawnInfo = 1;
+}
+
+message SCSpawnSceneObjectResult			        // 36021 
+{
+    optional string guid = 1;
+    optional SpawnSceneObjectInfo spawnInfo = 2;
+}
+
+// 客户端请求销毁物体消息
+message CSDestorySceneObjectRequest				    // 36022
+{
+    optional string guid = 1;
+    optional uint32 netId = 2;
+}
+
+message SCDestorySceneObjectResult			        // 36023
+{
+    optional int32 netId = 1;
+    optional string guid = 2;
+}
+
+// 客户端请求同步物体位置、旋转、缩放的消息
+message CSSyncTransRequest				            // 36024
+{
+   optional TransTempInfo transInfo = 1;
+}
+
+message SCSyncTransResult			        // 36025
+{
+    optional TransTempInfo transInfo = 1;
+}
+
+// 客户端请求挂接的消息
+message CSAttachRequest				                // 36026
+{
+   optional AttachObjectInfo attachInfo = 1;
+}
+
+message SCAttachResult			                    // 36027
+{
+    optional AttachObjectInfo attachInfo = 1;
+}
+
+// 客户端请求系统聊天行为等消息
+message CSChatMessageRequest				        // 36028
+{
+   optional MessageInfo attachInfo = 1;
+}
+
+message SCChatMessageResult			                // 36029
+{
+    optional MessageInfo attachInfo = 1;
+}
+
+// 客户端请求命令消息
+message CSCommandRequest                            // 36030
+{
+    optional CommandInfo command  = 1;
+}
+
+message SCCommandResult                             // 36031
+{
+    optional CommandInfo command  = 1;
+}
+// 客户端清点人数消息
+message CSCountPresonRequest                        // 36036
+{
+    repeated PersonnelCountInfo countInfo  = 1;
+}
+
+message SCCountPresonResult                         // 36037
+{
+    repeated PersonnelCountInfo countInfo  = 1;
+}
+
+// 客户端同步交互消息
+message CSInteractionRequest                        // 36037
+{
+    repeated InteractionInfo interactionInfo  = 1;
+}
+
+message SCInteractionResult                         // 36038
+{
+    repeated InteractionInfo interactionInfo  = 1;
+}
+
+// 客户端同步改变环境消息
+message CSEnvironmentRequest                        // 36039
+{
+    repeated EnvironmentInfo enviInfo  = 1;
+}
+
+message SCEnvironmentResult                         // 36040
+{
+    repeated EnvironmentInfo enviInfo  = 1;
+}
+
+// 客户端同步编辑路径消息
+message CSRoutePlanRequest                          // 36041
+{
+    repeated RoutePlanInfo routeInfo  = 1;
+}
+
+message CSRoutePlanResult                           // 36042
+{
+    repeated RoutePlanInfo routeInfo  = 1;
+}
+
+// 客户端同步系统提示消息
+message CSPopTipRequest                             // 36043
+{
+     optional MessageInfo popInfo = 1;
+}
+
+message SCPopTipResult                              // 36044
+{
+     optional MessageInfo popInfo = 1;
+}
+
+// 客户端同步视角请求（指挥端也想看其他成员的行为）
+message CSFollowClientRequest                       // 36045    
+{
+    optional string userID = 1;						//跟随的客户端的id
+    optional int32 isFollow = 2;					//是否处于跟随状态 0 为跟随 1为不跟随
+}
+
+message SCFollowClientResult                        // 36046
+{
+    optional string userID = 1;						//跟随的客户端的id
+    optional int32 isFollow = 2;					//是否处于跟随状态 0 为跟随 1为不跟随
+}
+
+// todo:物体激活显隐消息
+// todo:（人物属性同步）个体防护消息
+message CSSyncPlayerInfoRequest                     // 36047
+{
+    optional PlayerInfo playerInfo = 1;
+}
+
+message SCSyncPlayerInfoResult                      // 36048
+{
+    optional PlayerInfo playerInfo = 1;
+}
+
+// todo:(交互对象属性同步)消防炮属性消息
+message CSSyncSceneObjInfoRequest                   // 36049
+{
+    repeated SyncSceneObjInfo sceneObjInfo = 1;   
+}
+
+message SCSyncSceneObjInfoResult                    // 36050
+{
+    repeated SyncSceneObjInfo sceneObjInfo = 1;
+}
+
+//开始演练
+message CSStartDrillRequest                    // 36053
+{
+
+}
+
+message SCStartDrillResult                     // 36054
+{    
+
+}
+
+//结束演练
+message CSEndDrillRequest                    // 36055
+{
+
+}
+
+message SCEndDrillResult                     // 36056
+{    
+
+}
+
+//人员疏散
+message CSEvacuateRequest                    // 36057
+{    
+	repeated EvacuateInfo evacuateInfo  = 1;
+}
+
+message SCEvacuateResult                    // 36058
+{    
+	repeated EvacuateInfo evacuateInfo  = 1;
+}
+
+//------------
+//待定
+//------------
+
+//场景加载
+message CSLoadSceneRequest                          // 36100
+{
+   optional LevelInfo levelInfo = 1;
+}
+
+message SCLoadSceneResult                           // 36101
+{
+    optional LevelInfo levelInfo = 1;
+}
+
+// mirror 
+message CSLoadSceneProcessRequest                   // 36102
+{
+    optional string userId  = 1;
+    optional float readyTime = 2;           //准备时间
+    optional int32 readyState = 3;          //准备类型   
+}
+
+message SCLoadSceneProcessResult                    // 36103
+{
+    //repeated loadProcessInfo loadProcessInfos = 1;     
+    optional string userId  = 1;
+    optional float readyTime = 2;           //准备时间
+    optional int32 readyState = 3;          //准备类型  
+}
+
+message CSAssignClientAuthorityRequest              // 36104
+{
+    optional string guid  = 1;              //请求对象
+    optional int32 netId = 2;
+}
+
+message SCAssignClientAuthorityResult               // 36105
+{
+    optional string guid  = 1;            //请求对象    
+    optional int32 state = 2;             //请求状态[0：false 1:true]  
+}
+
+
+message CSLobbyChatMessageRequest                   // 36106
+{
+    optional LobbyChatMessage Message = 1;
+}
+
+message SCLobbyChatMessageResult                    // 36107
+{
+    optional LobbyChatMessage Message = 1;
+}
+
+    
+//------------
+//@general
+//------------
+
+//场景关卡消息体
+message LevelInfo
+{
+    optional int32 sceneId = 1;
+    optional string sceneName = 2;
+    optional int32 sceneMode = 3; // Single = 0, Additive = 1
+    optional int32 physicsMode = 4; // None = 0, Physics3D = 1, Physics2D = 2
+}
+
+// message loadProcessInfo
+// {
+//     optional string userId  = 1;
+//     optional float readyTime = 2;           //准备时间
+//     optional int32 readyState = 3;          //准备类型  
+// }
+
+// 座位号消息体
+message MemberInfo
+{
+	optional string guid = 1;           	//guid
+	optional string userID = 2;           	//用户ID
+    optional string userName = 3;         	//用户名
+    optional int32  connId = 4;           	//UnetID
+    optional int32  ready = 5;              // 0  no | 1 yes 是否进入准备状态
+    optional int32  empty = 6;              //当前组内位置是否为空
+    optional string groupID = 7;            //组别ID   orgID
+    optional int32 index = 8;               //组内成员索引
+
+	//optional string isOnline = 9;			//在线
+    //optional string iconUUID = 10;        //头像ID
+    //optional string orgName = 11;         //组名
+    //optional string rewardPoint = 12;     //奖励点
+}
+
+// 交换座位号消息体
+message SwarpMemberInfo
+{
+    optional int32 state = 1;               //0  request | 1 yes | 2 no 请求/拒绝/接受
+	optional MemberInfo curInfo = 2;
+	optional MemberInfo tarInfo = 3;
+}
+
+// 物体挂接消息
+message AttachObjectInfo
+{
+    optional string ownerGuid = 1;
+    optional string attachGuid = 2;
+}
+
+// 物体同步消息体
+message TransTempInfo
+{
+    optional string guid = 1;
+    optional PBVector3 position = 2;
+    optional PBQuaternion rotation = 3;
+    optional PBVector3 scale = 4;
+    optional float tamp = 5;
+}
+
+// 卵生物体的消息体
+message SpawnSceneObjectInfo
+{
+    optional int32 dataId = 1;
+    optional int32 netId = 2;
+    optional PBVector3 position = 3;
+    optional PBQuaternion rotation = 4;
+    optional PBVector3 scale = 5;
+    optional string groupId = 6;             
+}
+
+// 系统消息的消息体
+message MessageInfo
+{
+    optional EnMessageType MessageType = 1;//消息类型
+    optional string groupName = 2;//组别
+    optional string userDisplayName = 3;//用户显示名称
+    optional string time = 4;//消息发出时间
+    optional string messageContent = 5;//消息内容
+    optional string messageHighlightContent = 6;//消息内容中需要特别显示的
+}
+
+// 系统命令消息体（跟随、参数统一由工具类根据消息id统一定制）
+message CommandInfo
+{
+    optional string msgId = 1;
+    optional string param = 2;
+}
+
+
+
+// 清点人员消息体
+message PersonnelCountInfo
+{
+    optional string DisplayName  =1;
+    optional string Data = 2;
+    optional bool IsArrived = 3;
+    optional bool IsCommunicated = 4;
+}
+
+// 交互触发消息体
+message InteractionInfo
+{
+    optional string interactionPlayer = 1;
+    optional string interactionObject = 2;
+    optional int32 interactionState = 3;
+}
+
+// 环境消息体
+message EnvironmentInfo
+{
+    optional EnWeather Weather = 1;//天气类型
+    optional EnWindDirection WindDirection = 2;//风向
+    optional int32 WindLevel = 3;//风级
+    optional float WindVelocity = 4;//风速
+}
+
+// 路线规划消息体
+message RoutePlanInfo
+{
+    optional int32 PathType = 1;               // 路线种类
+    optional string PathName = 2;              // 路线名字
+    repeated PBVector3 Vertexes = 3;           // 路线顶点
+    optional bool enable = 4;                  // 路线代理 
+}
+
+// 玩家属性信息体
+message PlayerInfo
+{
+    optional string guid = 1;
+    optional int32 state = 2;
+    repeated SyncVar vars = 3;                 // hp 、mp 、score、etc
+    repeated EquipInfo equips = 4;
+    repeated EquipInfo userEquips = 5;
+
+    //...
+}
+
+// 场景交互道具信息体
+message SyncSceneObjInfo
+{
+    optional string guid = 1;
+    repeated SyncVar vars = 2;
+}
+
+// 变量同步消息体
+message SyncVar
+{
+    optional int32 id = 1;
+    optional string param = 2;
+}
+
+// 装备信息
+message EquipInfo
+{
+    optional string guid = 1;
+    optional int32 dataId = 2;
+    optional int32 state = 3; //0 equip|1 use
+}
+
+//人员疏散信息
+message EvacuateInfo
+{
+    optional string playerGuid = 1;
+    optional PBVector3 targetPos = 2;
+} 
+
+message PBVector3
+{
+    optional float x = 1;
+    optional float y = 2;
+    optional float z = 3;
+}
+
+message PBQuaternion
+{
+    optional float x = 1;
+    optional float y = 2;
+    optional float z = 3;
+    optional float w = 4;
+}
+
+// 消息类型
+enum EnMessageType
+{
+    ACTION = 0; //行为、措施信息
+    SELF = 1;   //本地发送聊天信息
+    OTHER = 2;  //外部发送聊天信息
+    SYSTEM  = 3;   //系统信息
+}
+
+// 天气类型
+enum EnWeather
+{
+    SUN = 0;
+    RAINY = 1;
+    SNOWY = 2;
+    FOG = 3;
+    WINDY = 4;
+    CLOUDY = 5;
+}
+
+enum EnWindDirection
+{
+    NOWIND = 0;
+    NORTH = 1;
+    NORTHEAST = 2;
+    EAST = 3;
+    SOUTHEAST = 4;
+    SOUTH = 5;
+    SOUTHWEST = 6;
+    WEST = 7;
+    NORTHWEST = 8;
+}
+
+message LobbyChatMessage
+{
+    //optional string roomID = 1;                             //房间ID
+
+    optional string Content = 2;                            //文本内容
+    optional string FromGuid = 3;                           //发送者的guid
+    optional EnMessageContentType ContentType = 4;
+    optional VoiceData Voice  = 5;
+}
+
+enum EnMessageContentType
+{
+    TEXT = 0;
+    VOICE = 1;
+}
+
+message VoiceData
+{
+    optional int32 Frequency = 1;
+    optional int32 Samples = 2;
+    optional int32 Length = 3;
+    optional bytes Content = 4;
+    optional int32 Channel = 5;
+}

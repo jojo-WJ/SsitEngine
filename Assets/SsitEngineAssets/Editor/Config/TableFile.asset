@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b312cf5dbbd16fb48b631664bd1966e9, type: 3}
+  m_Name: TableFile
+  m_EditorClassIdentifier: 
+  BinaryExportPath: 
+  FileNames:
+  - ExportAtlasTable
+  - ExportCompanyTable
+  - ExportContentTable
+  - ExportExampleAccidentTable
+  - ExportExampleBackgroundItemTable
+  - ExportExampleBackgroundSkillTable
+  - ExportExampleDeviceTable
+  - ExportExampleEmergencyPowerTable
+  - ExportExampleForceUintTable
+  - ExportExampleInvEquipTable
+  - ExportExampleItemTable
+  - ExportExampleMediumTable
+  - ExportExampleNpcTable
+  - ExportExamplePlayerTable
+  - ExportExampleProtectionsTable
+  - ExportExampleSceneTable
+  - ExportExampleSkillTable
+  - ExportExampleToolBoxTable
+  - ExportGlobalValueTable
+  - ExportResourcesTable
+  - ExportTextureTable
+  - ExportUITable
+  JsonExportPath: F:/Code/Emergency/Project/branches/Engine_Tool/SsitEngine2.0.0/SsitEngine/Assets/Art/JsonData
+  LuaExportPath: 
+  mIsExportJson: 1
+  mIsExportLua: 0
+  mIsExportLuaForBit: 0
+  mIsExportResources: 0
+  ScriptExportPath: F:/Code/Emergency/Project/branches/Engine_Tool/SsitEngine2.0.0/SsitEngine/Assets/Scripts/Data/Model
+  WorkSpacePath: F:/Code/Emergency/Project/branches/Engine_Tool/SsitEngine2.0.0/SsitEngine/Tools/Table
+  WorkSpaceRelationPath: Tools/Table

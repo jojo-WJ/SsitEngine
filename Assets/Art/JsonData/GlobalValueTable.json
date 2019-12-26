@@ -1,0 +1,15 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"GlobalValue":[
+		{ "index": 1, "content": "自定义1" },
+		{ "index": 2, "content": "自定义1" },
+		{ "index": 3, "content": "自定义2" },
+		{ "index": 1000, "content": "Res/Icon/Org" },
+		{ "index": 1001, "content": "Res/Icon/User" },
+		{ "index": 1002, "content": "Res/Scene/{0}/Icon/" },
+		{ "index": 1003, "content": "Res/Scene/{0}/FileMap/" },
+		{ "index": 1004, "content": "Res/Scene/{0}/Scheme/{1}/Icon/" },
+		{ "index": 1005, "content": "Res/Scene/{0}/Scheme/{1}/FileMap/" },
+		{ "index": 1006, "content": "Res/Scene/{0}/Scheme/{1}/TaskFileMap/" }
+	]}

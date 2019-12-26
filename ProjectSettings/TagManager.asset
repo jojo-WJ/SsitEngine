@@ -3,7 +3,21 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - ChatWindow
+  - Weapon
+  - IgnoreUIMobileControls
+  - Action
+  - AutoCrouch
+  - Ragdoll
+  - Ignore Ragdoll
+  - Boss
+  - Enemy
+  - CompanionAI
+  - PlayerUI
+  - Collectable
+  - Interactable
+  - LookAt
   layers:
   - Default
   - TransparentFX
@@ -13,13 +27,13 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Enemy
+  - CompanionAI
+  - Triggers
+  - StopMove
+  - HeadTrack
+  - Ground
   - 
   - 
   - 

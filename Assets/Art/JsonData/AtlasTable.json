@@ -1,0 +1,7 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"Atlas":[
+		{ "id": 1000, "resourceId": 10000 },
+		{ "id": 1001, "resourceId": 10001 }
+	]}

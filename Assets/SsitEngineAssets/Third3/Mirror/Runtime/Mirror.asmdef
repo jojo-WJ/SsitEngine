@@ -1,0 +1,16 @@
+{
+    "name": "Mirror",
+    "references": [
+        "Mirror.CompilerSymbols",
+        "SsitEngine_Unity",
+        "SsitEngine"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

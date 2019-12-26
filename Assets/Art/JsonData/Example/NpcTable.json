@@ -1,0 +1,9 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"Npc":[
+		{ "ID": 40000, "MapId": 6504, "Name": "谢小盟", "Profession": "护士", "IconId": 1042, "BackShowModelId": 20080, "AttachedSkillList":[  ], "AttachedItemList":[  ], "AttachedEquipList":[ 10001, 70007 ] },
+		{ "ID": 40001, "MapId": 6504, "Name": "王大通", "IconId": 1042, "BackShowModelId": 20081, "AttachedSkillList":[  ], "AttachedItemList":[  ], "AttachedEquipList":[ 10001, 70008 ] },
+		{ "ID": 40002, "MapId": 6504, "Name": "王小通", "IconId": 1042, "BackShowModelId": 20078, "AttachedSkillList":[  ], "AttachedItemList":[  ], "AttachedEquipList":[ 10001, 70005 ] },
+		{ "ID": 40003, "MapId": 6504, "Name": "王中通", "IconId": 1042, "BackShowModelId": 20079, "AttachedSkillList":[  ], "AttachedItemList":[  ], "AttachedEquipList":[ 10001, 70006 ] }
+	]}

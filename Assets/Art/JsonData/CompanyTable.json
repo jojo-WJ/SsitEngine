@@ -1,0 +1,7 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"Company":[
+		{ "CompanyID": 1, "CompanyName": "案例", "CompanyDesc": "Example", "CompanyIdentifier": "Example", "LobbyBgPath": "UI/Texture/BgIcon/1", "SettingFormBgPath": "UI/Texture/BgIcon/2" },
+		{ "CompanyID": 4, "CompanyName": "长岭石化", "CompanyDesc": "CLSH", "CompanyIdentifier": "CLSH" }
+	]}

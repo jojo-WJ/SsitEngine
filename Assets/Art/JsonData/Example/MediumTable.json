@@ -1,0 +1,7 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.9.0",
+	"Medium":[
+		{ "EquipID": 30001, "Name": "汽油", "QtArea": 50, "MonitoringItems":[ { "Name": "H<sub>2</sub>S", "Unit": "ppm", "CP": 10, "WP": 9999, "UL": 25, "DL": 2, "NO": 6, "FA": 0.2 }, { "Name": "O<sub>2</sub>", "Unit": "%", "CP": 10, "WP": 9999, "UL": 25, "DL": 8, "NO": 20, "FA": 0.03 }, { "Name": "LEL", "Unit": "%LEL", "CP": 1.5, "WP": 9999, "UL": 5, "DL": 0, "NO": 0, "FA": 0.1 }, { "Name": "CO", "Unit": "ppm", "CP": 0, "WP": 9999, "UL": 500, "DL": 0, "NO": 20, "FA": 1 } ] },
+		{ "EquipID": 31001, "Name": "汽油", "QtArea": 1000, "MonitoringItems":[ { "Name": "γ", "Unit": "uSv/h", "CP": 1, "WP": 0.1, "UL": 300, "DL": 0.01, "NO": 0.05, "FA": 5 }, { "Name": "β", "Unit": "uSv/h", "CP": 1, "WP": 0.1, "UL": 300, "DL": 0.01, "NO": 0.04, "FA": 6 } ] }
+	]}
