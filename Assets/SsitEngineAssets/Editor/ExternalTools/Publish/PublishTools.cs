@@ -90,7 +90,7 @@ namespace Framework.Editor
         private string mCurPlat;
         
         
-        [MenuItem("Tools/SsitEngine/Pulish Window #&o", false, 1)]
+        [MenuItem("Tools/SsitEngine/Pulish Window #&l", false, 1)]
         private static void InitWindow()
         {
             m_window = GetWindow(typeof(PublishTools));
